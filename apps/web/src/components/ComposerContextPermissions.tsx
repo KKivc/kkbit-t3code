@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { RuntimeMode } from "@t3tools/contracts";
 import { useAtomValue } from "@effect/atom-react";
 
@@ -35,7 +36,10 @@ export function ComposerContextPermissions(props: {
         <Icon aria-hidden="true" className="size-3" />
         <ComposerContextLabel>{label}</ComposerContextLabel>
       </TooltipTrigger>
-      <TooltipPopup>Permissions{shortcutLabel ? ` · ${shortcutLabel}` : null}</TooltipPopup>
+      <TooltipPopup>
+        {translateUi("Permissions")}
+        {shortcutLabel ? ` · ${shortcutLabel}` : null}
+      </TooltipPopup>
     </Tooltip>
   );
 }

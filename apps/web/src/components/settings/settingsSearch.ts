@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { HOSTED_APP_CHANNEL } from "~/branding";
 import { isElectron, isSecretsFeatureEnabled } from "~/env";
 import { isMacPlatform, isWindowsPlatform, normalizeSearchText } from "~/lib/utils";
@@ -86,28 +87,28 @@ export interface SettingsSearchAvailability {
 }
 
 export const SETTINGS_SECTION_LABELS: Readonly<Record<SettingsPath, string>> = {
-  "/settings/diagnostics": "Diagnostics",
-  "/settings/projects": "Projects",
-  "/settings/general": "General",
-  "/settings/appearance": "Appearance",
-  "/settings/chat": "Chat",
-  "/settings/diffs": "Diffs & pull requests",
-  "/settings/keybindings": "Keybindings",
+  "/settings/diagnostics": translateUi("Diagnostics"),
+  "/settings/projects": translateUi("Projects"),
+  "/settings/general": translateUi("General"),
+  "/settings/appearance": translateUi("Appearance"),
+  "/settings/chat": translateUi("Chat"),
+  "/settings/diffs": translateUi("Diffs & pull requests"),
+  "/settings/keybindings": translateUi("Keybindings"),
   "/settings/snap-shot": "SnapShots",
-  "/settings/providers": "Providers",
-  "/settings/threads": "Threads",
-  "/settings/browser": "Browser",
-  "/settings/devices": "Devices",
-  "/settings/scheduled-tasks": "Scheduled tasks",
-  "/settings/source-control": "Source control",
-  "/settings/worktrees": "Worktrees",
-  "/settings/connections": "Environments",
-  "/settings/access": "Sharing & access",
-  "/settings/secrets": "Secrets",
-  "/settings/maintenance": "Maintenance",
-  "/settings/labs": "Labs",
-  "/settings/about": "About",
-  "/settings/archived": "Archive",
+  "/settings/providers": translateUi("Providers"),
+  "/settings/threads": translateUi("Threads"),
+  "/settings/browser": translateUi("Browser"),
+  "/settings/devices": translateUi("Devices"),
+  "/settings/scheduled-tasks": translateUi("Scheduled tasks"),
+  "/settings/source-control": translateUi("Source control"),
+  "/settings/worktrees": translateUi("Worktrees"),
+  "/settings/connections": translateUi("Environments"),
+  "/settings/access": translateUi("Sharing & access"),
+  "/settings/secrets": translateUi("Secrets"),
+  "/settings/maintenance": translateUi("Maintenance"),
+  "/settings/labs": translateUi("Labs"),
+  "/settings/about": translateUi("About"),
+  "/settings/archived": translateUi("Archive"),
 };
 
 /** Sidebar order. A group without a heading is set apart by space alone. */
@@ -127,7 +128,7 @@ export const SETTINGS_NAV_GROUPS: ReadonlyArray<{
     ],
   },
   {
-    heading: "Agents",
+    heading: translateUi("Agents"),
     paths: [
       "/settings/providers",
       "/settings/threads",
@@ -141,7 +142,7 @@ export const SETTINGS_NAV_GROUPS: ReadonlyArray<{
     paths: ["/settings/projects", "/settings/source-control", "/settings/worktrees"],
   },
   {
-    heading: "Connections",
+    heading: translateUi("Connections"),
     paths: [
       "/settings/connections",
       "/settings/access",
@@ -192,8 +193,8 @@ export function sourceControlHostSearchItems(
       {
         id: sourceControlHostSettingsSearchId(definition.kind),
         title: credentials
-          ? `${definition.label} accounts and token`
-          : `${definition.label} credentials`,
+          ? translateUi("{0} accounts and token", [definition.label])
+          : translateUi("{0} credentials", [definition.label]),
         to: "/settings/source-control" as const,
         searchTerms: [
           credentials

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { resolveEnvironmentMachineKind } from "@t3tools/contracts";
 
 import {
@@ -65,11 +66,11 @@ export function LoadBalancingSettings({
       summary={
         settings.loadBalancingEnabled
           ? summarizeLoadPreferences(environments, settings.loadBalancingWeights)
-          : "Off"
+          : translateUi("Off")
       }
       control={
         <Switch
-          aria-label="Automatically balance load"
+          aria-label={translateUi("Automatically balance load")}
           checked={settings.loadBalancingEnabled}
           disabled={!settingsHydrated}
           onCheckedChange={(loadBalancingEnabled) => updateClientSettings({ loadBalancingEnabled })}
@@ -77,8 +78,9 @@ export function LoadBalancingSettings({
       }
     >
       <p className="px-3 py-2.5 text-xs text-muted-foreground sm:px-4">
-        New threads in shared projects start on the machine with the most free CPU and memory,
-        weighted by each machine's preference.
+        {translateUi(
+          "New threads in shared projects start on the machine with the most free CPU and memory, weighted by each machine's preference.",
+        )}
       </p>
       {environments.map((environment) => (
         <EnvironmentRow

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { MessageCircle, Trash2 } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
@@ -116,7 +117,7 @@ export function DiffCommentAnnotation({
       <div className="mt-1.5 flex items-center gap-1">
         <span className="mr-auto text-3xs text-muted-foreground/70">⌘/Ctrl Enter to send</span>
         <Button variant="ghost-muted" size="xs" onClick={onCancel}>
-          Cancel
+          {translateUi("Cancel")}
         </Button>
         {secondaryAction ? (
           <Button

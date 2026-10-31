@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { DraftInput, type DraftInputProps } from "../ui/draft-input";
 import { Input, type InputProps } from "../ui/input";
 
@@ -21,7 +22,7 @@ export function SecretInput({
     spellCheck: false,
     placeholder: configured
       ? "Stored secret, enter a new value to replace"
-      : (placeholder ?? "Not set"),
+      : (placeholder ?? translateUi("Not set")),
   };
   if (onCommit) {
     return (

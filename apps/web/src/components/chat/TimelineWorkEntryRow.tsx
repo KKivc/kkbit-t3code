@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { TimelinePendingApprovalRow } from "./TimelinePendingApprovalRow";
 import { WorkLogDetails, WorkLogRow } from "./WorkLog";
 import {
@@ -258,7 +259,7 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
               onClick={() => onRetryWorkspacePreparation(retryRunId)}
             >
               <RotateCcwIcon aria-hidden />
-              Retry
+              {translateUi("Retry")}
             </Button>
           </div>
         ) : null}
@@ -468,7 +469,7 @@ function WorkEntryLogRow(props: WorkEntryRowProps) {
               }}
               onKeyDown={stopRowToggle}
             >
-              Open chat
+              {translateUi("Open chat")}
             </button>
           ) : null}
           {notifiedSubagentThreadId ? (

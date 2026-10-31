@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   EditorId,
   EnvironmentId,
@@ -122,7 +123,7 @@ export function RightPanelSurfaceContent(props: {
       if (!pullRequest.supported) {
         return (
           <PullRequestsUnavailableState
-            title="Pull requests unavailable"
+            title={translateUi("Pull requests unavailable")}
             error="Update this environment's T3 Code server to browse pull requests."
           />
         );

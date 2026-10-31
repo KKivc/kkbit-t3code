@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomCommand } from "~/state/use-atom-command";
 import { scopeProjectRef } from "@t3tools/client-runtime/environment";
 import {
@@ -218,8 +219,8 @@ export function usePullRequestCloseBatch(onClosed: (entry: EnvironmentPullReques
       type: failures.length > 0 ? "error" : "success",
       title:
         failures.length > 0
-          ? `Closed ${closed} of ${batch.length} pull requests`
-          : `Closed ${closed} pull request${closed === 1 ? "" : "s"}`,
+          ? translateUi("Closed {0} of {1} pull requests", [closed, batch.length])
+          : `Closed ${closed} pull request${closed === 1 ? "" : translateUi("s")}`,
       ...(failures.length > 0 ? { description: failures.slice(0, 3).join("\n") } : {}),
     });
   };
@@ -301,14 +302,14 @@ export function usePullRequestHandoffs({
     if (opened === null) {
       toastManager.add({
         type: "error",
-        title: "Could not open a thread",
-        description: "Try again from the project, or open a thread first.",
+        title: translateUi("Could not open a thread"),
+        description: translateUi("Try again from the project, or open a thread first."),
       });
       return;
     }
     toastManager.add({
       type: "success",
-      title: "Asked in a thread",
+      title: translateUi("Asked in a thread"),
       description:
         task.prompt.length > 0
           ? "The question is in the composer. Read it over, then send."
@@ -338,8 +339,8 @@ export function usePullRequestHandoffs({
       setHandoff(null);
       toastManager.update(toastId, {
         type: "error",
-        title: "Could not open a thread for the checkout",
-        description: "Try again from the project, or open a thread first.",
+        title: translateUi("Could not open a thread for the checkout"),
+        description: translateUi("Try again from the project, or open a thread first."),
       });
       return;
     }
@@ -371,8 +372,11 @@ export function usePullRequestHandoffs({
       setHandoff(null);
       toastManager.update(toastId, {
         type: "error",
-        title: "Checked out, but the thread stayed where it was",
-        description: `The checkout is ready on \`${prepared.value.branch}\`. Point a thread at it from the branch picker, then ask again.`,
+        title: translateUi("Checked out, but the thread stayed where it was"),
+        description: translateUi(
+          "The checkout is ready on `{0}`. Point a thread at it from the branch picker, then ask again.",
+          [prepared.value.branch],
+        ),
       });
       return;
     }
@@ -383,7 +387,8 @@ export function usePullRequestHandoffs({
         prepared.value.isOnPullRequestHead
           ? {
               type: "success",
-              title: mode === "local" ? "Checked out here" : "Checked out",
+              title:
+                mode === "local" ? translateUi("Checked out here") : translateUi("Checked out"),
               description:
                 mode === "local"
                   ? `This repository is on the ${terminology.singular}'s branch, with a thread open on it.`
@@ -399,8 +404,8 @@ export function usePullRequestHandoffs({
       prepared.value.isOnPullRequestHead
         ? {
             type: "success",
-            title: "Checkout ready",
-            description: "The task is in the composer. Read it over, then send.",
+            title: translateUi("Checkout ready"),
+            description: translateUi("The task is in the composer. Read it over, then send."),
           }
         : offHeadPullRequestCheckoutToast(terminology),
     );

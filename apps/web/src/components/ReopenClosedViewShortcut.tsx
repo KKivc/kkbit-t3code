@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import {
   scopeProjectRef,
@@ -145,7 +146,7 @@ export function ReopenClosedViewShortcut() {
       .catch((error: unknown) => {
         toastManager.add({
           type: "error",
-          title: "Could not reopen view",
+          title: translateUi("Could not reopen view"),
           description: error instanceof Error ? error.message : String(error),
         });
       });

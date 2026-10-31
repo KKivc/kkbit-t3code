@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthOrchestrationOperateScope,
   type EditorId,
@@ -40,13 +41,16 @@ export function KeybindingsConfigWarning({
             toastManager.add(
               stackedThreadToast({
                 type: "error",
-                title: "Unable to open keybindings file",
-                description: error instanceof Error ? error.message : "Unknown error opening file.",
+                title: translateUi("Unable to open keybindings file"),
+                description:
+                  error instanceof Error
+                    ? error.message
+                    : translateUi("Unknown error opening file."),
               }),
             );
           }}
         >
-          Open keybindings.json
+          {translateUi("Open keybindings.json")}
         </Button>
       </span>
     </>

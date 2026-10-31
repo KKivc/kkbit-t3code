@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   DndContext,
   type DragEndEvent,
@@ -60,7 +61,7 @@ export function EnvironmentRoutesList({
       ? connectionRouteId(prepared.value.target)
       : null;
   const reorder = useAtomCommand(environmentCatalog.reorderRoutes, "Reorder routes");
-  const removeRoute = useAtomCommand(environmentCatalog.removeRoute, "Remove route");
+  const removeRoute = useAtomCommand(environmentCatalog.removeRoute, translateUi("Remove route"));
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -118,7 +119,7 @@ export function EnvironmentRoutesList({
       <div className="-ml-1.5 pt-1">
         <Button size="xs" variant="ghost-muted" onClick={onAddRoute}>
           <PlusIcon className="size-3" />
-          Add route
+          {translateUi("Add route")}
         </Button>
       </div>
     </div>
@@ -165,7 +166,7 @@ function SortableRouteRow({
           {label}
           {inUse ? (
             <span className="rounded-sm bg-success/12 px-1 text-2xs font-normal text-success-foreground">
-              In use
+              {translateUi("In use")}
             </span>
           ) : null}
         </p>
@@ -201,7 +202,7 @@ function SortableRouteRow({
           >
             <XIcon className="size-3" />
           </TooltipTrigger>
-          <TooltipPopup side="top">Remove route</TooltipPopup>
+          <TooltipPopup side="top">{translateUi("Remove route")}</TooltipPopup>
         </Tooltip>
       ) : null}
     </li>

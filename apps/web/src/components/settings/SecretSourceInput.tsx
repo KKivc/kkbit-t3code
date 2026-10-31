@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   SecretReference,
   type EnvironmentId,
@@ -88,7 +89,7 @@ export function SecretSourceInput({
   const reference = secret !== undefined && secret.provider === provider ? secret.reference : "";
   const providerSource = sources.find((source) => source.id === provider);
   const definition = providerSource && builtInSecretProviderDefinitions.find(providerSource.kind);
-  const label = input["aria-label"] ?? "Secret";
+  const label = input["aria-label"] ?? translateUi("Secret");
   const providerLabel = (id: SecretProviderId) =>
     sources.find((source) => source.id === id)?.label ?? id;
   const providerIcon = (id: SecretProviderId) =>
@@ -113,7 +114,7 @@ export function SecretSourceInput({
           size="sm"
           className="w-auto min-w-0 shrink-0"
           aria-label={`${label} source`}
-          title={provider === null ? "Value" : providerLabel(provider)}
+          title={provider === null ? translateUi("Value") : providerLabel(provider)}
         >
           <SelectValue>
             <SourceIcon icon={provider === null ? TypeIcon : providerIcon(provider)} />
@@ -121,7 +122,7 @@ export function SecretSourceInput({
         </SelectTrigger>
         <SelectPopup align="start" alignItemWithTrigger={false}>
           <SelectItem value={STORED_VALUE}>
-            <SourceLabel icon={TypeIcon} label="Value" />
+            <SourceLabel icon={TypeIcon} label={translateUi("Value")} />
           </SelectItem>
           {sources.map((source) => (
             <SelectItem key={source.id} value={source.id}>

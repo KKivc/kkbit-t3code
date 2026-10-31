@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   type LinkedPrompt,
   parseNewThreadLink,
@@ -114,7 +115,10 @@ function HostedPromptLinkLanding({
   if (!summary.ok) {
     return (
       <StandalonePage>
-        <StandalonePageHeader title="Could not open the link" description={summary.error} />
+        <StandalonePageHeader
+          title={translateUi("Could not open the link")}
+          description={summary.error}
+        />
       </StandalonePage>
     );
   }
@@ -123,15 +127,18 @@ function HostedPromptLinkLanding({
   return (
     <StandalonePage>
       <StandalonePageHeader
-        title="Open this prompt"
-        description="It opens as a draft. Nothing runs until you press Send."
+        title={translateUi("Open this prompt")}
+        description={translateUi("It opens as a draft. Nothing runs until you press Send.")}
       />
       {prompt !== null && prompt.hiddenCharacters > 0 ? (
         <Alert className="mt-5" variant="error">
-          <AlertTitle>This prompt had hidden characters, it may be malicious</AlertTitle>
+          <AlertTitle>
+            {translateUi("This prompt had hidden characters, it may be malicious")}
+          </AlertTitle>
           <AlertDescription>
             T3 Code removed {prompt.hiddenCharacters} hidden character
-            {prompt.hiddenCharacters === 1 ? "" : "s"}. Read the prompt before you send it.
+            {prompt.hiddenCharacters === 1 ? "" : "s"}
+            {translateUi(". Read the prompt before you send it.")}
           </AlertDescription>
         </Alert>
       ) : null}
@@ -147,16 +154,16 @@ function HostedPromptLinkLanding({
         </Button>
         {canContinue ? (
           <Button variant="outline" onClick={() => onChoose("browser", remember)}>
-            Continue here
+            {translateUi("Continue here")}
           </Button>
         ) : null}
         <Button variant="ghost" render={<a href={DESKTOP_DOWNLOAD_URL} />}>
-          Get T3 Code
+          {translateUi("Get T3 Code")}
         </Button>
       </div>
       <label className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
         <Checkbox checked={remember} onCheckedChange={(checked) => setRemember(checked === true)} />
-        Remember my choice
+        {translateUi("Remember my choice")}
       </label>
     </StandalonePage>
   );

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { Tooltip, TooltipTrigger, TooltipPopup } from "../ui/tooltip";
 import type {
   EnvironmentId,
@@ -150,14 +151,18 @@ export function PullRequestStackMenu({
             }
           />
           <TooltipPopup>
-            View stack #{stack.number}, layer {position} of {stack.layers.length}
+            View stack #{stack.number}, layer {position}
+            {translateUi("of")}
+            {stack.layers.length}
             {notice ? ` · ${notice}` : null}
           </TooltipPopup>
         </Tooltip>
         <MenuPopup align="start">
           <MenuGroup>
             <PullRequestStackHeader number={stack.number} notice={notice} stale={!!onRetry} />
-            {onRetry ? <MenuItem onClick={onRetry}>Retry stack refresh</MenuItem> : null}
+            {onRetry ? (
+              <MenuItem onClick={onRetry}>{translateUi("Retry stack refresh")}</MenuItem>
+            ) : null}
             <PullRequestStackLayers
               stack={stack}
               reference={reference}
@@ -255,7 +260,7 @@ export function PullRequestStackMenu({
           </DialogPanel>
           <DialogFooter>
             <Button variant="outline" onClick={() => setConfirmation(null)}>
-              Cancel
+              {translateUi("Cancel")}
             </Button>
             <Button onClick={() => void run()}>
               {confirmation === "merge" ? "Merge stack" : "Rebase stack"}

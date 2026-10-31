@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomCommand } from "~/state/use-atom-command";
 import type { EnvironmentId, PullRequestLabelCandidate, PullRequestRef } from "@t3tools/contracts";
 import { CheckIcon, TagIcon } from "lucide-react";
@@ -57,8 +58,8 @@ export function PullRequestLabelPicker({
       toastManager.add({
         type: "error",
         title: candidate.isApplied
-          ? `Could not take ${candidate.name} off`
-          : `Could not put ${candidate.name} on`,
+          ? translateUi("Could not take {0} off", [candidate.name])
+          : translateUi("Could not put {0} on", [candidate.name]),
         description: readableFailure(
           squashAtomCommandFailure(result),
           "The host refused it. Check that you have triage access on this repository.",
@@ -71,7 +72,7 @@ export function PullRequestLabelPicker({
   return (
     <PullRequestCandidatePicker
       icon={<TagIcon className="size-3.5" />}
-      label="Change labels"
+      label={translateUi("Change labels")}
       allowed={allowed}
       disabledReason="Changing labels needs triage access on this repository"
       open={open}
@@ -107,7 +108,7 @@ export function PullRequestLabelPicker({
               ) : null}
             </span>
             {candidate.isApplied ? (
-              <CheckIcon aria-label="Applied" className="size-3.5 shrink-0" />
+              <CheckIcon aria-label={translateUi("Applied")} className="size-3.5 shrink-0" />
             ) : null}
           </>
         );

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ServerUpdateState } from "@t3tools/client-runtime/state/server";
 import type {
   DesktopUpdateChannel,
@@ -423,10 +424,10 @@ export function describeUpdateCapsule(
 ): UpdateCapsuleView {
   if (run.phase === "countdown" && run.restartAt !== null) {
     const seconds = Math.max(0, Math.ceil((run.restartAt - now) / 1000));
-    return { tone: "default", label: `Restart in ${seconds}s`, action: "later" };
+    return { tone: "default", label: translateUi("Restart in {0}s", [seconds]), action: "later" };
   }
   if (run.phase === "installing") {
-    return { tone: "default", label: "Restarting…", action: null };
+    return { tone: "default", label: translateUi("Restarting…"), action: null };
   }
   const active = machines.filter(({ status }) => isActive(status) && status !== "waiting");
   const slowest = active.toSorted((a, b) => a.machine.startedAt - b.machine.startedAt)[0];
@@ -443,12 +444,18 @@ export function describeUpdateCapsule(
   }
   const done = machines.filter(({ status }) => status === "done").length;
   if (machines.some(({ status }) => isActive(status))) {
-    return { tone: "default", label: `${done} of ${machines.length} updated`, action: null };
+    return {
+      tone: "default",
+      label: translateUi("{0} of {1} updated", [done, machines.length]),
+      action: null,
+    };
   }
   if (local?.status === "downloading") {
     return {
       tone: "default",
-      label: `Downloading${local.percent === null ? "" : ` ${Math.floor(local.percent)}%`}`,
+      label: translateUi("Downloading{0}", [
+        local.percent === null ? "" : ` ${Math.floor(local.percent)}%`,
+      ]),
       action: null,
     };
   }
@@ -456,14 +463,21 @@ export function describeUpdateCapsule(
   if (failed.length > 0) {
     return {
       tone: "failed",
-      label: failed.length === 1 ? `${failed[0]!.machine.label} failed` : `${failed.length} failed`,
+      label:
+        failed.length === 1
+          ? translateUi("{0} failed", [failed[0]!.machine.label])
+          : translateUi("{0} failed", [failed.length]),
       action:
         !run.trackSwitch && failed.some(({ machine }) => machine.server !== null)
           ? "retry"
           : "dismiss",
     };
   }
-  return { tone: "default", label: `${done} of ${machines.length} updated`, action: null };
+  return {
+    tone: "default",
+    label: translateUi("{0} of {1} updated", [done, machines.length]),
+    action: null,
+  };
 }
 
 export const RUN_STATUS_LABELS: Record<UpdateRunMachineStatus, string> = {
@@ -533,13 +547,16 @@ export function getUpdateEverythingToastView(
     if (parts.length === 0) return null;
     return {
       type: "success",
-      title: `Updated ${joinList(parts)}`,
+      title: translateUi("Updated {0}", [joinList(parts)]),
       ...(restarting.length === 0 ? {} : { description: restarting.join("\n") }),
     };
   }
   return {
     type: "error",
-    title: parts.length === 0 ? "Update failed" : `Updated ${joinList(parts)}`,
+    title:
+      parts.length === 0
+        ? translateUi("Update failed")
+        : translateUi("Updated {0}", [joinList(parts)]),
     description: [...result.failures, ...restarting].join("\n"),
   };
 }

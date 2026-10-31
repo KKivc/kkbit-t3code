@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { findErrorTraceId } from "@t3tools/client-runtime/errors";
 import {
   isAtomCommandInterrupted,
@@ -19,11 +20,11 @@ function reportFailure(title: string, cause: unknown) {
   toastManager.add({
     type: "error",
     title,
-    description: cause instanceof Error ? cause.message : "Try again.",
+    description: cause instanceof Error ? cause.message : translateUi("Try again."),
     data: traceId
       ? {
           secondaryActionProps: {
-            children: "Copy trace ID",
+            children: translateUi("Copy trace ID"),
             onClick: () => void navigator.clipboard?.writeText(traceId),
           },
         }

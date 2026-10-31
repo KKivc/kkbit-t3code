@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DesktopPreviewColorScheme } from "@t3tools/contracts";
 import { Minus, MoreVertical, Plus as PlusIcon, RotateCcw } from "lucide-react";
 
@@ -22,9 +23,9 @@ const COLOR_SCHEME_OPTIONS: ReadonlyArray<{
   value: DesktopPreviewColorScheme;
   label: string;
 }> = [
-  { value: "system", label: "System" },
-  { value: "light", label: "Light" },
-  { value: "dark", label: "Dark" },
+  { value: "system", label: translateUi("System") },
+  { value: "light", label: translateUi("Light") },
+  { value: "dark", label: translateUi("Dark") },
 ];
 
 export interface PreviewMoreMenuActions {
@@ -62,7 +63,7 @@ const MenuTriggerButton = () => (
     >
       <MoreVertical />
     </TooltipTrigger>
-    <TooltipPopup>More</TooltipPopup>
+    <TooltipPopup>{translateUi("More")}</TooltipPopup>
   </Tooltip>
 );
 
@@ -103,7 +104,7 @@ export function PreviewMoreMenu({
           {deviceToolbarVisible ? "Hide device toolbar" : "Show device toolbar"}
         </MenuItem>
         <MenuSub>
-          <MenuSubTrigger disabled={disabled}>Appearance</MenuSubTrigger>
+          <MenuSubTrigger disabled={disabled}>{translateUi("Appearance")}</MenuSubTrigger>
           <MenuSubPopup>
             <MenuRadioGroup
               value={colorScheme}
@@ -131,7 +132,7 @@ export function PreviewMoreMenu({
               size="icon-xs"
               type="button"
               onClick={actions.zoomOut}
-              aria-label="Zoom out"
+              aria-label={translateUi("Zoom out")}
               disabled={disabled}
             >
               <Minus />
@@ -144,7 +145,7 @@ export function PreviewMoreMenu({
               size="icon-xs"
               type="button"
               onClick={actions.zoomIn}
-              aria-label="Zoom in"
+              aria-label={translateUi("Zoom in")}
               disabled={disabled}
             >
               <PlusIcon />
@@ -154,7 +155,7 @@ export function PreviewMoreMenu({
               size="icon-xs"
               type="button"
               onClick={actions.resetZoom}
-              aria-label="Reset zoom"
+              aria-label={translateUi("Reset zoom")}
               disabled={disabled}
             >
               <RotateCcw />

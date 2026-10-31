@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
@@ -32,8 +33,10 @@ export function PreviewFileNotShown({
           This file can&rsquo;t be shown here
         </h1>
         <p className="text-sm leading-relaxed text-muted-foreground">
-          <span className="font-semibold text-foreground">{fileName}</span> from {host} was
-          downloaded instead.
+          <span className="font-semibold text-foreground">{fileName}</span>
+          {translateUi("from")}
+          {host}
+          {translateUi("was downloaded instead.")}
         </p>
         <div className="mt-auto flex items-center gap-2 pt-8">
           <div className="flex-1" />
@@ -42,7 +45,7 @@ export function PreviewFileNotShown({
           </Button>
           {downloadUrl ? (
             <Button type="button" size="sm" render={<a href={downloadUrl} download={fileName} />}>
-              Download
+              {translateUi("Download")}
             </Button>
           ) : null}
         </div>
@@ -102,7 +105,7 @@ export function PreviewUnreachable({ url, code, description, onReload, move }: P
             </Button>
           ) : null}
           <Button type="button" size="sm" onClick={onReload}>
-            Reload
+            {translateUi("Reload")}
           </Button>
         </div>
       </div>

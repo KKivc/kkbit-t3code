@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ScopedThreadRef } from "@t3tools/contracts";
 import {
   pullRequestLinkProject,
@@ -123,16 +124,17 @@ function LinkPullRequestDialog({
     <Dialog open={open} onOpenChange={(next) => (pending ? undefined : onOpenChange(next))}>
       <DialogPopup className="max-w-xl" initialFocus={inputRef}>
         <DialogHeader>
-          <DialogTitle>Link pull request</DialogTitle>
+          <DialogTitle>{translateUi("Link pull request")}</DialogTitle>
           <DialogDescription>
-            Attach a pull request to this thread by its URL, or by its number for this thread's
-            repository.
+            {translateUi(
+              "Attach a pull request to this thread by its URL, or by its number for this thread's repository.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogPanel>
           <Input
             ref={inputRef}
-            placeholder="Pull request URL or #42"
+            placeholder={translateUi("Pull request URL or #42")}
             value={reference}
             onChange={(event) => {
               setDirty(true);
@@ -161,7 +163,7 @@ function LinkPullRequestDialog({
             onClick={() => onOpenChange(false)}
             disabled={pending}
           >
-            Cancel
+            {translateUi("Cancel")}
           </Button>
           <Button
             type="button"

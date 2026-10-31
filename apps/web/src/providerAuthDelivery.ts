@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { runAtomCommand } from "@t3tools/client-runtime/state/runtime";
 import { readCodexAuthDelivery } from "@t3tools/shared/codexAuthHandoff";
 
@@ -53,15 +54,15 @@ async function completeProviderAuth(delivery: ProviderAuthDelivery): Promise<voi
     if (result._tag === "Failure") {
       toastManager.add({
         type: "error",
-        title: "ChatGPT sign-in couldn't finish",
-        description: "Return to the provider and try again.",
+        title: translateUi("ChatGPT sign-in couldn't finish"),
+        description: translateUi("Return to the provider and try again."),
       });
     }
   } catch {
     toastManager.add({
       type: "error",
-      title: "ChatGPT sign-in couldn't finish",
-      description: "Reconnect to the environment and try again.",
+      title: translateUi("ChatGPT sign-in couldn't finish"),
+      description: translateUi("Reconnect to the environment and try again."),
     });
   }
 }

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { RelayClientDeviceRecord } from "@t3tools/contracts/relay";
 import { SmartphoneIcon } from "lucide-react";
 
@@ -94,8 +95,9 @@ function EmptyMobileClients() {
       <EmptyHeader>
         <EmptyTitle>No mobile clients</EmptyTitle>
         <EmptyDescription>
-          Install T3 Code on your phone and sign in to T3 Connect to get push notifications and Live
-          Activities.
+          {translateUi(
+            "Install T3 Code on your phone and sign in to T3 Connect to get push notifications and Live Activities.",
+          )}
         </EmptyDescription>
       </EmptyHeader>
     </Empty>
@@ -111,8 +113,8 @@ export function MobileClientsUserProfilePage() {
 
   return (
     <ClerkUserProfilePage
-      title="Mobile clients"
-      description="Mobile devices that get notifications from your environments."
+      title={translateUi("Mobile clients")}
+      description={translateUi("Mobile devices that get notifications from your environments.")}
       action={
         <ClerkUserProfileRefreshButton
           isPending={devicesState.isPending}
@@ -133,7 +135,7 @@ export function MobileClientsUserProfilePage() {
               <p className="mt-0.5 text-xs text-muted-foreground">{devicesState.error}</p>
             </div>
             <Button size="xs" variant="outline" onClick={devicesState.refresh}>
-              Try again
+              {translateUi("Try again")}
             </Button>
           </div>
         ) : null}

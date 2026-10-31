@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   ANTIGRAVITY_DEFAULT_MODEL,
   type ProviderInstanceId,
@@ -376,7 +377,7 @@ export const ProviderModelPicker = memo(function ProviderModelPicker(props: {
           {props.triggerSuffix}
           {selectedModel?.isUnavailable && !selectedEntries && props.triggerLabel === undefined ? (
             <Badge variant="outline" size="sm">
-              Unavailable
+              {translateUi("Unavailable")}
             </Badge>
           ) : null}
         </span>

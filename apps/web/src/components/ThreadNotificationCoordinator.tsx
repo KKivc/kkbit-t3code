@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   type EnvironmentThreadShell,
   type PendingSubagentRequest,
@@ -87,16 +88,16 @@ export function startThreadNotifications(
     };
     const title =
       kind === "completion"
-        ? "Thread completed"
+        ? translateUi("Thread completed")
         : status === "approval"
-          ? "Approval needed"
+          ? translateUi("Approval needed")
           : status === "limited"
-            ? "Usage limit reached"
+            ? translateUi("Usage limit reached")
             : status === "failed"
-              ? "Thread failed"
+              ? translateUi("Thread failed")
               : status === "request"
-                ? "Guest request"
-                : "Input needed";
+                ? translateUi("Guest request")
+                : translateUi("Input needed");
     if (hasNotificationSound(mode)) {
       void playNotificationSound(kind, () =>
         hasNotificationSound(getClientSettings().notificationMode),
@@ -126,7 +127,7 @@ export function startThreadNotifications(
             ),
         },
         actionProps: {
-          children: "Open thread",
+          children: translateUi("Open thread"),
           onClick: () => {
             toastManager.close(toastId);
             void router.navigate({

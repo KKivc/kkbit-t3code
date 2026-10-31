@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   EnvironmentProject,
   EnvironmentThreadShell,
@@ -299,8 +300,9 @@ export function useChatTerminalActions(input: ChatTerminalActionsInput) {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not open preview",
-            description: error instanceof Error ? error.message : "An unexpected error occurred.",
+            title: translateUi("Could not open preview"),
+            description:
+              error instanceof Error ? error.message : translateUi("An unexpected error occurred."),
           }),
         );
       }

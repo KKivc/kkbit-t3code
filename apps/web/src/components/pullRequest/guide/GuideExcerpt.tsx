@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   DiffLineAnnotation,
   FileDiffContentsLoader,
@@ -165,7 +166,8 @@ export function GuideExcerpt({
         />
       ) : loading ? (
         <p className="rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
-          Loading {excerpt.path}...
+          {translateUi("Loading")}
+          {excerpt.path}...
         </p>
       ) : (
         <div className="flex items-center justify-between gap-3 rounded-lg border border-border/60 px-3 py-2 text-xs text-muted-foreground">
@@ -174,7 +176,7 @@ export function GuideExcerpt({
             {excerpt.end} are not in the loaded diff.
           </span>
           <Button size="xs" variant="outline" onClick={() => onOpenFile(excerpt.path)}>
-            Open in Code
+            {translateUi("Open in Code")}
           </Button>
         </div>
       )}
@@ -330,7 +332,7 @@ function ExcerptDiff({
                 {...(commenting.canComment && onAskAgent !== null
                   ? {
                       secondaryAction: {
-                        label: "Ask agent",
+                        label: translateUi("Ask agent"),
                         onAction: (text: string) => askAgent(text),
                       },
                     }
@@ -357,8 +359,9 @@ function ExcerptDiff({
         renderHeaderMetadata={() => (
           <span className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="tabular-nums">
-              {excerpt.side === "old" ? "removed code, " : ""}showing {slice.shown} of {slice.total}{" "}
-              diff lines
+              {excerpt.side === "old" ? "removed code, " : ""}showing {slice.shown}
+              {translateUi("of")}
+              {slice.total} diff lines
             </span>
             <Button
               size="icon-xs"

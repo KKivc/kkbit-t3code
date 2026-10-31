@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   ProviderInstanceId,
   ServerProvider,
@@ -61,13 +62,13 @@ export function ThreadDetailsUsage({
   return (
     <ThreadDetailsSection
       headingId="thread-details-usage-heading"
-      title="Usage limits"
+      title={translateUi("Usage limits")}
       showHeading={false}
     >
       <div className="grid grid-cols-[auto_minmax(3rem,1fr)_auto] gap-x-3 text-xs">
         {notice ? (
           <UsageRow
-            label="Limits"
+            label={translateUi("Limits")}
             fill={null}
             tone={null}
             value="Unavailable"
@@ -97,12 +98,12 @@ export function ThreadDetailsContext({ usage }: { readonly usage: ContextWindowS
   return (
     <ThreadDetailsSection
       headingId="thread-details-context-heading"
-      title="Context window"
+      title={translateUi("Context window")}
       showHeading={false}
     >
       <div className="grid grid-cols-[auto_minmax(3rem,1fr)_auto] gap-x-3 text-xs">
         <UsageRow
-          label="Context"
+          label={translateUi("Context")}
           fill={used}
           tone={used === null ? null : used >= 90 ? "error" : used >= 80 ? "warning" : null}
           tick={tick}
@@ -120,8 +121,9 @@ export function ThreadDetailsContext({ usage }: { readonly usage: ContextWindowS
               </span>
               {maxTokens !== null ? (
                 <span className="text-muted-foreground">
-                  {usage.usedTokens.toLocaleString("en-US")} of {maxTokens.toLocaleString("en-US")}{" "}
-                  tokens
+                  {usage.usedTokens.toLocaleString("en-US")}
+                  {translateUi("of")}
+                  {maxTokens.toLocaleString("en-US")} tokens
                 </span>
               ) : null}
               {threshold !== null && threshold > 0 ? (
@@ -158,7 +160,8 @@ function LimitRow({
       tooltip={
         <>
           <span className="text-foreground">
-            {window.label}: {left}% left
+            {window.label}: {left}
+            {translateUi("% left")}
           </span>
           {window.resetsAt && resetsAt > now ? (
             <span className="text-muted-foreground">

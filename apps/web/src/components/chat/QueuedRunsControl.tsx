@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
 import { deriveThreadQueueWorkflowState } from "@t3tools/client-runtime/state/thread-workflows";
 import { assistantCitationsToPlainText } from "@t3tools/shared/assistantCitations";
@@ -281,7 +282,7 @@ export function QueuedRunsControl({
                           }}
                         >
                           <ArrowUpIcon />
-                          Send now
+                          {translateUi("Send now")}
                         </Button>
                       </TooltipTrigger>
                       <TooltipPopup>
@@ -293,19 +294,21 @@ export function QueuedRunsControl({
                 {item.pending ? (
                   <span className="flex items-center gap-1 px-1">
                     <Clock3Icon aria-hidden className="size-3" />
-                    Saving
+                    {translateUi("Saving")}
                   </span>
                 ) : null}
                 {isEditing ? (
                   <>
-                    <span className="px-1 text-foreground">Editing in the composer</span>
+                    <span className="px-1 text-foreground">
+                      {translateUi("Editing in the composer")}
+                    </span>
                     <Button
                       size="xs"
                       variant="ghost"
-                      aria-label="Cancel editing queued message"
+                      aria-label={translateUi("Cancel editing queued message")}
                       onClick={props.onCancelEdit}
                     >
-                      Cancel
+                      {translateUi("Cancel")}
                     </Button>
                   </>
                 ) : (
@@ -316,7 +319,7 @@ export function QueuedRunsControl({
                         <Button
                           size="icon-xs"
                           variant="ghost-muted"
-                          aria-label="Edit queued message"
+                          aria-label={translateUi("Edit queued message")}
                           disabled={
                             item.runId === null ||
                             !item.editable ||
@@ -348,7 +351,7 @@ export function QueuedRunsControl({
                           <Button
                             size="icon-xs"
                             variant="ghost-muted"
-                            aria-label="Remove queued message"
+                            aria-label={translateUi("Remove queued message")}
                             disabled={item.runId === null || busyRunId !== null}
                             onClick={() => {
                               if (item.runId !== null) void remove(item.runId);
@@ -358,7 +361,7 @@ export function QueuedRunsControl({
                       >
                         <XIcon />
                       </TooltipTrigger>
-                      <TooltipPopup>Remove from queue</TooltipPopup>
+                      <TooltipPopup>{translateUi("Remove from queue")}</TooltipPopup>
                     </Tooltip>
                   </>
                 )}
@@ -420,13 +423,13 @@ function QueuedMessage(props: {
     attribution === "automation"
       ? {
           icon: CalendarClockIcon,
-          label: "Automation",
+          label: translateUi("Automation"),
           summary: taskTitle ?? props.previewText.split(/\r?\n/, 1)[0] ?? "",
         }
       : attribution === "agent"
         ? {
             icon: MessagesSquareIcon,
-            label: senderShell?.title.trim() || "Agent",
+            label: senderShell?.title.trim() || translateUi("Agent"),
             summary: props.previewText.split(/\r?\n/).find((line) => line.trim()) ?? "",
           }
         : null;
@@ -435,7 +438,7 @@ function QueuedMessage(props: {
   return (
     <>
       {attribution === "t3code" ? (
-        <p className="me-1 text-2xs text-muted-foreground/70">Sent by T3 Code</p>
+        <p className="me-1 text-2xs text-muted-foreground/70">{translateUi("Sent by T3 Code")}</p>
       ) : null}
       {presentation?.guestName === undefined ? null : (
         <GuestMessageName name={presentation.guestName} />
@@ -501,7 +504,7 @@ function QueuedMessage(props: {
           <span className="me-1 flex items-center gap-2 px-1 opacity-0 transition-opacity duration-200 pointer-coarse:opacity-100 focus-within:opacity-100 group-hover/queued:opacity-100">
             {attribution === "agent" && senderThreadId ? (
               <InlineButton tone="muted" onClick={() => props.onOpenThread(senderThreadId)}>
-                Open thread
+                {translateUi("Open thread")}
               </InlineButton>
             ) : null}
             {scheduledTaskId ? (
@@ -514,7 +517,7 @@ function QueuedMessage(props: {
                   />
                 }
               >
-                Open automation
+                {translateUi("Open automation")}
               </InlineButton>
             ) : null}
             <TimelineRowTimestamp

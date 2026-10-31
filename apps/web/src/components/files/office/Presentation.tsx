@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 /* oxlint-disable react/no-unstable-nested-components -- These callbacks return overlays, and are invoked as render functions. */
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
@@ -107,7 +108,9 @@ export default function Presentation(props: {
           <ChevronLeftIcon className="size-3.5" />
         </FileSurfaceAction>
         <span className="flex-1 text-center text-xs tabular-nums" aria-live="polite">
-          Slide {page + 1} of {opened.slides.length}
+          Slide {page + 1}
+          {translateUi("of")}
+          {opened.slides.length}
         </span>
         <FileSurfaceAction
           label="Next slide"

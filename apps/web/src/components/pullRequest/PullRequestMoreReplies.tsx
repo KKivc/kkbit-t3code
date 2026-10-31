@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { PullRequestReplyAvailability } from "./pullRequestDetail.logic";
 
 export function PullRequestMoreReplies({
@@ -20,7 +21,7 @@ export function PullRequestMoreReplies({
           rel="noopener noreferrer"
           className="hover:text-foreground hover:underline"
         >
-          View on host
+          {translateUi("View on host")}
         </a>
       ) : null}
     </div>

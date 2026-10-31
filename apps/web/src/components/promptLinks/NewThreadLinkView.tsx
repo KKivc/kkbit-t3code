@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { scopeProjectRef, scopeThreadRef } from "@t3tools/client-runtime/environment";
 import { getCloneDestinationPath } from "@t3tools/client-runtime/operations/projects";
 import {
@@ -225,8 +226,8 @@ export function NewThreadLinkView({ link }: { readonly link: NewThreadLink }) {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Clone failed",
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Clone failed"),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       }
@@ -363,7 +364,8 @@ export function NewThreadLinkView({ link }: { readonly link: NewThreadLink }) {
           description="Clone it to work on it here, or start without a project."
         >
           <Button size="sm" onClick={() => void cloneRepository(state.repository)}>
-            Clone {name}
+            {translateUi("Clone")}
+            {name}
           </Button>
           <Button size="sm" variant="outline" onClick={openWithoutProject}>
             Use without project

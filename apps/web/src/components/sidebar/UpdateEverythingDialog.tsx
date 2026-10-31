@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import { EnvironmentId } from "@t3tools/contracts";
 import { Atom } from "effect/reactivity";
@@ -153,9 +154,9 @@ function UpdateEverythingDialogContent({
           {/* Machine names truncate first. Provider lists wrap between names, never inside one. */}
           <div className="grid grid-cols-[minmax(4rem,max-content)_max-content_minmax(min-content,1fr)_max-content] gap-x-4 text-sm">
             <div className="col-span-full grid grid-cols-subgrid border-b pb-1.5 text-muted-foreground text-xs">
-              <span>Machine</span>
+              <span>{translateUi("Machine")}</span>
               <span>T3 Code</span>
-              <span>Providers</span>
+              <span>{translateUi("Providers")}</span>
               <span />
             </div>
             {updating.map((row) => (
@@ -169,10 +170,12 @@ function UpdateEverythingDialogContent({
                 <span>
                   {row.app !== null ? APP_LABELS[row.app] : null}
                   {row.app === null && row.skipped !== null ? (
-                    <span className="text-muted-foreground">Skipped</span>
+                    <span className="text-muted-foreground">{translateUi("Skipped")}</span>
                   ) : null}
                   {row.app === "this-app" ? (
-                    <span className="block text-muted-foreground text-xs">restarts last</span>
+                    <span className="block text-muted-foreground text-xs">
+                      {translateUi("restarts last")}
+                    </span>
                   ) : null}
                 </span>
                 <span>
@@ -228,7 +231,7 @@ function UpdateEverythingDialogContent({
           </p>
         ) : null}
         <AlertDialogClose ref={cancelRef} render={<Button variant="outline" disabled={busy} />}>
-          Cancel
+          {translateUi("Cancel")}
         </AlertDialogClose>
         <Button disabled={disabledReason !== null || busy} onClick={onConfirm}>
           {confirmLabel}

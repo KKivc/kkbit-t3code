@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { formatFilePathForClipboard } from "@t3tools/client-runtime/media-actions";
 import {
   isAtomCommandInterrupted,
@@ -87,8 +88,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Unable to open file",
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Unable to open file"),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       } catch (cause) {
@@ -99,8 +100,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Unable to open file",
-            description: cause instanceof Error ? cause.message : "An error occurred.",
+            title: translateUi("Unable to open file"),
+            description: cause instanceof Error ? cause.message : translateUi("An error occurred."),
           }),
         );
       }
@@ -137,8 +138,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Unable to open file in browser",
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Unable to open file in browser"),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       } catch (cause) {
@@ -149,8 +150,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Unable to open file in browser",
-            description: cause instanceof Error ? cause.message : "An error occurred.",
+            title: translateUi("Unable to open file in browser"),
+            description: cause instanceof Error ? cause.message : translateUi("An error occurred."),
           }),
         );
       }
@@ -175,8 +176,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Unable to reveal file",
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Unable to reveal file"),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       } catch (cause) {
@@ -187,8 +188,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Unable to reveal file",
-            description: cause instanceof Error ? cause.message : "An error occurred.",
+            title: translateUi("Unable to reveal file"),
+            description: cause instanceof Error ? cause.message : translateUi("An error occurred."),
           }),
         );
       }
@@ -200,8 +201,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
       toastManager.add(
         stackedThreadToast({
           type: "error",
-          title: `Failed to copy ${title.toLowerCase()}`,
-          description: "Clipboard API unavailable.",
+          title: translateUi("Failed to copy {0}", [title.toLowerCase()]),
+          description: translateUi("Clipboard API unavailable."),
         }),
       );
       return;
@@ -221,7 +222,7 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
       ([, text]) => {
         toastManager.add({
           type: "success",
-          title: `${title} copied`,
+          title: translateUi("{0} copied", [title]),
           description: text,
         });
       },
@@ -233,8 +234,8 @@ export const MarkdownFileLink = memo(function MarkdownFileLink({
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: `Failed to copy ${title.toLowerCase()}`,
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Failed to copy {0}", [title.toLowerCase()]),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       },

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   mergeDirectPreviewAnnotation,
   resolveBackgroundDraftWorkspaceOptions,
@@ -435,8 +436,10 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add(
         stackedThreadToast({
           type: "info",
-          title: "Annotation attached to draft",
-          description: "Sending is unavailable right now. Finish the current action, then send.",
+          title: translateUi("Annotation attached to draft"),
+          description: translateUi(
+            "Sending is unavailable right now. Finish the current action, then send.",
+          ),
         }),
       );
     };
@@ -475,8 +478,10 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add({
         ...stackedThreadToast({
           type: "warning",
-          title: "Not connected: message not sent",
-          description: "Reconnecting to the environment. Try again once it is connected.",
+          title: translateUi("Not connected: message not sent"),
+          description: translateUi(
+            "Reconnecting to the environment. Try again once it is connected.",
+          ),
         }),
         id: `chat-send-environment-unavailable:${toastSlot}`,
       });
@@ -495,7 +500,7 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add(
         stackedThreadToast({
           type: "warning",
-          title: "Side chat not started",
+          title: translateUi("Side chat not started"),
           description: sideChatDisabledReason,
         }),
       );
@@ -514,8 +519,8 @@ export function useComposerSend(input: ComposerSendInput) {
         toastManager.add(
           stackedThreadToast({
             type: "warning",
-            title: "Side chats take text only",
-            description: "Remove the attachments and context, then send it again.",
+            title: translateUi("Side chats take text only"),
+            description: translateUi("Remove the attachments and context, then send it again."),
           }),
         );
         return;
@@ -570,9 +575,10 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add(
         stackedThreadToast({
           type: "warning",
-          title: "Choose models and a base branch",
-          description:
+          title: translateUi("Choose models and a base branch"),
+          description: translateUi(
             "Multiple models need a new thread in a Git project. Each gets its own worktree.",
+          ),
         }),
       );
       return;
@@ -620,8 +626,11 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add(
         stackedThreadToast({
           type: "warning",
-          title: "Attached thread is on another machine",
-          description: `This machine's agent can't read "${strandedThread.title}". Remove it, or switch back to ${owner} to send.`,
+          title: translateUi("Attached thread is on another machine"),
+          description: translateUi(
+            "This machine's agent can't read \"{0}\". Remove it, or switch back to {1} to send.",
+            [strandedThread.title, owner],
+          ),
         }),
       );
       return;
@@ -675,8 +684,8 @@ export function useComposerSend(input: ComposerSendInput) {
         toastManager.add(
           stackedThreadToast({
             type: "warning",
-            title: "Start a Codex thread first",
-            description: "Send a message before you submit feedback.",
+            title: translateUi("Start a Codex thread first"),
+            description: translateUi("Send a message before you submit feedback."),
           }),
         );
         return;
@@ -829,8 +838,8 @@ export function useComposerSend(input: ComposerSendInput) {
       toastManager.add(
         stackedThreadToast({
           type: "warning",
-          title: "Choose a project first",
-          description: "This draft no longer points to an available project.",
+          title: translateUi("Choose a project first"),
+          description: translateUi("This draft no longer points to an available project."),
         }),
       );
       return;
@@ -1140,7 +1149,7 @@ export function useComposerSend(input: ComposerSendInput) {
           toastManager.add({
             type: "info",
             title: notice,
-            description: "Send again when it's ready.",
+            description: translateUi("Send again when it's ready."),
           });
         }
         return;
@@ -1379,7 +1388,7 @@ export function useComposerSend(input: ComposerSendInput) {
           toastManager.add(
             stackedThreadToast({
               type: "warning",
-              title: "Could not open a fresh composer",
+              title: translateUi("Could not open a fresh composer"),
               description: error instanceof Error ? error.message : undefined,
             }),
           );
@@ -1409,10 +1418,10 @@ export function useComposerSend(input: ComposerSendInput) {
             toastManager.add(
               stackedThreadToast({
                 type: "success",
-                title: "Started in background",
+                title: translateUi("Started in background"),
                 timeout: 5_000,
                 actionProps: {
-                  children: "Open",
+                  children: translateUi("Open"),
                   onClick: () => {
                     void navigate({
                       to: "/$environmentId/$threadId",
@@ -1483,11 +1492,12 @@ export function useComposerSend(input: ComposerSendInput) {
               type: "error",
               title:
                 submissionIntent === "background"
-                  ? "Background task failed"
-                  : "Could not start thread",
-              description: error instanceof Error ? error.message : "Failed to send message.",
+                  ? translateUi("Background task failed")
+                  : translateUi("Could not start thread"),
+              description:
+                error instanceof Error ? error.message : translateUi("Failed to send message."),
               actionProps: {
-                children: "Open draft",
+                children: translateUi("Open draft"),
                 onClick: () => {
                   void navigate({ to: "/draft/$draftId", params: { draftId } });
                 },

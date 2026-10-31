@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { settlePromise } from "@t3tools/client-runtime/state/runtime";
 import type { DesktopSshPasswordPromptRequest } from "@t3tools/contracts";
 import * as AsyncResult from "effect/reactivity/AsyncResult";
@@ -156,11 +157,12 @@ function ActiveSshPasswordPrompt({
     >
       <DialogPopup className="max-w-md" initialFocus={inputRef} showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>SSH verification required</DialogTitle>
+          <DialogTitle>{translateUi("SSH verification required")}</DialogTitle>
           <DialogDescription>
-            Enter the password or verification code required by <code>{target}</code>. T3 Code
-            passes your response to the local SSH process and keeps it in memory to reuse for this
-            host. T3 Code does not write it to disk.
+            Enter the password or verification code required by <code>{target}</code>
+            {translateUi(
+              ". T3 Code passes your response to the local SSH process and keeps it in memory to reuse for this host. T3 Code does not write it to disk.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogPanel scrollFade={false}>
@@ -201,8 +203,9 @@ function ActiveSshPasswordPrompt({
               <p className="text-sm text-destructive">{visibleResponseError}</p>
             ) : (
               <p className="text-sm text-muted-foreground">
-                SSH keys may replace a password, but your server can still require a verification
-                code.
+                {translateUi(
+                  "SSH keys may replace a password, but your server can still require a verification code.",
+                )}
               </p>
             )}
           </form>
@@ -212,7 +215,7 @@ function ActiveSshPasswordPrompt({
             {isExpired ? "Dismiss" : "Cancel"}
           </Button>
           <Button disabled={isResponding || isExpired} form={formId} type="submit">
-            Continue
+            {translateUi("Continue")}
           </Button>
         </DialogFooter>
       </DialogPopup>

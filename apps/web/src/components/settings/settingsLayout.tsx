@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { SettingsGroup } from "./SettingsGroup";
 import { AuthSettingsWriteScope } from "@t3tools/contracts";
 import { usePrimaryEnvironmentId, usePrimaryEnvironment } from "../../state/environments";
@@ -186,7 +187,11 @@ export function PolicyTooltip({ children }: { readonly children: string }) {
       <TooltipTrigger
         delay={200}
         render={
-          <Button size="icon-micro" variant="ghost-muted" aria-label="Background policy details">
+          <Button
+            size="icon-micro"
+            variant="ghost-muted"
+            aria-label={translateUi("Background policy details")}
+          >
             <InfoIcon className="size-3.5" />
           </Button>
         }
@@ -365,7 +370,7 @@ export function SettingsRow({
     source === "project" || source === "mixed" ? (
       <SettingResetButton
         label={typeof title === "string" ? title : "override"}
-        tooltip="Reset to inherited value"
+        tooltip={translateUi("Reset to inherited value")}
         onClick={() => (onResetOverride ? onResetOverride() : clearOverrides(scopedKeys))}
       />
     ) : null
@@ -405,11 +410,11 @@ export function SettingsRow({
                   : (primaryEnvironment?.label ?? "the primary environment")
               }.`
             : context
-              ? "Reconnect the selected environment to change this setting."
+              ? translateUi("Reconnect the selected environment to change this setting.")
               : PRIMARY_SETTINGS_UNAVAILABLE_MESSAGE,
         )
       : environmentWide && control
-        ? inertControl("Environment-wide setting. Select an environment to change it.")
+        ? inertControl(translateUi("Environment-wide setting. Select an environment to change it."))
         : control;
   const customized =
     context !== null &&
@@ -423,16 +428,16 @@ export function SettingsRow({
       }),
     );
   const inheritance: { state: SettingInheritanceState; summary: string } = mixed
-    ? { state: "mixed", summary: "Mixed across selected environments" }
+    ? { state: "mixed", summary: translateUi("Mixed across selected environments") }
     : source === "project"
-      ? { state: "overridden", summary: "Overridden for this project" }
+      ? { state: "overridden", summary: translateUi("Overridden for this project") }
       : source === "t3.json"
-        ? { state: "inherited", summary: "Inherited from the repository's t3.json" }
+        ? { state: "inherited", summary: translateUi("Inherited from the repository's t3.json") }
         : source === "environment" && scopedKeys.length > 0
           ? { state: "inherited", summary: `Inherited from ${inheritedFrom}` }
           : customized
-            ? { state: "environment", summary: "Set on the environment" }
-            : { state: "default", summary: "Built-in default" };
+            ? { state: "environment", summary: translateUi("Set on the environment") }
+            : { state: "default", summary: translateUi("Built-in default") };
   const renderedInheritance =
     context && serverScoped && settingKeys.length > 0 ? (
       <SettingInheritance
@@ -513,7 +518,7 @@ export function SettingsRow({
 
 export function SettingResetButton({
   label,
-  tooltip = "Reset to default",
+  tooltip = translateUi("Reset to default"),
   disabled = false,
   onClick,
 }: {

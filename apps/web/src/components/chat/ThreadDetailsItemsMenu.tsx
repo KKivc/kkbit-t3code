@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   getClientSettings,
   updateClientSettings,
@@ -18,7 +19,7 @@ export function ThreadDetailsItemsMenuItems() {
   return (
     <>
       <MenuGroup>
-        <MenuGroupLabel>Show in thread details</MenuGroupLabel>
+        <MenuGroupLabel>{translateUi("Show in thread details")}</MenuGroupLabel>
         {THREAD_DETAILS_ITEMS.map((item) => (
           <MenuCheckboxItem
             key={item.id}
@@ -38,7 +39,7 @@ export function ThreadDetailsItemsMenuItems() {
         disabled={isDefaultThreadDetailsVisibility(visibility)}
         onClick={() => updateClientSettings(RESET_THREAD_DETAILS_ITEMS)}
       >
-        Reset to default
+        {translateUi("Reset to default")}
       </MenuItem>
     </>
   );

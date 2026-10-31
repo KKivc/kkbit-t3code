@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId } from "@t3tools/contracts";
 import type { TimestampFormat } from "@t3tools/contracts/settings";
 import {
@@ -39,8 +40,8 @@ export function pickSnoozePreset(
   if (!picked) {
     toastManager.add({
       type: "warning",
-      title: "Could not snooze thread",
-      description: "That snooze time has passed. Choose another time.",
+      title: translateUi("Could not snooze thread"),
+      description: translateUi("That snooze time has passed. Choose another time."),
     });
   }
   return picked;

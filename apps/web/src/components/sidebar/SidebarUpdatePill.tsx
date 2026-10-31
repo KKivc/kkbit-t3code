@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DesktopBridge, DesktopUpdateState } from "@t3tools/contracts";
 import { TriangleAlertIcon } from "lucide-react";
 import { type ComponentProps, useId, useRef, useState } from "react";
@@ -124,7 +125,7 @@ function SidebarUpdateArchitectureWarningContent() {
   return (
     <Alert variant="warning">
       <TriangleAlertIcon />
-      <AlertTitle>Intel build on Apple Silicon</AlertTitle>
+      <AlertTitle>{translateUi("Intel build on Apple Silicon")}</AlertTitle>
       <AlertDescription>{description}</AlertDescription>
     </Alert>
   );
@@ -300,8 +301,9 @@ function SidebarUpdateControl() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not confirm update",
-            description: error instanceof Error ? error.message : "Update confirmation failed.",
+            title: translateUi("Could not confirm update"),
+            description:
+              error instanceof Error ? error.message : translateUi("Update confirmation failed."),
           }),
         );
         return;
@@ -325,9 +327,10 @@ function SidebarUpdateControl() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not check for updates",
+            title: translateUi("Could not check for updates"),
             description:
-              result.state.message ?? "Automatic updates are not available in this build.",
+              result.state.message ??
+              translateUi("Automatic updates are not available in this build."),
           }),
         );
       })
@@ -335,8 +338,9 @@ function SidebarUpdateControl() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not check for updates",
-            description: error instanceof Error ? error.message : "Update check failed.",
+            title: translateUi("Could not check for updates"),
+            description:
+              error instanceof Error ? error.message : translateUi("Update check failed."),
           }),
         );
       })
@@ -365,8 +369,9 @@ function SidebarUpdateControl() {
       toastManager.add(
         stackedThreadToast({
           type: "error",
-          title: "Could not update everything",
-          description: error instanceof Error ? error.message : "An unexpected error occurred.",
+          title: translateUi("Could not update everything"),
+          description:
+            error instanceof Error ? error.message : translateUi("An unexpected error occurred."),
         }),
       );
     }
@@ -542,7 +547,7 @@ function SidebarUpdateControl() {
         {showReleaseNotesPopover && state ? (
           <PopoverPopup
             align="center"
-            aria-label="Update release notes"
+            aria-label={translateUi("Update release notes")}
             initialFocus={false}
             onKeyDownCapture={(event) => {
               if (

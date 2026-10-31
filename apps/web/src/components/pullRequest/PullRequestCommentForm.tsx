@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
 import { useAtomCommand } from "~/state/use-atom-command";
 import type { EnvironmentId, PullRequestDetailView, PullRequestRef } from "@t3tools/contracts";
@@ -74,7 +75,7 @@ export function PullRequestCommentForm({
     });
     if (result._tag === "Failure") {
       setSubmitting(null);
-      toastManager.add({ type: "error", title: "Could not post the comment" });
+      toastManager.add({ type: "error", title: translateUi("Could not post the comment") });
       return;
     }
     setBody("");
@@ -91,7 +92,7 @@ export function PullRequestCommentForm({
         disabled={submitting !== null || actionPending}
         value={body}
         rows={3}
-        placeholder="Leave a comment"
+        placeholder={translateUi("Leave a comment")}
         aria-label={`Comment on this ${sourceControlClients.get(detail.provider).changeRequest.singular}`}
         onChange={(event) => setBody(event.target.value)}
         onKeyDown={(event) => {
@@ -127,7 +128,7 @@ export function PullRequestCommentForm({
               // The longest label holds the width, so the confirming click lands on the button.
               <span className="inline-grid">
                 <span aria-hidden className="invisible col-start-1 row-start-1">
-                  Close with comment
+                  {translateUi("Close with comment")}
                 </span>
                 <span className="col-start-1 row-start-1">
                   {submitting === "close"

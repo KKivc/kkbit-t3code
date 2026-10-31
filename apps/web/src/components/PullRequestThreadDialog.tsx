@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthOrchestrationOperateScope,
   type EnvironmentId,
@@ -205,11 +206,14 @@ export function PullRequestThreadDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center">
             <SourceControlIcon className="me-2 size-4" />
-            Checkout {terminology.singular}
+            {translateUi("Checkout")}
+            {terminology.singular}
           </DialogTitle>
           <DialogDescription>
-            Resolve a {sourceControlPresentation.providerName} {terminology.singular}, then create
-            the draft thread in the main repo or in a dedicated worktree.
+            Resolve a {sourceControlPresentation.providerName} {terminology.singular}
+            {translateUi(
+              ", then create the draft thread in the main repo or in a dedicated worktree.",
+            )}
           </DialogDescription>
         </DialogHeader>
         <DialogPanel>
@@ -246,8 +250,8 @@ export function PullRequestThreadDialog({
                 <div className="min-w-0">
                   <p className="truncate font-medium text-sm">{resolvedPullRequest.title}</p>
                   <p className="truncate text-muted-foreground text-xs">
-                    #{resolvedPullRequest.number} · {resolvedPullRequest.headBranch} to{" "}
-                    {resolvedPullRequest.baseBranch}
+                    #{resolvedPullRequest.number} · {resolvedPullRequest.headBranch}
+                    {translateUi("to")} {resolvedPullRequest.baseBranch}
                   </p>
                 </div>
                 <span className={cn("shrink-0 text-xs capitalize", statusTone)}>
@@ -274,7 +278,7 @@ export function PullRequestThreadDialog({
             onClick={() => onOpenChange(false)}
             disabled={preparePullRequestThreadAction.isPending}
           >
-            Cancel
+            {translateUi("Cancel")}
           </Button>
           <Button
             type="button"

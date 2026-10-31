@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ChatComposerProps } from "./ChatComposer";
 import {
   type ChatFileAttachment,
@@ -129,7 +130,7 @@ export function useComposerAttachmentIntake(input: {
     ) {
       toastManager.add({
         type: "error",
-        title: "This question cannot accept attachments.",
+        title: translateUi("This question cannot accept attachments."),
       });
       return false;
     }
@@ -231,10 +232,11 @@ export function useComposerAttachmentIntake(input: {
         const attached = storedFiles[0]!;
         toastManager.add({
           type: "info",
-          title: `Large paste attached as ${attached.name}`,
-          description: `${formatAttachmentSize(attached.sizeBytes)} · Use ${
-            isMacPlatform(navigator.platform) ? "⌘⇧V" : "Ctrl+Shift+V"
-          } to keep a large paste inline.`,
+          title: translateUi("Large paste attached as {0}", [attached.name]),
+          description: translateUi("{0} · Use {1} to keep a large paste inline.", [
+            formatAttachmentSize(attached.sizeBytes),
+            isMacPlatform(navigator.platform) ? "⌘⇧V" : "Ctrl+Shift+V",
+          ]),
           data: { hideCopyButton: true },
         });
       }
@@ -397,8 +399,8 @@ export function useComposerAttachmentIntake(input: {
       }
       toastManager.add({
         type: "error",
-        title: "Pasted text is too large for this message",
-        description: "Remove some text or an attachment, then paste again.",
+        title: translateUi("Pasted text is too large for this message"),
+        description: translateUi("Remove some text or an attachment, then paste again."),
         data: { hideCopyButton: true },
       });
       return true;
@@ -419,8 +421,10 @@ export function useComposerAttachmentIntake(input: {
       if (!wouldExceedInputLimit) return false;
       toastManager.add({
         type: "error",
-        title: "Pasted text is too large to attach",
-        description: "Reduce the clipboard contents or save a smaller excerpt as a file.",
+        title: translateUi("Pasted text is too large to attach"),
+        description: translateUi(
+          "Reduce the clipboard contents or save a smaller excerpt as a file.",
+        ),
         data: { hideCopyButton: true },
       });
       return true;

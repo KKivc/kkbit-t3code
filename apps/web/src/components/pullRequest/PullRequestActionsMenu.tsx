@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import {
   canEditPullRequestMaintainerEdits,
@@ -192,7 +193,7 @@ export function PullRequestActionsMenu({
       setMaintainerEditsChoice(previousChoice);
       toastManager.add({
         type: "error",
-        title: "Could not save maintainer access",
+        title: translateUi("Could not save maintainer access"),
         description: readableFailure(squashAtomCommandFailure(result), "Try again."),
       });
       return;
@@ -242,7 +243,7 @@ export function PullRequestActionsMenu({
         />
         <MenuItem disabled={refreshing} onClick={() => void refreshFromHost()}>
           <RefreshIcon size="sm" refreshing={refreshing} />
-          Refresh
+          {translateUi("Refresh")}
         </MenuItem>
         <MenuItem disabled={handoff !== null} onClick={askAboutPullRequest}>
           <MessageCircleQuestionIcon className="mt-1 size-3.5 shrink-0 self-start" />
@@ -262,7 +263,7 @@ export function PullRequestActionsMenu({
               {handoff === "explain" ? "Opening..." : `Explain this ${terminology.shortLabel}`}
             </span>
             <span className="text-xs text-muted-foreground">
-              A walk through the diff and what to read closely.
+              {translateUi("A walk through the diff and what to read closely.")}
             </span>
           </span>
         </MenuItem>
@@ -292,19 +293,20 @@ export function PullRequestActionsMenu({
               checked={maintainerCanModify === true}
               disabled={!canSaveMaintainerEdits}
               closeOnClick={false}
-              aria-label="Allow edits from maintainers"
+              aria-label={translateUi("Allow edits from maintainers")}
               aria-describedby={maintainerEditsHintId}
               onCheckedChange={(value) => void saveMaintainerEdits(value)}
             >
               <span className="flex max-w-xs flex-col gap-0.5">
-                <span>Allow edits from maintainers</span>
+                <span>{translateUi("Allow edits from maintainers")}</span>
                 <span id={maintainerEditsHintId} className="text-xs text-muted-foreground">
-                  Maintainers can push to this branch. If your fork has workflows, this can also
-                  give access to its secrets.
+                  {translateUi(
+                    "Maintainers can push to this branch. If your fork has workflows, this can also give access to its secrets.",
+                  )}
                 </span>
                 {maintainerEditsSaving ? (
                   <span role="status" className="text-xs text-muted-foreground">
-                    Saving…
+                    {translateUi("Saving…")}
                   </span>
                 ) : null}
               </span>
@@ -341,7 +343,7 @@ export function PullRequestActionsMenu({
             {autoMergeArmed && can("disable-auto-merge") ? (
               <MenuItem disabled={actionPending} onClick={() => void perform("disable-auto-merge")}>
                 <PullRequestGlyph.merged className="size-3.5" />
-                Disable auto-merge
+                {translateUi("Disable auto-merge")}
               </MenuItem>
             ) : showsAutoMerge ? (
               <MenuItem
@@ -401,7 +403,7 @@ export function PullRequestActionsMenu({
         </MenuItem>
         <MenuItem onClick={() => copyReference(detail.url, `${terminology.shortLabel} link`)}>
           <LinkIcon className="size-3.5" />
-          Copy link
+          {translateUi("Copy link")}
           <MenuShortcut>
             {shortcutLabelForCommand(keybindings, "thread.copyReference")}
           </MenuShortcut>
@@ -410,7 +412,8 @@ export function PullRequestActionsMenu({
           onClick={() => copyReference(`#${reference.number}`, `${terminology.shortLabel} number`)}
         >
           <CopyIcon className="size-3.5" />
-          Copy {terminology.shortLabel} number
+          {translateUi("Copy")}
+          {terminology.shortLabel} number
           <MenuShortcut>
             {shortcutLabelForCommand(keybindings, "pullRequest.copyNumber")}
           </MenuShortcut>
@@ -436,7 +439,8 @@ export function PullRequestActionsMenu({
             <MenuSeparator />
             <MenuItem disabled={actionPending} onClick={() => void perform("reopen")}>
               <PullRequestGlyph.reopen className="size-3.5" />
-              Reopen {terminology.singular}
+              {translateUi("Reopen")}
+              {terminology.singular}
             </MenuItem>
           </>
         ) : detail.state === "merged" && can("revert") ? (

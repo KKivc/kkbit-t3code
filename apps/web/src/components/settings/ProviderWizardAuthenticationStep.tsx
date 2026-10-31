@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import type { EnvironmentId, ProviderInstanceId } from "@t3tools/contracts";
 
@@ -56,18 +57,20 @@ export function ProviderWizardAuthenticationStep({
             />
           ) : (
             <SettingsRow
-              title="Account"
+              title={translateUi("Account")}
               description={
                 isDiscovering
                   ? "Discovering sign-in methods…"
                   : (query.error ??
                     auth?.message ??
-                    "No in-app sign-in advertised. Follow the provider's docs to finish setup.")
+                    translateUi(
+                      "No in-app sign-in advertised. Follow the provider's docs to finish setup.",
+                    ))
               }
               control={
                 isDiscovering ? (
                   <Button disabled size="sm" variant="outline">
-                    Sign in
+                    {translateUi("Sign in")}
                   </Button>
                 ) : provider?.setup?.documentationUrl ? (
                   <Button
@@ -77,7 +80,7 @@ export function ProviderWizardAuthenticationStep({
                       <a href={provider.setup.documentationUrl} target="_blank" rel="noreferrer" />
                     }
                   >
-                    Open docs
+                    {translateUi("Open docs")}
                   </Button>
                 ) : undefined
               }
@@ -92,7 +95,7 @@ export function ProviderWizardAuthenticationStep({
           disabled={active}
           onClick={onFinish}
         >
-          {signedIn ? "Done" : "Skip for now"}
+          {signedIn ? translateUi("Done") : translateUi("Skip for now")}
         </Button>
       </WizardFooter>
     </>

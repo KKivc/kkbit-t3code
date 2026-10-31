@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import type {
   AtomCommandFailure,
@@ -247,7 +248,7 @@ export function useGitStackedAction(scope: SourceControlActionScope) {
 
   return useAction({
     kind: "runStackedAction",
-    label: "Running source control action",
+    label: translateUi("Running source control action"),
     scope,
     action,
     onSuccess: status.refresh,

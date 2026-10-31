@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   matchComposerEnvironmentItems,
   matchComposerThreadItems,
@@ -272,7 +273,8 @@ export function useComposerMenuItems({
         provider: selectedProvider,
         command,
         label: `/${command.name}`,
-        description: command.description ?? command.input?.hint ?? "Run provider command",
+        description:
+          command.description ?? command.input?.hint ?? translateUi("Run provider command"),
       }));
       const query = composerTrigger.query.trim().toLowerCase();
       const skillItems = slashMenuSkills.map((skill) => ({
@@ -284,7 +286,7 @@ export function useComposerMenuItems({
         description:
           skill.shortDescription ??
           skill.description ??
-          (skill.scope ? `${skill.scope} skill` : ""),
+          (skill.scope ? translateUi("{0} skill", [skill.scope]) : ""),
       }));
       const visibleProviderSlashCommandItems = providerSlashCommandItems.filter(
         (item) => item.command.name !== "compact" || compactSlashCommandAvailable,
@@ -305,7 +307,9 @@ export function useComposerMenuItems({
         description:
           skill.shortDescription ??
           skill.description ??
-          (skill.scope ? `${skill.scope} skill` : "Run provider skill"),
+          (skill.scope
+            ? translateUi("{0} skill", [skill.scope])
+            : translateUi("Run provider skill")),
       }));
     }
     if (

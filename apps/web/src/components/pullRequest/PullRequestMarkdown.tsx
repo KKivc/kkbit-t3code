@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { ExternalLinkIcon, PaperclipIcon } from "lucide-react";
 import { markdownImageSourceFragment } from "@t3tools/client-runtime/markdown-images";
 import { sourceControlClients } from "@t3tools/client-runtime/source-control-clients";
@@ -45,7 +46,7 @@ function PullRequestHostVideo({
     <MediaVideoPlayer
       src={src === null ? null : src + markdownImageSourceFragment(url)}
       originalUrl={url}
-      label="Pull request video"
+      label={translateUi("Pull request video")}
       className="w-full"
       videoClassName="rounded-lg border border-border/60"
       onRetry={refreshAssetUrl}
@@ -113,7 +114,7 @@ export function PullRequestMarkdown({
               key={`${segment.id}:${segment.url}`}
               src={segment.url}
               originalUrl={segment.url}
-              label="Pull request video"
+              label={translateUi("Pull request video")}
               className="w-full"
               videoClassName="rounded-lg border border-border/60"
             />

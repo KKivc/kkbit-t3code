@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthSettingsWriteScope,
   ENVIRONMENT_MACHINE_KINDS,
@@ -25,10 +26,10 @@ export function resolveEnvironmentIconPickerLock(input: {
   readonly operateAccess: "granted" | "denied" | "pending";
 }): string | null {
   if (input.serverConfig === null) {
-    return "Connect to this environment to change its icon.";
+    return translateUi("Connect to this environment to change its icon.");
   }
   if (input.operateAccess !== "granted") {
-    return "Your session on this environment cannot change its settings.";
+    return translateUi("Your session on this environment cannot change its settings.");
   }
   return null;
 }
@@ -52,7 +53,7 @@ export function EnvironmentIconMenu({
     <MenuSub>
       <MenuSubTrigger>
         <EnvironmentMachineIcon kind={resolved} />
-        Icon
+        {translateUi("Icon")}
       </MenuSubTrigger>
       <MenuSubPopup>
         {lock !== null ? (

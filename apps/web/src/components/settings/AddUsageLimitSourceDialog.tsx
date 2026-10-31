@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, UnifiedSettings } from "@t3tools/contracts";
 import { useState } from "react";
 
@@ -72,10 +73,11 @@ export function AddUsageLimitSourceDialog({
     >
       <DialogPopup className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add a CLIProxyAPI hub</DialogTitle>
+          <DialogTitle>{translateUi("Add a CLIProxyAPI hub")}</DialogTitle>
           <DialogDescription>
-            Show the quota of every account the hub pools, next to the providers on{" "}
-            {environmentLabel}. The key stays on that server.
+            {translateUi("Show the quota of every account the hub pools, next to the providers on")}{" "}
+            {environmentLabel}
+            {translateUi(". The key stays on that server.")}
           </DialogDescription>
         </DialogHeader>
         <DialogPanel>
@@ -97,7 +99,7 @@ export function AddUsageLimitSourceDialog({
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="usage-source-key">Management key</Label>
+              <Label htmlFor="usage-source-key">{translateUi("Management key")}</Label>
               <SecretInput
                 id="usage-source-key"
                 value={managementKey}
@@ -105,10 +107,10 @@ export function AddUsageLimitSourceDialog({
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="usage-source-label">Label (optional)</Label>
+              <Label htmlFor="usage-source-label">{translateUi("Label (optional)")}</Label>
               <Input
                 id="usage-source-label"
-                placeholder="Defaults to the hub's host name"
+                placeholder={translateUi("Defaults to the hub's host name")}
                 value={label}
                 onChange={(event) => setLabel(event.target.value)}
               />
@@ -123,10 +125,10 @@ export function AddUsageLimitSourceDialog({
               onOpenChange(false);
             }}
           >
-            Cancel
+            {translateUi("Cancel")}
           </Button>
           <Button onClick={save} disabled={!canSave}>
-            Add hub
+            {translateUi("Add hub")}
           </Button>
         </DialogFooter>
       </DialogPopup>

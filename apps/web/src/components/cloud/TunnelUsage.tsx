@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { T3CHAT_PLAN_TUNNEL_LIMITS } from "@t3tools/contracts/relay";
 import { TriangleAlertIcon } from "lucide-react";
 import type { ReactNode } from "react";
@@ -42,13 +43,16 @@ export function TunnelUsageMeter({
     <div className={cn("flex max-w-sm flex-col gap-1.5", className)}>
       <div className="flex items-baseline justify-between gap-3 text-xs">
         <span className={cn("tabular-nums", full ? "text-warning-foreground" : "text-foreground")}>
-          {used} of {limit} tunnels in use
+          {used}
+          {translateUi("of")}
+          {limit}
+          {translateUi("tunnels in use")}
         </span>
         {action}
       </div>
       <div
         role="meter"
-        aria-label="T3 Connect tunnels in use"
+        aria-label={translateUi("T3 Connect tunnels in use")}
         aria-valuemin={0}
         aria-valuemax={limit}
         aria-valuenow={used}
@@ -87,24 +91,24 @@ export function TunnelLimitAlert({
   const action =
     upgrade === "link" && onLinkT3Chat ? (
       <Button size="sm" onClick={onLinkT3Chat}>
-        Link T3 Chat
+        {translateUi("Link T3 Chat")}
       </Button>
     ) : upgrade === "pro" || upgrade === "premier" ? (
       <Button
         size="sm"
         render={<a href={T3CHAT_SUBSCRIPTION_URL} target="_blank" rel="noopener noreferrer" />}
       >
-        Upgrade on T3 Chat
+        {translateUi("Upgrade on T3 Chat")}
       </Button>
     ) : onManageTunnels ? (
       <Button size="sm" variant="outline" onClick={onManageTunnels}>
-        Manage tunnels
+        {translateUi("Manage tunnels")}
       </Button>
     ) : null;
   return (
     <Alert variant="warning">
       <TriangleAlertIcon />
-      <AlertTitle>You&apos;re out of tunnels (they cost us money).</AlertTitle>
+      <AlertTitle>{translateUi("You're out of tunnels (they cost us money).")}</AlertTitle>
       <AlertDescription>
         {upgrade === "link"
           ? "Switch to Tailscale or get more tunnels by linking your T3 Chat sub (sorry!)"

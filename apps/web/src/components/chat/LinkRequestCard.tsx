@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { pipe } from "effect/Function";
 import { useAtomValue } from "@effect/atom-react";
 import {
@@ -140,7 +141,7 @@ function PendingLinkRequest(props: {
             disabled={declining}
             onClick={() => void decline()}
           >
-            Decline
+            {translateUi("Decline")}
           </Button>
           <Button type="button" size="xs" disabled={declining} onClick={() => setOpen(true)}>
             {picksMachine(item) ? "Choose machine…" : "Review link…"}
@@ -148,7 +149,7 @@ function PendingLinkRequest(props: {
         </div>
       ) : (
         <p className="text-xs text-muted-foreground">
-          Only a session that manages access here can answer this.
+          {translateUi("Only a session that manages access here can answer this.")}
         </p>
       )}
       <LinkRequestDialog
@@ -373,7 +374,9 @@ function LinkRequestDialog(props: {
                 ) : null}
                 {asksAddress ? (
                   <label className="block space-y-1.5">
-                    <span className="block text-xs font-medium text-foreground">Address</span>
+                    <span className="block text-xs font-medium text-foreground">
+                      {translateUi("Address")}
+                    </span>
                     <Input
                       value={address}
                       onChange={(event) => setAddress(event.target.value)}
@@ -384,8 +387,11 @@ function LinkRequestDialog(props: {
                     />
                     {target.kind === "machine" ? (
                       <span className="block text-xs text-muted-foreground">
-                        This app has no address for {target.label} that another machine can reach.
-                        Enter its https or Tailscale address.
+                        {translateUi("This app has no address for")}
+                        {target.label}
+                        {translateUi(
+                          "that another machine can reach. Enter its https or Tailscale address.",
+                        )}
                       </span>
                     ) : null}
                   </label>
@@ -401,20 +407,23 @@ function LinkRequestDialog(props: {
                     {canMint ? null : (
                       <label className="block space-y-1.5">
                         <span className="block text-xs font-medium text-foreground">
-                          Pairing code
+                          {translateUi("Pairing code")}
                         </span>
                         <Input
                           value={pairingCode}
                           onChange={(event) => setPairingCode(event.target.value)}
-                          placeholder="Paste the code"
+                          placeholder={translateUi("Paste the code")}
                           disabled={busy}
                           autoComplete="one-time-code"
                           nativeInput
                           spellCheck={false}
                         />
                         <span className="block text-xs text-muted-foreground">
-                          Create a link on {targetName}: Settings → Connections → Create link, then
-                          paste its code here.
+                          {translateUi("Create a link on")}
+                          {targetName}
+                          {translateUi(
+                            ": Settings → Connections → Create link, then paste its code here.",
+                          )}
                         </span>
                       </label>
                     )}
@@ -425,8 +434,11 @@ function LinkRequestDialog(props: {
             )}
             {useExisting ? (
               <p className="text-xs text-muted-foreground">
-                This environment is already linked to {targetName}. The agent can use that link as
-                it is; change its access in Settings → Connections.
+                {translateUi("This environment is already linked to")}
+                {targetName}
+                {translateUi(
+                  ". The agent can use that link as it is; change its access in Settings → Connections.",
+                )}
               </p>
             ) : null}
             {error !== null ? (
@@ -447,11 +459,11 @@ function LinkRequestDialog(props: {
                 setError(null);
               }}
             >
-              Back
+              {translateUi("Back")}
             </Button>
           ) : (
             <Button variant="outline" type="button" disabled={busy} onClick={close}>
-              Cancel
+              {translateUi("Cancel")}
             </Button>
           )}
           <Button
@@ -478,7 +490,7 @@ function MachinePicker(props: {
   return (
     <div className="space-y-2">
       <span id={labelId} className="block text-xs font-medium">
-        Machine
+        {translateUi("Machine")}
       </span>
       <RadioGroup
         aria-labelledby={labelId}
@@ -502,7 +514,7 @@ function MachinePicker(props: {
         ))}
         <label className="flex cursor-pointer items-center gap-2.5 rounded-lg border px-3 py-2 text-sm">
           <Radio value={ANOTHER_ADDRESS} />
-          <span className="min-w-0 flex-1 font-medium">Another address…</span>
+          <span className="min-w-0 flex-1 font-medium">{translateUi("Another address…")}</span>
         </label>
       </RadioGroup>
     </div>

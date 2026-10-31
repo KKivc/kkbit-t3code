@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthOrchestrationOperateScope,
   type EnvironmentId,
@@ -382,11 +383,11 @@ export function useImplementPlanInNewThread(input: ImplementPlanInNewThreadInput
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Could not start implementation thread",
+            title: translateUi("Could not start implementation thread"),
             description:
               error instanceof Error
                 ? error.message
-                : "An error occurred while creating the new thread.",
+                : translateUi("An error occurred while creating the new thread."),
           }),
         );
       }

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { memo, useEffect, useState } from "react";
 import { isThemeColor, themeColorToHex, type ThemeColorRole } from "../../themePalette";
 import { cn } from "../../lib/utils";
@@ -8,14 +9,14 @@ import { Popover, PopoverPopup, PopoverTrigger } from "../ui/popover";
 import { Tooltip, TooltipPopup, TooltipTrigger } from "../ui/tooltip";
 export function getThemeRoleLabel(role: ThemeColorRole): string {
   const labels: Partial<Record<ThemeColorRole, string>> = {
-    canvas: "Background",
+    canvas: translateUi("Background"),
     toolbar: "Toolbar background",
     toolbarForeground: "Toolbar text",
     toolbarBorder: "Toolbar border",
     toolbarControl: "Toolbar control",
     toolbarControlForeground: "Toolbar control text",
     toolbarControlHover: "Toolbar control hover",
-    accent: "Accent color",
+    accent: translateUi("Accent color"),
     errorForeground: "Error text",
     errorSurface: "Error background",
     warningForeground: "Warning text",
@@ -161,7 +162,7 @@ function ThemeColorPickerPanel({
       <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-foreground">{label}</p>
-          <p className="text-2xs text-muted-foreground">Choose a color</p>
+          <p className="text-2xs text-muted-foreground">{translateUi("Choose a color")}</p>
         </div>
         <span
           className="size-7 shrink-0 rounded-full shadow-sm"
@@ -334,7 +335,7 @@ export const ThemeColorField = memo(function ThemeColorField({
         <TooltipTrigger
           render={
             <button
-              aria-label={`${selected ? "Hide" : "Show"} ${label} usage`}
+              aria-label={`${selected ? translateUi("Hide") : translateUi("Show")} ${label} usage`}
               aria-pressed={selected}
               className="flex min-w-0 flex-1 cursor-pointer items-center rounded-md text-left text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
               onClick={() => onToggleSelected?.(role)}
@@ -344,7 +345,7 @@ export const ThemeColorField = memo(function ThemeColorField({
             </button>
           }
         />
-        <TooltipPopup side="top">{`${selected ? "Hide" : "Show"} where ${label} is used`}</TooltipPopup>
+        <TooltipPopup side="top">{`${selected ? translateUi("Hide") : translateUi("Show")} where ${label} is used`}</TooltipPopup>
       </Tooltip>
       <div className="ml-auto flex shrink-0 items-center gap-2">
         <ThemeColorPicker

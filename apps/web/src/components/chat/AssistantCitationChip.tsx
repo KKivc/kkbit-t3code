@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { AssistantCitation } from "@t3tools/contracts";
 import {
   assistantCitationLabel,
@@ -148,7 +149,7 @@ export function AssistantCitationChip({
             render={<Button variant="outline" size="sm" render={<Link {...sourceLinkProps} />} />}
           >
             <ArrowUpRightIcon aria-hidden="true" />
-            Go to source
+            {translateUi("Go to source")}
           </PopoverClose>
         </div>
       </ContextChipPopover>
@@ -205,7 +206,7 @@ export function AssistantCitationChip({
                   : undefined
               }
               ref={commentPopupRef}
-              aria-label="Edit citation comment"
+              aria-label={translateUi("Edit citation comment")}
               width="md"
               padding="compact"
               onPointerDown={(event) => event.stopPropagation()}

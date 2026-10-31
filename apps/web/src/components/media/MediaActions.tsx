@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   formatFilePathForClipboard,
   type MediaActionId,
@@ -131,7 +132,7 @@ export function MediaActions({
     let failureTitle = "Could not open media menu";
     let progressToast: ReturnType<typeof toastManager.add> | undefined;
     const result = await settlePromise(async () => {
-      const noun = source.kind === "image" ? "image" : "video";
+      const noun = source.kind === "image" ? translateUi("image") : translateUi("video");
       const unavailable = !canReadMedia || (source.src === null && source.asset === undefined);
       const canCopyImage =
         typeof navigator !== "undefined" &&
@@ -139,19 +140,23 @@ export function MediaActions({
         typeof ClipboardItem !== "undefined";
       const items: ContextMenuItem<MediaActionId>[] = [];
       if (reference?.kind === "file") {
-        items.push({ id: "copy-full-path", label: "Copy full path" });
+        items.push({ id: "copy-full-path", label: translateUi("Copy full path") });
         if (reference.relativePath)
-          items.push({ id: "copy-relative-path", label: "Copy relative path" });
+          items.push({ id: "copy-relative-path", label: translateUi("Copy relative path") });
       } else if (reference?.kind === "url") {
-        items.push({ id: "copy-url", label: "Copy URL" });
+        items.push({ id: "copy-url", label: translateUi("Copy URL") });
       }
       if (source.onOpenFile)
-        items.push({ id: "open-file", label: "Open in file viewer", disabled: !canReadMedia });
+        items.push({
+          id: "open-file",
+          label: translateUi("Open in file viewer"),
+          disabled: !canReadMedia,
+        });
       items.push({ id: "save", label: `Save ${noun}`, disabled: unavailable });
       if (source.kind === "image") {
         items.push({
           id: "copy-image",
-          label: "Copy image",
+          label: translateUi("Copy image"),
           disabled: unavailable || !canCopyImage,
         });
       }
@@ -173,7 +178,7 @@ export function MediaActions({
         await writeTextToClipboard(clipboardText, reference?.kind === "file" ? "file path" : "URL");
         toastManager.add({
           type: "success",
-          title: action === "copy-url" ? "URL copied" : "Path copied",
+          title: action === "copy-url" ? "URL copied" : translateUi("Path copied"),
         });
       } else if (action === "open-file") {
         assertCanReadMedia();

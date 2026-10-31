@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import * as DateTime from "effect/DateTime";
 
 import { resolveDesktopPairingUrl, resolveHostedPairingUrl } from "./pairingUrls";
@@ -64,7 +65,7 @@ export function missingTailscaleEndpointDescription(
 ): string {
   return state && state.mode !== "network-accessible" && !state.tailscaleServeEnabled
     ? "Turn on Network access to detect Tailscale."
-    : "Start Tailscale to set up HTTPS access through MagicDNS.";
+    : translateUi("Start Tailscale to set up HTTPS access through MagicDNS.");
 }
 
 export function resolveTailscaleServeBaseUrl(
@@ -109,12 +110,12 @@ export function resolveLocalVersionStatusLabel(state: DesktopUpdateState | null)
     (state.status === "checking" && state.downloadedVersion !== null)
   ) {
     const version = getDesktopUpdateDownloadedVersion(state);
-    return version ? `Update ${version} downloaded` : "Update downloaded";
+    return version ? `Update ${version} downloaded` : translateUi("Update downloaded");
   }
   if (action === "download") {
     return state.availableVersion
       ? `Update ${state.availableVersion} available`
-      : "Update available";
+      : translateUi("Update available");
   }
   return "Up to date";
 }
@@ -423,16 +424,16 @@ export function isHostedAppPairingUrl(value: string): boolean {
 
 export function endpointShareHint(endpoint: AdvertisedEndpoint, url: string): string {
   if (isHostedAppPairingUrl(url)) {
-    return "Opens the hosted app, no install needed";
+    return translateUi("Opens the hosted app, no install needed");
   }
   switch (endpoint.reachability) {
     case "lan":
-      return "Devices on the same network";
+      return translateUi("Devices on the same network");
     case "private-network":
-      return "Devices on your private network";
+      return translateUi("Devices on your private network");
     case "public":
-      return "Reachable from anywhere";
+      return translateUi("Reachable from anywhere");
     case "loopback":
-      return "Clients on this machine";
+      return translateUi("Clients on this machine");
   }
 }

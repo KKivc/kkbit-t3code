@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId } from "@t3tools/contracts";
 import type { SourceControlDefinition } from "@t3tools/client-runtime/source-control-clients";
 import * as Equal from "effect/Equal";
@@ -25,7 +26,7 @@ export function SourceControlHostSettings({
     (settings) => settings.sourceControlHosts[definition.kind],
   );
   const updateSettings = useAtomCommand(serverEnvironment.updateSettings, {
-    label: `save ${definition.label} settings`,
+    label: translateUi("save {0} settings", [definition.label]),
   });
   const [saving, setSaving] = useState(false);
   const formDefinition = { settingsSchema: definition.settings };
@@ -68,7 +69,7 @@ export function SourceControlHostSettings({
               void save(Object.fromEntries(Object.keys(saved ?? {}).map((key) => [key, ""])))
             }
           >
-            Remove
+            {translateUi("Remove")}
           </Button>
         </div>
       ) : null}

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   capitalizeTerm,
   sourceControlClients,
@@ -116,7 +117,7 @@ export function PullRequestComposer({
                 if (value === "comment" || value === "review") setRequestedMode(value);
               }}
             >
-              <Toggle value="comment">Comment</Toggle>
+              <Toggle value="comment">{translateUi("Comment")}</Toggle>
               <Toggle value="review">
                 {pendingComments.length > 0 ? `Review (${pendingComments.length})` : "Review"}
               </Toggle>
@@ -131,8 +132,8 @@ export function PullRequestComposer({
               <Button
                 size="icon-xs"
                 variant="ghost"
-                aria-label="Discard pending line comments"
-                title="Discard pending line comments"
+                aria-label={translateUi("Discard pending line comments")}
+                title={translateUi("Discard pending line comments")}
                 disabled={reviewPending}
                 onClick={() => clearComments(reviewKey)}
               >

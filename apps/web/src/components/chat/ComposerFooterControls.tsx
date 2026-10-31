@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   ModelSelection,
   ProviderInstanceId,
@@ -175,9 +176,9 @@ export function ComposerPermissionsSection(props: {
   const descriptionId = useId();
   return (
     <div data-composer-permissions className="grid w-72 gap-1.5 px-2 py-1.5">
-      <div className="font-medium text-muted-foreground text-xs">Permissions</div>
+      <div className="font-medium text-muted-foreground text-xs">{translateUi("Permissions")}</div>
       <MenuPrimitive.RadioGroup
-        aria-label="Permissions"
+        aria-label={translateUi("Permissions")}
         value={props.runtimeMode}
         onValueChange={(value: RuntimeMode) => {
           if (value !== props.runtimeMode) props.onRuntimeModeChange(value);

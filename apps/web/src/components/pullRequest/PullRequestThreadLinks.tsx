@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { Tooltip, TooltipTrigger, TooltipPopup } from "../ui/tooltip";
 import { scopeThreadRef } from "@t3tools/client-runtime/environment";
 import { settlePromise, squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
@@ -163,7 +164,10 @@ function EnabledPullRequestThreadLinks({
       {display === "picker" ? (
         <Dialog open onOpenChange={onPickerOpenChange}>
           <DialogPopup className="max-w-md" showCloseButton={false}>
-            <DialogTitle className="sr-only">Link {term} to a thread</DialogTitle>
+            <DialogTitle className="sr-only">
+              {translateUi("Link")}
+              {term} to a thread
+            </DialogTitle>
             <ThreadPicker
               environmentId={environmentId}
               url={url}
@@ -238,7 +242,7 @@ function ThreadPicker({
                 {linked ? (
                   <>
                     <CheckIcon aria-hidden className="size-3.5" />
-                    <span className="text-xs text-muted-foreground">Linked</span>
+                    <span className="text-xs text-muted-foreground">{translateUi("Linked")}</span>
                   </>
                 ) : null}
               </CommandItem>

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAuth } from "@clerk/react";
 import type { EnvironmentId } from "@t3tools/contracts";
 import { Link } from "@tanstack/react-router";
@@ -49,7 +50,7 @@ export function HostedEmptyState() {
           <EmptyContent>
             {localEnvironmentOff ? (
               <Button render={<Link to="/settings/connections" />} size="sm">
-                Open Environments
+                {translateUi("Open Environments")}
               </Button>
             ) : (
               <ol className="w-full space-y-4 text-left">
@@ -79,11 +80,11 @@ function T3ConnectSteps() {
         {isSignedIn ? (
           <p className="flex items-center gap-1.5 text-muted-foreground">
             <CheckIcon className="size-4" />
-            Signed in
+            {translateUi("Signed in")}
           </p>
         ) : (
           <Button size="sm" disabled={!isLoaded} onClick={openAuthPrompt}>
-            Sign in
+            {translateUi("Sign in")}
           </Button>
         )}
       </SetupStep>
@@ -106,7 +107,11 @@ function T3ConnectSteps() {
                     return next;
                   }),
               }}
-              empty={<p className="text-xs text-muted-foreground">Waiting for your computer…</p>}
+              empty={
+                <p className="text-xs text-muted-foreground">
+                  {translateUi("Waiting for your computer…")}
+                </p>
+              }
             />
           </div>
         ) : null}
@@ -123,7 +128,7 @@ function PairingSteps() {
       </SetupStep>
       <SetupStep number={2}>
         <Button render={<Link to="/settings/connections" />} size="sm">
-          Add pairing link
+          {translateUi("Add pairing link")}
         </Button>
       </SetupStep>
     </>
@@ -148,7 +153,7 @@ function SetupStep({
 function RunOnComputer({ command }: { readonly command: string }) {
   return (
     <>
-      <p>Run on your computer:</p>
+      <p>{translateUi("Run on your computer:")}</p>
       <CommandBlock command={command} className="mt-2" />
       <a
         className="mt-2 inline-block text-xs text-muted-foreground underline underline-offset-2 hover:text-foreground"
@@ -156,7 +161,7 @@ function RunOnComputer({ command }: { readonly command: string }) {
         target="_blank"
         rel="noreferrer noopener"
       >
-        Or download the desktop app
+        {translateUi("Or download the desktop app")}
       </a>
     </>
   );

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { settingsScopeEnvironmentLabels } from "./settingsScopeAxis";
 import { Spinner } from "~/components/ui/spinner";
 import { ArchiveIcon, ArchiveX } from "lucide-react";
@@ -130,8 +131,8 @@ export function ArchivedThreadsPanel() {
     if (!api) return;
     const clicked = await api.contextMenu.show(
       [
-        { id: "unarchive", label: "Unarchive" },
-        { id: "delete", label: "Delete", destructive: true },
+        { id: "unarchive", label: translateUi("Unarchive") },
+        { id: "delete", label: translateUi("Delete"), destructive: true },
       ],
       position,
     );
@@ -145,8 +146,8 @@ export function ArchivedThreadsPanel() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Failed to unarchive thread",
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Failed to unarchive thread"),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       }
@@ -162,8 +163,8 @@ export function ArchivedThreadsPanel() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: "Failed to delete thread",
-            description: error instanceof Error ? error.message : "An error occurred.",
+            title: translateUi("Failed to delete thread"),
+            description: error instanceof Error ? error.message : translateUi("An error occurred."),
           }),
         );
       }
@@ -186,16 +187,16 @@ export function ArchivedThreadsPanel() {
                   <ArchiveIcon className="size-3.5 text-muted-foreground" />
                 )}
                 {isLoadingArchive
-                  ? "Loading archived threads"
+                  ? translateUi("Loading archived threads")
                   : archiveError
-                    ? "Could not load archived threads"
-                    : "No archived threads"}
+                    ? translateUi("Could not load archived threads")
+                    : translateUi("No archived threads")}
               </span>
             }
             description={
               isLoadingArchive
-                ? "Checking connected environments."
-                : (archiveError ?? "Archived threads will appear here.")
+                ? translateUi("Checking connected environments.")
+                : (archiveError ?? translateUi("Archived threads will appear here."))
             }
           />
         </SettingsSection>
@@ -227,9 +228,11 @@ export function ArchivedThreadsPanel() {
                       toastManager.add(
                         stackedThreadToast({
                           type: "error",
-                          title: "Archived thread action failed",
+                          title: translateUi("Archived thread action failed"),
                           description:
-                            error instanceof Error ? error.message : "An error occurred.",
+                            error instanceof Error
+                              ? error.message
+                              : translateUi("An error occurred."),
                         }),
                       );
                     }
@@ -239,7 +242,8 @@ export function ArchivedThreadsPanel() {
                 description={
                   <span className={hasMultipleEnvironments ? "block truncate" : undefined}>
                     {hasMultipleEnvironments ? `${thread.environmentLabel} · ` : null}
-                    Archived <RelativeTime timestamp={thread.archivedAt ?? thread.createdAt} />
+                    {translateUi("Archived")}
+                    <RelativeTime timestamp={thread.archivedAt ?? thread.createdAt} />
                     {" \u00b7 Created "}
                     <RelativeTime timestamp={thread.createdAt} />
                   </span>
@@ -264,9 +268,11 @@ export function ArchivedThreadsPanel() {
                           toastManager.add(
                             stackedThreadToast({
                               type: "error",
-                              title: "Failed to unarchive thread",
+                              title: translateUi("Failed to unarchive thread"),
                               description:
-                                error instanceof Error ? error.message : "An error occurred.",
+                                error instanceof Error
+                                  ? error.message
+                                  : translateUi("An error occurred."),
                             }),
                           );
                         }
@@ -274,7 +280,7 @@ export function ArchivedThreadsPanel() {
                     }}
                   >
                     <ArchiveX className="size-3.5" />
-                    <span>Unarchive</span>
+                    <span>{translateUi("Unarchive")}</span>
                   </Button>
                 }
               />

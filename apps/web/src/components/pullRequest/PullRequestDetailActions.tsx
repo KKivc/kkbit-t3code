@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   EnvironmentId,
   PullRequestAction,
@@ -123,18 +124,18 @@ export function PullRequestCheckoutMenu({
         <MenuItem disabled={!canPrepareWorktree} onClick={() => onCheckout("worktree")}>
           <GitBranchIcon className="mt-1 size-3.5 shrink-0 self-start" />
           <span className="flex min-w-0 flex-col">
-            <span>In a separate worktree</span>
+            <span>{translateUi("In a separate worktree")}</span>
             <span className="text-xs text-muted-foreground">
-              Its own folder and thread. Nothing you have open moves.
+              {translateUi("Its own folder and thread. Nothing you have open moves.")}
             </span>
           </span>
         </MenuItem>
         <MenuItem disabled={!canCheckoutHere} onClick={() => onCheckout("local")}>
           <FolderGit2Icon className="mt-1 size-3.5 shrink-0 self-start" />
           <span className="flex min-w-0 flex-col">
-            <span>In this repository</span>
+            <span>{translateUi("In this repository")}</span>
             <span className="text-xs text-muted-foreground">
-              Switches the branch you are working in.
+              {translateUi("Switches the branch you are working in.")}
             </span>
           </span>
         </MenuItem>
@@ -244,15 +245,17 @@ export function PullRequestPrimaryAction({
                   variant="default"
                   disabled={actionPending}
                   onClick={() => void perform("ready")}
-                  aria-label="Ready for review"
+                  aria-label={translateUi("Ready for review")}
                 >
                   <PullRequestGlyph.pullRequest aria-hidden className="size-3.5" />
-                  <span className="@max-[30rem]/pr-header:hidden">Ready for review</span>
+                  <span className="@max-[30rem]/pr-header:hidden">
+                    {translateUi("Ready for review")}
+                  </span>
                 </Button>
               </span>
             }
           />
-          <TooltipPopup side="top">Ready for review</TooltipPopup>
+          <TooltipPopup side="top">{translateUi("Ready for review")}</TooltipPopup>
         </Tooltip>
       ) : primaryAction === "enable-auto-merge" ? (
         <Tooltip>
@@ -417,10 +420,10 @@ export function PullRequestApproveWorkflowsButton({
               <PlayIcon aria-hidden className="size-3.5" />
               <span className="inline-grid">
                 <span aria-hidden className="invisible col-start-1 row-start-1">
-                  Approve workflows to run
+                  {translateUi("Approve workflows to run")}
                 </span>
                 <span aria-hidden className="invisible col-start-1 row-start-1">
-                  Confirm approve?
+                  {translateUi("Confirm approve?")}
                 </span>
                 <span className="col-start-1 row-start-1">
                   {pendingAction === "approve-workflows"

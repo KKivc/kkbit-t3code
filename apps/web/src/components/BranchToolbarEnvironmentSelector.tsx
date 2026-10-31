@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { ComposerSelectControl } from "./chat/ComposerControl";
 import { ComposerContextLabel } from "./ComposerContextLabel";
 import { Tooltip, TooltipTrigger, TooltipPopup } from "./ui/tooltip";
@@ -54,13 +55,15 @@ export const BranchToolbarEnvironmentSelector = memo(function BranchToolbarEnvir
 
   const environmentItems = [
     ...(onAutoEnvironment
-      ? [{ value: AUTO_VALUE, label: autoEnvironmentLabel ?? "Auto balance" }]
+      ? [{ value: AUTO_VALUE, label: autoEnvironmentLabel ?? translateUi("Auto balance") }]
       : []),
     ...availableEnvironments.map((env) => ({
       value: environmentValue(env.environmentId),
       label: env.label,
     })),
-    ...(onAddToMachine ? [{ value: ADD_MACHINE_VALUE, label: "Add to another machine" }] : []),
+    ...(onAddToMachine
+      ? [{ value: ADD_MACHINE_VALUE, label: translateUi("Add to another machine") }]
+      : []),
   ];
 
   // Match the xs control's height and padding: the composer strip has no min-height,
@@ -107,7 +110,7 @@ export const BranchToolbarEnvironmentSelector = memo(function BranchToolbarEnvir
             <ComposerSelectControl
               size="xs"
               className="min-w-0 max-w-full"
-              aria-label="Run on"
+              aria-label={translateUi("Run on")}
               data-composer-shortcut="composer.host"
               data-composer-context-control
             />
@@ -132,7 +135,7 @@ export const BranchToolbarEnvironmentSelector = memo(function BranchToolbarEnvir
       </Tooltip>
       <SelectPopup alignItemWithTrigger={false} {...composerFloatingLayerProps}>
         <SelectGroup>
-          <SelectGroupLabel>Run on</SelectGroupLabel>
+          <SelectGroupLabel>{translateUi("Run on")}</SelectGroupLabel>
           {onAutoEnvironment && (
             <SelectItem
               value={AUTO_VALUE}
@@ -162,7 +165,7 @@ export const BranchToolbarEnvironmentSelector = memo(function BranchToolbarEnvir
             <SelectItem value={ADD_MACHINE_VALUE}>
               <span className={ADD_TO_MACHINE_LABEL_CLASS}>
                 <PlusIcon aria-hidden="true" className="size-3" />
-                Add to another machine
+                {translateUi("Add to another machine")}
               </span>
             </SelectItem>
           ) : null}

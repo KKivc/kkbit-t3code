@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAuth, useClerk } from "@clerk/react";
 import { readConnectAuthorizeRequest } from "@t3tools/shared/connectAuth";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
@@ -80,7 +81,7 @@ export function ConnectCliAuthorizeSurface() {
       {isLoaded && !isSignedIn ? (
         <div className="mt-6">
           <Button type="button" onClick={openSignIn}>
-            Sign in
+            {translateUi("Sign in")}
           </Button>
         </div>
       ) : null}

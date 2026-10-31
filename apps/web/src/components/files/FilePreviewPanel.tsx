@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { DownloadIcon, CopyIcon, CheckIcon } from "lucide-react";
 import { useCopyToClipboard } from "~/hooks/useCopyToClipboard";
 import { Spinner } from "~/components/ui/spinner";
@@ -1220,8 +1221,8 @@ export default function FilePreviewPanel({
       toastManager.add(
         stackedThreadToast({
           type: "error",
-          title: "Unable to open file in browser",
-          description: error instanceof Error ? error.message : "An error occurred.",
+          title: translateUi("Unable to open file in browser"),
+          description: error instanceof Error ? error.message : translateUi("An error occurred."),
         }),
       );
     })();
@@ -1582,7 +1583,7 @@ export function WorkspaceLargeTextPreview(props: {
     toastManager.add({
       type: "error",
       title: "Could not read file",
-      description: cause instanceof Error ? cause.message : "Try again.",
+      description: cause instanceof Error ? cause.message : translateUi("Try again."),
     });
   };
   // Each workspace mutation re-mints the URL, so an edited file loads its new bytes.
@@ -1613,7 +1614,7 @@ export function WorkspaceLargeTextPreview(props: {
       />
     );
   if (assetUrl._tag !== "Success" || loaded === null)
-    return <div className="p-6 text-xs text-muted-foreground">Loading…</div>;
+    return <div className="p-6 text-xs text-muted-foreground">{translateUi("Loading…")}</div>;
   const src = `${loaded.url}${loaded.url.includes("?") ? "&" : "?"}revision=${encodeURIComponent(loaded.revision)}`;
   return (
     <>
@@ -1655,7 +1656,11 @@ export function WorkspaceLargeTextPreview(props: {
           <DownloadIcon className="size-3.5" />
         </FileSurfaceAction>
       </div>
-      <Suspense fallback={<div className="p-6 text-xs text-muted-foreground">Loading…</div>}>
+      <Suspense
+        fallback={
+          <div className="p-6 text-xs text-muted-foreground">{translateUi("Loading…")}</div>
+        }
+      >
         <LargeTextViewer
           key={`${src}:${revision}`}
           name={props.name}

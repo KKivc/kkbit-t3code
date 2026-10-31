@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   isAtomCommandInterrupted,
   squashAtomCommandFailure,
@@ -79,16 +80,16 @@ export function ProviderAuthenticationSection({
       : auth?.phase === "verifying"
         ? "Checking your account…"
         : interaction?.type === "terminal"
-          ? "Complete sign-in in the terminal below."
+          ? translateUi("Complete sign-in in the terminal below.")
           : interaction?.type === "credentials"
-            ? "Enter your credentials below."
-            : "Finish signing in in your browser."
+            ? translateUi("Enter your credentials below.")
+            : translateUi("Finish signing in in your browser.")
     : signedIn
-      ? "Signed in."
+      ? translateUi("Signed in.")
       : isDiscovering
         ? "Discovering sign-in methods…"
         : needsExternalSetup
-          ? "No in-app sign-in advertised. Follow the provider's docs to finish setup."
+          ? translateUi("No in-app sign-in advertised. Follow the provider's docs to finish setup.")
           : `Sign in on ${environmentLabel}.`;
   const statusMessage = auth?.phase === "failed" ? auth.message : null;
   const disabled = readOnly || pending || query.error !== null || isDiscovering;
@@ -111,11 +112,13 @@ export function ProviderAuthenticationSection({
       else if (!isAtomCommandInterrupted(result)) {
         const failure = squashAtomCommandFailure(result);
         setError(
-          failure instanceof Error ? failure.message : "Provider sign-in failed. Try again.",
+          failure instanceof Error
+            ? failure.message
+            : translateUi("Provider sign-in failed. Try again."),
         );
       }
     } catch {
-      setError("Provider sign-in failed. Try again.");
+      setError(translateUi("Provider sign-in failed. Try again."));
     }
     pendingRef.current = false;
     setPending(false);
@@ -148,7 +151,9 @@ export function ProviderAuthenticationSection({
       setError(null);
     } catch {
       pending?.close();
-      setError("Could not open the sign-in page. Copy the link and open it in your browser.");
+      setError(
+        translateUi("Could not open the sign-in page. Copy the link and open it in your browser."),
+      );
     }
   }
 
@@ -158,17 +163,17 @@ export function ProviderAuthenticationSection({
 
   return (
     <SettingsRow
-      title="Account"
+      title={translateUi("Account")}
       description={
         signedIn && !active && provider.auth.email?.trim() ? (
           <span>
-            Signed in as{" "}
+            {translateUi("Signed in as")}{" "}
             <RedactedSensitiveText
               key={provider.auth.email}
               value={provider.auth.email}
-              ariaLabel="Toggle account email visibility"
-              revealTooltip="Click to reveal email"
-              hideTooltip="Click to hide email"
+              ariaLabel={translateUi("Toggle account email visibility")}
+              revealTooltip={translateUi("Click to reveal email")}
+              hideTooltip={translateUi("Click to hide email")}
               className="max-w-full truncate"
             />
           </span>
@@ -191,14 +196,14 @@ export function ProviderAuthenticationSection({
               disabled={disabled}
               onValueChange={(value) => setMethodId(value ?? "")}
             >
-              <SelectTrigger size="sm" aria-label="Sign-in method" className="w-44">
+              <SelectTrigger size="sm" aria-label={translateUi("Sign-in method")} className="w-44">
                 <SelectValue>
                   {auth?.methods?.find((method) => method.id === methodId)?.name ??
-                    "Provider default"}
+                    translateUi("Provider default")}
                 </SelectValue>
               </SelectTrigger>
               <SelectPopup>
-                <SelectItem value="">Provider default</SelectItem>
+                <SelectItem value="">{translateUi("Provider default")}</SelectItem>
                 {auth?.methods?.map((method) => (
                   <SelectItem key={method.id} value={method.id}>
                     {method.name}
@@ -215,32 +220,35 @@ export function ProviderAuthenticationSection({
                 disabled={disabled}
                 onClick={() => void openBrowser()}
               >
-                Open browser
+                {translateUi("Open browser")}
               </Button>
               <Tooltip>
                 <TooltipTrigger
                   render={
                     <Button
-                      aria-label="Copy sign-in link"
+                      aria-label={translateUi("Copy sign-in link")}
                       size="icon-sm"
                       variant="ghost-muted"
                       disabled={disabled}
                       onClick={() => {
                         // Copy during the click to retain clipboard activation; consent must still be
                         // recorded before use.
-                        const copied = writeTextToClipboard(url, "Provider sign-in link");
+                        const copied = writeTextToClipboard(
+                          url,
+                          translateUi("Provider sign-in link"),
+                        );
                         void (async () => {
                           await copied;
                           if (interaction?.type === "browser" && interaction.requiresConsent)
                             await send({ type: "browser", action: "accept" });
-                        })().catch(() => setError("Could not copy the sign-in link."));
+                        })().catch(() => setError(translateUi("Could not copy the sign-in link.")));
                       }}
                     >
                       <CopyIcon />
                     </Button>
                   }
                 />
-                <TooltipPopup>Copy sign-in link</TooltipPopup>
+                <TooltipPopup>{translateUi("Copy sign-in link")}</TooltipPopup>
               </Tooltip>
             </>
           ) : null}
@@ -253,13 +261,13 @@ export function ProviderAuthenticationSection({
                   <a href={provider.setup.documentationUrl} target="_blank" rel="noreferrer" />
                 }
               >
-                Open docs
+                {translateUi("Open docs")}
               </Button>
             ) : active && auth?.flowId ? (
               <Button
                 size="sm"
                 variant="ghost-muted"
-                aria-label="Cancel sign-in"
+                aria-label={translateUi("Cancel sign-in")}
                 disabled={disabled}
                 onClick={() =>
                   void run(() =>
@@ -267,7 +275,7 @@ export function ProviderAuthenticationSection({
                   )
                 }
               >
-                Cancel
+                {translateUi("Cancel")}
               </Button>
             ) : !active && !needsExternalSetup && provider.setup?.canAuthenticate !== false ? (
               <Button
@@ -289,10 +297,10 @@ export function ProviderAuthenticationSection({
                 }
               >
                 {signedIn
-                  ? "Change account"
+                  ? translateUi("Change account")
                   : auth?.phase === "failed" || auth?.phase === "cancelled"
-                    ? "Retry sign-in"
-                    : "Sign in"}
+                    ? translateUi("Retry sign-in")
+                    : translateUi("Sign in")}
               </Button>
             ) : null}
             {!active && signedIn && (provider.auth.canLogout ?? provider.setup?.canAuthenticate) ? (
@@ -310,7 +318,7 @@ export function ProviderAuthenticationSection({
                     });
                 }}
               >
-                Sign out
+                {translateUi("Sign out")}
               </Button>
             ) : null}
           </>
@@ -326,16 +334,18 @@ export function ProviderAuthenticationSection({
         <>
           {interaction?.type === "deviceCode" ? (
             <p className="py-2 text-sm text-muted-foreground">
-              Enter code{" "}
+              {translateUi("Enter code")}{" "}
               <code className="select-all font-mono text-foreground">{interaction.userCode}</code>{" "}
-              in your browser.
+              {translateUi("in your browser.")}
             </p>
           ) : null}
           {interaction?.type === "terminal" ? (
             <div className="py-2">
               <Suspense
                 fallback={
-                  <p className="text-xs text-muted-foreground">Loading sign-in terminal…</p>
+                  <p className="text-xs text-muted-foreground">
+                    {translateUi("Loading sign-in terminal…")}
+                  </p>
                 }
               >
                 <ProviderAuthTerminal
@@ -368,14 +378,18 @@ export function ProviderAuthenticationSection({
                         if (result._tag !== "Success") {
                           terminalQueue.current = [];
                           if (!isAtomCommandInterrupted(result))
-                            setError("The provider sign-in terminal is no longer available.");
+                            setError(
+                              translateUi("The provider sign-in terminal is no longer available."),
+                            );
                           break;
                         }
                       }
                     })()
                       .catch(() => {
                         terminalQueue.current = [];
-                        setError("Could not send input to the provider sign-in terminal.");
+                        setError(
+                          translateUi("Could not send input to the provider sign-in terminal."),
+                        );
                       })
                       .finally(() => {
                         terminalSending.current = false;
@@ -416,7 +430,7 @@ export function ProviderAuthenticationSection({
                 className="w-fit"
                 disabled={disabled}
               >
-                Connect
+                {translateUi("Connect")}
               </Button>
             </form>
           ) : null}
@@ -437,7 +451,7 @@ export function ProviderAuthenticationSection({
               }}
             >
               <label className="grid gap-1">
-                If the final localhost page does not load, paste its full URL here.
+                {translateUi("If the final localhost page does not load, paste its full URL here.")}
                 <Input
                   size="sm"
                   id={`provider-callback-${instanceId}`}
@@ -456,7 +470,7 @@ export function ProviderAuthenticationSection({
                 className="w-fit"
                 disabled={disabled || !values.callback?.trim()}
               >
-                Continue
+                {translateUi("Continue")}
               </Button>
             </form>
           ) : null}

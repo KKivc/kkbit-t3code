@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DesktopBridge, DesktopUpdateState } from "@t3tools/contracts";
 import { ArrowRightIcon } from "lucide-react";
 
@@ -16,7 +17,7 @@ export async function openDesktopUpdateReleaseNotes(
   try {
     if (shell && (await shell.openExternal(releaseUrl))) return;
   } catch {}
-  toastManager.add({ type: "error", title: "Unable to open release notes" });
+  toastManager.add({ type: "error", title: translateUi("Unable to open release notes") });
 }
 
 function ReleaseNotesLink({
@@ -34,7 +35,7 @@ function ReleaseNotesLink({
       }}
       type="button"
     >
-      Read more
+      {translateUi("Read more")}
       <ArrowRightIcon
         aria-hidden
         className="ml-1 inline size-3 -rotate-45 align-[-0.125em]"
@@ -51,10 +52,10 @@ export function showDesktopUpdateDownloadedToast(
   const releaseUrl = getDesktopUpdateReleaseUrl(getDesktopUpdateDownloadedVersion(state));
   toastManager.add({
     type: "success",
-    title: "Update downloaded",
+    title: translateUi("Update downloaded"),
     description: (
       <>
-        Restart the app from the update button to install it.
+        {translateUi("Restart the app from the update button to install it.")}
         {releaseUrl ? <ReleaseNotesLink releaseUrl={releaseUrl} shell={shell} /> : null}
       </>
     ),

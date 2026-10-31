@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   EnvironmentId,
   GUEST_MESSAGE_MAX_LENGTH,
@@ -236,7 +237,7 @@ export function GuestPage() {
   return (
     <div className="flex h-dvh flex-col bg-background text-foreground">
       {access === "checking" ? (
-        <Notice title="Connecting..." />
+        <Notice title={translateUi("Connecting...")} />
       ) : access === "name" && credential !== null ? (
         <NameForm
           credential={credential}
@@ -250,7 +251,7 @@ export function GuestPage() {
         <GuestSession shareId={shareId} />
       ) : (
         <Notice
-          title="This link has ended or is not valid"
+          title={translateUi("This link has ended or is not valid")}
           detail="Ask the owner for a new link. Each link works in one browser."
         />
       )}
@@ -321,7 +322,7 @@ function GuestSession({ shareId }: { readonly shareId: string }) {
     return <Notice title="This link has ended" detail="The owner stopped sharing this thread." />;
   }
   if (stream.view !== null) {
-    if (stream.projection === null) return <Notice title="Connecting..." />;
+    if (stream.projection === null) return <Notice title={translateUi("Connecting...")} />;
     return (
       <GuestThread
         view={stream.view}
@@ -331,10 +332,10 @@ function GuestSession({ shareId }: { readonly shareId: string }) {
       />
     );
   }
-  if (!rejected) return <Notice title="Connecting..." />;
+  if (!rejected) return <Notice title={translateUi("Connecting...")} />;
   return (
     <Notice
-      title="This link has ended or is not valid"
+      title={translateUi("This link has ended or is not valid")}
       detail="Ask the owner for a new link. Each link works in one browser."
     />
   );
@@ -779,8 +780,8 @@ function GuestComposer({
         </ul>
       ) : null}
       <textarea
-        aria-label="Message"
-        placeholder="Message"
+        aria-label={translateUi("Message")}
+        placeholder={translateUi("Message")}
         rows={2}
         maxLength={GUEST_MESSAGE_MAX_LENGTH}
         value={text}
@@ -802,7 +803,10 @@ function GuestComposer({
             event.target.value = "";
           }}
         />
-        <ComposerControl aria-label="Attach files" onClick={() => fileInputRef.current?.click()}>
+        <ComposerControl
+          aria-label={translateUi("Attach files")}
+          onClick={() => fileInputRef.current?.click()}
+        >
           <ComposerControlIcon icon={PaperclipIcon} />
         </ComposerControl>
         <GuestModelLabel model={model} />
@@ -817,7 +821,7 @@ function GuestComposer({
         )}
         <button
           type="submit"
-          aria-label="Send"
+          aria-label={translateUi("Send")}
           disabled={sending || (text.trim() === "" && files.length === 0)}
           className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-full bg-message-action text-message-action-foreground shadow-xs hover:bg-message-action-hover focus-visible:outline-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-64"
         >

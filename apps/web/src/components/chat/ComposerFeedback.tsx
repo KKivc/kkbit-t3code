@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   codexFeedbackNotice,
   type CodexFeedbackSubmission,
@@ -31,14 +32,15 @@ export function feedbackBannerItem(
               (error: unknown) => {
                 toastManager.add({
                   type: "error",
-                  title: "Could not copy thread ID",
-                  description: error instanceof Error ? error.message : "An error occurred.",
+                  title: translateUi("Could not copy thread ID"),
+                  description:
+                    error instanceof Error ? error.message : translateUi("An error occurred."),
                 });
               },
             );
           }}
         >
-          Copy ID
+          {translateUi("Copy ID")}
         </Button>
       ) : undefined,
     ...(submission.status !== "uploading"

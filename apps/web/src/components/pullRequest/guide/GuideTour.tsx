@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, PullRequestRef, PullRequestReviewGuide } from "@t3tools/contracts";
 import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
 
@@ -108,7 +109,9 @@ export function GuideTour({
             </p>
           ) : null}
           {stop === null ? (
-            <p className="text-sm text-muted-foreground">This change has no files to tour.</p>
+            <p className="text-sm text-muted-foreground">
+              {translateUi("This change has no files to tour.")}
+            </p>
           ) : (
             <GuideStop
               key={position}

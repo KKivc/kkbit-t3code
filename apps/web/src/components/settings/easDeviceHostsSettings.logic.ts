@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   EasDeviceHostConfig,
   type EasDeviceHostConfig as EasDeviceHostConfigType,
@@ -9,7 +10,7 @@ export const parseEasDeviceHostDraft = Schema.decodeUnknownOption(EasDeviceHostC
 export const newEasDeviceHost = (id: string): EasDeviceHostConfigType => ({
   kind: "eas",
   id,
-  label: "EAS Simulator",
+  label: translateUi("EAS Simulator"),
   accessToken: "",
   maxSessionMinutes: 30,
   idleMinutes: 10,

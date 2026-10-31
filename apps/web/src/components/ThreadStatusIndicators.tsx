@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { pipe } from "effect/Function";
 import {
   scopeProjectRef,
@@ -178,19 +179,28 @@ function resolveThreadPullRequestBadgePresentation({
     return {
       Icon: PullRequestGlyph.stack,
       toneClassName: aggregate.toneClassName,
-      label: `Stack of ${badge.layers} ${terminology.plural}, ${aggregate.label.toLowerCase()}`,
+      label: translateUi("Stack of {0} {1}, {2}", [
+        badge.layers,
+        terminology.plural,
+        aggregate.label.toLowerCase(),
+      ]),
       text: badge.layers,
     };
   }
   if (number === undefined || url === undefined) return null;
 
-  const tooltip = status?.tooltip ?? `${terminology.shortLabel} #${number}, status pending`;
+  const tooltip =
+    status?.tooltip ?? translateUi("{0} #{1}, status pending", [terminology.shortLabel, number]);
   if (badge?.kind === "pull-request" && badge.others > 0) {
     const aggregate = PULL_REQUEST_STATE_PRESENTATION[badge.state];
     return {
       Icon: aggregate.Icon,
       toneClassName: aggregate.toneClassName,
-      label: `${tooltip}, and ${badge.others} more linked; overall ${aggregate.label.toLowerCase()}`,
+      label: translateUi("{0}, and {1} more linked; overall {2}", [
+        tooltip,
+        badge.others,
+        aggregate.label.toLowerCase(),
+      ]),
       text: `+${badge.others + 1}`,
     };
   }
@@ -617,7 +627,7 @@ function ThreadStatusLabel({
           render={
             <span
               role="img"
-              aria-label={status.label}
+              aria-label={translateUi(status.label)}
               className={`inline-flex size-3.5 shrink-0 items-center justify-center ${status.colorClass}`}
             />
           }
@@ -628,7 +638,7 @@ function ThreadStatusLabel({
             }`}
           />
         </TooltipTrigger>
-        <TooltipPopup side="top">{status.label}</TooltipPopup>
+        <TooltipPopup side="top">{translateUi(status.label)}</TooltipPopup>
       </Tooltip>
     );
   }
@@ -639,7 +649,7 @@ function ThreadStatusLabel({
         render={
           <span
             role="img"
-            aria-label={status.label}
+            aria-label={translateUi(status.label)}
             className={`inline-flex items-center gap-1 text-3xs ${status.colorClass}`}
           />
         }
@@ -649,9 +659,9 @@ function ThreadStatusLabel({
             status.pulse ? "motion-safe:animate-status-pulse" : ""
           }`}
         />
-        <span className="hidden md:inline">{status.label}</span>
+        <span className="hidden md:inline">{translateUi(status.label)}</span>
       </TooltipTrigger>
-      <TooltipPopup side="top">{status.label}</TooltipPopup>
+      <TooltipPopup side="top">{translateUi(status.label)}</TooltipPopup>
     </Tooltip>
   );
 }

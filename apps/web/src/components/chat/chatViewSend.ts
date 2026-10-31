@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   CommandId,
   type EnvironmentId,
@@ -108,14 +109,15 @@ export async function startFanoutThread(input: {
     const failureToastId = toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: `Could not start ${input.model}`,
-        description: error instanceof Error ? error.message : "Failed to send message.",
+        title: translateUi("Could not start {0}", [input.model]),
+        description:
+          error instanceof Error ? error.message : translateUi("Failed to send message."),
         ...(retainedThreadId
           ? {
               timeout: 0,
               data: {
                 secondaryActionProps: {
-                  children: "Allow retry",
+                  children: translateUi("Allow retry"),
                   onClick: () => {
                     void readLocalApi()
                       ?.dialogs.confirm(
@@ -137,7 +139,7 @@ export async function startFanoutThread(input: {
                 },
               },
               actionProps: {
-                children: "Open thread",
+                children: translateUi("Open thread"),
                 onClick: () => input.openThread(retainedThreadId),
               },
             }

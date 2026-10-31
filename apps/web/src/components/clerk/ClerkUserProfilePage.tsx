@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
 
 import type { ReactNode } from "react";
@@ -57,7 +58,7 @@ export function ClerkUserProfileRefreshButton({
       onClick={onClick}
     >
       <RefreshIcon aria-hidden="true" size="sm" refreshing={isPending} />
-      Refresh
+      {translateUi("Refresh")}
     </Button>
   );
 }

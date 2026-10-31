@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DesktopUpdateActionResult, DesktopUpdateState } from "@t3tools/contracts";
 
 export type DesktopUpdateButtonAction = "download" | "install" | "none";
@@ -158,5 +159,5 @@ export function getDesktopUpdateIdleTooltip(
   const disabledReason = getDesktopUpdateDisabledReason(state);
   return disabledReason
     ? { title: "Updates unavailable", detail: disabledReason }
-    : { title: "Check for updates", detail: null };
+    : { title: translateUi("Check for updates"), detail: null };
 }

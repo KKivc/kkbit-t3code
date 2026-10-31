@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { DeviceHostUpdates } from "./DeviceHostUpdates";
 import type {
   DevicePlatform,
@@ -223,8 +224,8 @@ export function DevicePanel(props: {
           <DeviceHostUpdates state={state} environmentId={environmentId} />
           {bootingDevices.length > 0 ? (
             <div role="status" className="border-b px-3 py-2 text-xs text-muted-foreground">
-              Starting {bootingDevices.map((device) => device.name).join(", ")}… This can take a
-              minute.
+              {translateUi("Starting")}
+              {bootingDevices.map((device) => device.name).join(", ")}… This can take a minute.
             </div>
           ) : null}
           {operationError ? (
@@ -272,7 +273,7 @@ export function DevicePanel(props: {
             >
               {loadError !== null ? (
                 <Button size="sm" variant="outline" onClick={refreshState}>
-                  Retry
+                  {translateUi("Retry")}
                 </Button>
               ) : null}
             </DeviceLoadingView>
@@ -350,8 +351,9 @@ export function DevicePanel(props: {
                 !state.devices.some((device) => device.platform === "android") &&
                 !unavailablePlatforms.some((platform) => platform.platform === "android") ? (
                   <p className="max-w-sm text-xs">
-                    No Android virtual devices found. Create one in Android Studio's Device Manager,
-                    then refresh.
+                    {translateUi(
+                      "No Android virtual devices found. Create one in Android Studio's Device Manager, then refresh.",
+                    )}
                   </p>
                 ) : null}
                 {loaded && !hostBusy ? (
@@ -412,7 +414,10 @@ function DeviceDiscoveryWarning(props: { readonly label: string; readonly detail
   if (dismissed) return null;
   return (
     <DeviceNotice tone="warning" onDismiss={() => setDismissed(true)}>
-      <p className="font-medium">Device discovery warning · {props.label}</p>
+      <p className="font-medium">
+        {translateUi("Device discovery warning ·")}
+        {props.label}
+      </p>
       {props.detail}
     </DeviceNotice>
   );

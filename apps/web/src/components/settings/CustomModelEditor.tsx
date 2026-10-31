@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import type { ProviderDriverKind, ServerProviderModel } from "@t3tools/contracts";
@@ -138,11 +139,11 @@ export function CustomModelEditor({
         size="compact"
         value={choice.id}
         onChange={(event) => updateChoice(descriptor.key, choice.key, { id: event.target.value })}
-        placeholder="value"
+        placeholder={translateUi("value")}
         font="mono"
         className="w-28"
         spellCheck={false}
-        aria-label="Choice value"
+        aria-label={translateUi("Choice value")}
       />
       <Input
         size="compact"
@@ -150,9 +151,9 @@ export function CustomModelEditor({
         onChange={(event) =>
           updateChoice(descriptor.key, choice.key, { label: event.target.value })
         }
-        placeholder="Label"
+        placeholder={translateUi("Label")}
         className="min-w-0 flex-1"
-        aria-label="Choice label"
+        aria-label={translateUi("Choice label")}
       />
       <label className="flex shrink-0 items-center gap-1.5 text-2xs text-muted-foreground">
         <Switch
@@ -161,14 +162,14 @@ export function CustomModelEditor({
           onCheckedChange={(checked) =>
             updateChoice(descriptor.key, choice.key, { isDefault: checked })
           }
-          aria-label="Default choice"
+          aria-label={translateUi("Default choice")}
         />
-        Default
+        {translateUi("Default")}
       </label>
       <Button
         size="icon-micro"
         variant="ghost-muted"
-        aria-label="Remove choice"
+        aria-label={translateUi("Remove choice")}
         onClick={() =>
           updateDescriptor(descriptor.key, {
             choices: descriptor.choices.filter((candidate) => candidate.key !== choice.key),
@@ -186,13 +187,16 @@ export function CustomModelEditor({
       className="flex flex-col gap-2 rounded-md border border-border/60 bg-background/40 p-2.5"
     >
       <div className="flex flex-wrap items-center gap-2">
-        <span className="w-14 shrink-0 text-2xs text-muted-foreground">Option {index + 1}</span>
+        <span className="w-14 shrink-0 text-2xs text-muted-foreground">
+          {translateUi("Option")}
+          {index + 1}
+        </span>
         {presets.length > 0 ? (
           <Select
             value={idSelectValue(descriptor)}
             onValueChange={(value) => applyPresetId(descriptor, value)}
           >
-            <SelectTrigger size="compact" className="w-40" aria-label="Option id">
+            <SelectTrigger size="compact" className="w-40" aria-label={translateUi("Option id")}>
               <SelectValue>
                 {idSelectValue(descriptor) === CUSTOM_ID_VALUE ? "Custom…" : descriptor.id}
               </SelectValue>
@@ -206,7 +210,7 @@ export function CustomModelEditor({
                   </span>
                 </SelectItem>
               ))}
-              <SelectItem value={CUSTOM_ID_VALUE}>Custom…</SelectItem>
+              <SelectItem value={CUSTOM_ID_VALUE}>{translateUi("Custom…")}</SelectItem>
             </SelectPopup>
           </Select>
         ) : null}
@@ -219,16 +223,16 @@ export function CustomModelEditor({
             font="mono"
             className="w-36"
             spellCheck={false}
-            aria-label="Option id"
+            aria-label={translateUi("Option id")}
           />
         ) : null}
         <Input
           size="compact"
           value={descriptor.label}
           onChange={(event) => updateDescriptor(descriptor.key, { label: event.target.value })}
-          placeholder="Label"
+          placeholder={translateUi("Label")}
           className="min-w-0 flex-1"
-          aria-label="Option label"
+          aria-label={translateUi("Option label")}
         />
         <Select
           value={descriptor.type}
@@ -236,12 +240,14 @@ export function CustomModelEditor({
             updateDescriptor(descriptor.key, { type: value === "boolean" ? "boolean" : "select" })
           }
         >
-          <SelectTrigger size="compact" className="w-24" aria-label="Option type">
-            <SelectValue>{descriptor.type === "boolean" ? "Toggle" : "Choices"}</SelectValue>
+          <SelectTrigger size="compact" className="w-24" aria-label={translateUi("Option type")}>
+            <SelectValue>
+              {descriptor.type === "boolean" ? translateUi("Toggle") : translateUi("Choices")}
+            </SelectValue>
           </SelectTrigger>
           <SelectPopup align="end" alignItemWithTrigger={false}>
-            <SelectItem value="select">Choices</SelectItem>
-            <SelectItem value="boolean">Toggle</SelectItem>
+            <SelectItem value="select">{translateUi("Choices")}</SelectItem>
+            <SelectItem value="boolean">{translateUi("Toggle")}</SelectItem>
           </SelectPopup>
         </Select>
         <Button
@@ -268,7 +274,7 @@ export function CustomModelEditor({
             }
           >
             <PlusIcon className="size-3" />
-            Add choice
+            {translateUi("Add choice")}
           </Button>
         </div>
       ) : null}
@@ -287,7 +293,7 @@ export function CustomModelEditor({
     >
       <div className="flex flex-col gap-1">
         <label htmlFor={domId("name")} className="text-xs text-muted-foreground">
-          Display name
+          {translateUi("Display name")}
         </label>
         <Input
           id={domId("name")}
@@ -303,15 +309,17 @@ export function CustomModelEditor({
 
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <span className="text-xs text-muted-foreground">Options shown in the composer</span>
+          <span className="text-xs text-muted-foreground">
+            {translateUi("Options shown in the composer")}
+          </span>
           {startFromCandidates.length > 0 ? (
             <Select value={START_FROM_NONE} onValueChange={handleStartFrom}>
               <SelectTrigger
                 size="compact"
                 className="w-44"
-                aria-label="Copy options from a built-in model"
+                aria-label={translateUi("Copy options from a built-in model")}
               >
-                <SelectValue>Copy from…</SelectValue>
+                <SelectValue>{translateUi("Copy from…")}</SelectValue>
               </SelectTrigger>
               <SelectPopup align="end" alignItemWithTrigger={false}>
                 {startFromCandidates.map((model) => (
@@ -325,7 +333,7 @@ export function CustomModelEditor({
         </div>
         {draft.descriptors.length === 0 ? (
           <p className="text-xs text-muted-foreground/70">
-            No custom options. The composer uses the provider's default options.
+            {translateUi("No custom options. The composer uses the provider's default options.")}
           </p>
         ) : null}
         {draft.descriptors.map(renderDescriptor)}
@@ -354,7 +362,7 @@ export function CustomModelEditor({
             onClick={() => addDescriptor(emptyEditorDescriptor())}
           >
             <PlusIcon className="size-3" />
-            Custom option
+            {translateUi("Custom option")}
           </Button>
         </div>
       </div>
@@ -363,10 +371,10 @@ export function CustomModelEditor({
 
       <div className="flex gap-2">
         <Button size="sm" variant="outline" onClick={handleSave}>
-          Save
+          {translateUi("Save")}
         </Button>
         <Button size="sm" variant="ghost" onClick={onCancel}>
-          Cancel
+          {translateUi("Cancel")}
         </Button>
       </div>
     </div>

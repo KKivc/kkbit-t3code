@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { Tooltip, TooltipTrigger, TooltipPopup } from "../ui/tooltip";
 import type { EnvironmentId, PullRequestRef, PullRequestStackMembership } from "@t3tools/contracts";
 import { useState } from "react";
@@ -28,7 +29,9 @@ function StackBody({
           notice={query.notice}
           stale={!!query.error}
         />
-        {query.error ? <MenuItem onClick={query.refresh}>Retry stack refresh</MenuItem> : null}
+        {query.error ? (
+          <MenuItem onClick={query.refresh}>{translateUi("Retry stack refresh")}</MenuItem>
+        ) : null}
         <PullRequestStackLayers stack={query.data} reference={reference} onSelect={onSelect} />
       </>
     );
@@ -80,7 +83,9 @@ export function PullRequestStackPopover({
           }
         />
         <TooltipPopup>
-          View stack #{membership.number}, layer {membership.position} of {membership.size}
+          View stack #{membership.number}, layer {membership.position}
+          {translateUi("of")}
+          {membership.size}
         </TooltipPopup>
       </Tooltip>
       <MenuPopup

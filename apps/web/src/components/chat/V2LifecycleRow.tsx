@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { ThreadHoverCardPopup } from "../ThreadHoverCard";
 import { AgentElapsed } from "./AgentElapsed";
 import { projectedSubagentsToRuntime } from "@t3tools/client-runtime/state/subagentRuntime";
@@ -114,7 +115,7 @@ export function V2LifecycleRow(props: {
             aria-label={`Open ${item.title ?? "created thread"}`}
             onClick={() => props.onOpenThread(item.targetThreadId)}
           >
-            Open chat
+            {translateUi("Open chat")}
           </Button>
         </div>
       );
@@ -129,7 +130,7 @@ export function V2LifecycleRow(props: {
             aria-label={`Open ${item.title ?? "created thread"}`}
             onClick={() => props.onOpenThread(item.targetThreadId)}
           >
-            Open chat
+            {translateUi("Open chat")}
           </InlineButton>
         }
       />
@@ -163,13 +164,13 @@ const STATUS_VISUALS: Record<
   { dotClass: string; label: string }
 > = {
   pending: { dotClass: "bg-info", label: "Queued" },
-  running: { dotClass: "bg-info", label: "Running" },
-  waiting: { dotClass: "bg-info", label: "Waiting" },
+  running: { dotClass: "bg-info", label: translateUi("Running") },
+  waiting: { dotClass: "bg-info", label: translateUi("Waiting") },
   idle: { dotClass: "bg-muted-foreground/50", label: "Idle · resumable" },
-  completed: { dotClass: "bg-success", label: "Completed" },
-  failed: { dotClass: "bg-destructive", label: "Failed" },
-  cancelled: { dotClass: "bg-muted-foreground/60", label: "Stopped" },
-  interrupted: { dotClass: "bg-muted-foreground/60", label: "Stopped" },
+  completed: { dotClass: "bg-success", label: translateUi("Completed") },
+  failed: { dotClass: "bg-destructive", label: translateUi("Failed") },
+  cancelled: { dotClass: "bg-muted-foreground/60", label: translateUi("Stopped") },
+  interrupted: { dotClass: "bg-muted-foreground/60", label: translateUi("Stopped") },
 };
 
 function subagentStatusVisual(status: OrchestrationV2TurnItem["status"]) {
@@ -431,7 +432,10 @@ function SubagentTimelineLink(props: {
             {props.title}
           </span>
           {remote !== undefined ? (
-            <span className="shrink-0 text-xs text-muted-foreground">on {remote.label}</span>
+            <span className="shrink-0 text-xs text-muted-foreground">
+              {translateUi("on")}
+              {remote.label}
+            </span>
           ) : null}
         </span>
         <span

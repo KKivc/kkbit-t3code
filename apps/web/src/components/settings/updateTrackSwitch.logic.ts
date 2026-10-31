@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DesktopBridge, DesktopUpdateChannel, DesktopUpdateState } from "@t3tools/contracts";
 import { acceptsTrackSwitchRelease } from "@t3tools/shared/cliRelease";
 
@@ -28,7 +29,8 @@ export async function prepareLocalTrackSwitch(
   } catch (error) {
     return {
       ok: false,
-      message: error instanceof Error ? error.message : "The update track did not change.",
+      message:
+        error instanceof Error ? error.message : translateUi("The update track did not change."),
     };
   }
   if (!input.reinstall) return { ok: true, local: null };

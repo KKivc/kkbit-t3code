@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, ScopedThreadRef } from "@t3tools/contracts";
 import { useAtomValue } from "@effect/atom-react";
 import { useNavigate } from "@tanstack/react-router";
@@ -250,7 +251,7 @@ export function useOpenPrLink(threadRef?: ScopedThreadRef) {
         stackedThreadToast({
           type: "error",
           title: "Unable to open pull request link",
-          description: error instanceof Error ? error.message : "An error occurred.",
+          description: error instanceof Error ? error.message : translateUi("An error occurred."),
         }),
       );
     });

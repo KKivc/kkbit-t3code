@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { projectChangeRequestUrl } from "@t3tools/client-runtime/change-request-links";
 import { normalizeThreadPullRequestKey } from "@t3tools/client-runtime/thread-pull-requests";
 import { useAtomValue } from "@effect/atom-react";
@@ -197,9 +198,9 @@ const UPDATE_BRANCH_REBASE_FAILURE_HINT =
   "The host refused it. A rebase stops at the first commit that does not apply cleanly; updating with a merge commit may still work.";
 
 const TABS: ReadonlyArray<{ value: PullRequestDetailTab; label: string }> = [
-  { value: "summary", label: "Summary" },
-  { value: "guide", label: "Guide" },
-  { value: "timeline", label: "Timeline" },
+  { value: "summary", label: translateUi("Summary") },
+  { value: "guide", label: translateUi("Guide") },
+  { value: "timeline", label: translateUi("Timeline") },
   { value: "code", label: "Code" },
 ];
 
@@ -216,7 +217,7 @@ const composerTargetKey = (target: ScopedThreadRef | DraftId): string =>
 function reportCheckoutCommandError(error: Error) {
   toastManager.add({
     type: "error",
-    title: "Could not copy checkout command",
+    title: translateUi("Could not copy checkout command"),
     description: error.message,
   });
 }
@@ -475,11 +476,12 @@ export function PullRequestDetailPanel({
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   const { copyToClipboard: copyReference } = useCopyToClipboard<string>({
     target: `${terminology.singular} reference`,
-    onCopy: (label) => toastManager.add({ type: "success", title: `${label} copied` }),
+    onCopy: (label) =>
+      toastManager.add({ type: "success", title: translateUi("{0} copied", [label]) }),
     onError: (error, label) =>
       toastManager.add({
         type: "error",
-        title: `Failed to copy ${label}`,
+        title: translateUi("Failed to copy {0}", [label]),
         description: error.message,
       }),
   });
@@ -685,7 +687,7 @@ export function PullRequestDetailPanel({
       toastManager.add({ type: "success", title: `Revert ${terminology.singular} opened` });
     }
     if (action === "delete-branch") {
-      toastManager.add({ type: "success", title: "Branch deleted" });
+      toastManager.add({ type: "success", title: translateUi("Branch deleted") });
     }
     if (pullRequestActionNeedsHostRefresh(action)) {
       void refreshFromHost();
@@ -715,7 +717,7 @@ export function PullRequestDetailPanel({
     });
     if (commentResult._tag === "Failure") {
       setPendingAction(null);
-      toastManager.add({ type: "error", title: "Could not post the comment" });
+      toastManager.add({ type: "error", title: translateUi("Could not post the comment") });
       return { commentPosted: false };
     }
     const actionSucceeded = await finishAction(action);
@@ -807,7 +809,7 @@ export function PullRequestDetailPanel({
       writeTaskToComposer(attachTarget, task);
       toastManager.add({
         type: "success",
-        title: "Added to the composer",
+        title: translateUi("Added to the composer"),
         description:
           task.prompt.length > 0
             ? "The question is in the composer. Read it over, then send."
@@ -838,14 +840,14 @@ export function PullRequestDetailPanel({
     if (opened === null) {
       toastManager.add({
         type: "error",
-        title: "Could not open a thread",
-        description: "Try again from the project, or open a thread first.",
+        title: translateUi("Could not open a thread"),
+        description: translateUi("Try again from the project, or open a thread first."),
       });
       return;
     }
     toastManager.add({
       type: "success",
-      title: "Asked in a thread",
+      title: translateUi("Asked in a thread"),
       description:
         task.prompt.length > 0
           ? "The question is in the composer. Read it over, then send."
@@ -863,8 +865,8 @@ export function PullRequestDetailPanel({
       writeTaskToComposer(attachTarget, task);
       toastManager.add({
         type: "success",
-        title: "Added to the composer",
-        description: "The task is in the composer. Read it over, then send.",
+        title: translateUi("Added to the composer"),
+        description: translateUi("The task is in the composer. Read it over, then send."),
       });
       return;
     }
@@ -899,8 +901,8 @@ export function PullRequestDetailPanel({
       setHandoff(null);
       toastManager.update(toastId, {
         type: "error",
-        title: "Could not open a thread for the checkout",
-        description: "Try again from the project, or open a thread first.",
+        title: translateUi("Could not open a thread for the checkout"),
+        description: translateUi("Try again from the project, or open a thread first."),
       });
       return;
     }
@@ -933,8 +935,11 @@ export function PullRequestDetailPanel({
       // Sending after failed rebinding would use the previous checkout.
       toastManager.update(toastId, {
         type: "error",
-        title: "Checked out, but the thread stayed where it was",
-        description: `The checkout is ready on \`${prepared.value.branch}\`. Point a thread at it from the branch picker, then ask again.`,
+        title: translateUi("Checked out, but the thread stayed where it was"),
+        description: translateUi(
+          "The checkout is ready on `{0}`. Point a thread at it from the branch picker, then ask again.",
+          [prepared.value.branch],
+        ),
       });
       return;
     }
@@ -945,7 +950,8 @@ export function PullRequestDetailPanel({
         prepared.value.isOnPullRequestHead
           ? {
               type: "success",
-              title: mode === "local" ? "Checked out here" : "Checked out",
+              title:
+                mode === "local" ? translateUi("Checked out here") : translateUi("Checked out"),
               description:
                 mode === "local"
                   ? `This repository is on the ${terminology.singular}'s branch, with a thread open on it.`
@@ -961,8 +967,8 @@ export function PullRequestDetailPanel({
       prepared.value.isOnPullRequestHead
         ? {
             type: "success",
-            title: "Checkout ready",
-            description: "The task is in the composer. Read it over, then send.",
+            title: translateUi("Checkout ready"),
+            description: translateUi("The task is in the composer. Read it over, then send."),
           }
         : offHeadPullRequestCheckoutToast(terminology),
     );
@@ -1293,7 +1299,7 @@ export function PullRequestDetailPanel({
             <TooltipProvider delay={150} closeDelay={150} timeout={400}>
               {!nativeStack && supportsStackActions && nativeStackQuery.error ? (
                 <Button variant="ghost" size="xs" onClick={nativeStackQuery.refresh}>
-                  Retry stack lookup
+                  {translateUi("Retry stack lookup")}
                 </Button>
               ) : null}
               {nativeStack ? (
@@ -1450,7 +1456,7 @@ export function PullRequestDetailPanel({
                       iconClassName="size-3"
                     />
                     <ArrowLeftIcon
-                      aria-label="receives changes from"
+                      aria-label={translateUi("receives changes from")}
                       className="size-3 shrink-0 opacity-60"
                     />
                     <Tooltip>
@@ -1524,7 +1530,8 @@ export function PullRequestDetailPanel({
                 }
                 updated={
                   <span>
-                    updated <RelativeTime timestamp={detail.updatedAt} />
+                    {translateUi("updated")}
+                    <RelativeTime timestamp={detail.updatedAt} />
                   </span>
                 }
                 checkout={

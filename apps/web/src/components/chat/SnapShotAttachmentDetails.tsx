@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { SnapShotSource } from "@t3tools/contracts";
 import { ImageIcon, TextIcon } from "lucide-react";
 import { Suspense } from "react";
@@ -111,7 +112,7 @@ export function SnapShotContentsButton({
       </Tooltip>
       <PopoverPopup side={side} align="center" width="md">
         <div className="max-h-[min(28rem,70vh)] space-y-2 overflow-y-auto">
-          <PopoverTitle>Accessibility data</PopoverTitle>
+          <PopoverTitle>{translateUi("Accessibility data")}</PopoverTitle>
           {accessibilityDetails ? (
             <SnapShotAccessibilityData
               details={accessibilityDetails}
@@ -119,12 +120,15 @@ export function SnapShotContentsButton({
             />
           ) : includesAccessibility ? (
             <div className="rounded-md border border-border/70 bg-muted/45 p-2.5 text-muted-foreground text-xs leading-4">
-              Structured accessibility elements were included, but they have no readable names or
-              values.
+              {translateUi(
+                "Structured accessibility elements were included, but they have no readable names or values.",
+              )}
             </div>
           ) : (
             <div className="rounded-md border border-border/70 bg-muted/45 p-2.5 text-muted-foreground text-xs leading-4">
-              The app or capture backend did not provide verified accessibility data.
+              {translateUi(
+                "The app or capture backend did not provide verified accessibility data.",
+              )}
             </div>
           )}
         </div>

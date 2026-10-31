@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import { useState, type ReactNode } from "react";
 
@@ -53,16 +54,16 @@ function getEmptyStateMessage(query: string, error: string | null, isPending: bo
 function EmptyProjectFilePicker() {
   return (
     <CommandPaletteContent
-      aria-label="File picker"
+      aria-label={translateUi("File picker")}
       escapeLabel="Back"
       footerActionLabel="Open file"
-      inputProps={{ disabled: true, placeholder: "Search files…" }}
+      inputProps={{ disabled: true, placeholder: translateUi("Search files…") }}
       mode="none"
       testId="project-file-picker"
       value=""
     >
       <div className="py-10 text-center text-sm text-muted-foreground">
-        Open a project to search its files.
+        {translateUi("Open a project to search its files.")}
       </div>
     </CommandPaletteContent>
   );
@@ -110,11 +111,11 @@ function OpenProjectFilePicker(props: ProjectFilePickerProps & { target: ActiveP
 
   return (
     <CommandPaletteContent
-      aria-label="File picker"
+      aria-label={translateUi("File picker")}
       autoHighlight="always"
       escapeLabel="Back"
       footerActionLabel="Open file"
-      inputProps={{ placeholder: "Search files…" }}
+      inputProps={{ placeholder: translateUi("Search files…") }}
       mode="none"
       onItemHighlighted={(value) => {
         setHighlightedItemValue(typeof value === "string" ? value : null);

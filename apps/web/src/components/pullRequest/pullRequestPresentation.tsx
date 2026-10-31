@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { Spinner } from "~/components/ui/spinner";
 import type {
   PullRequestActor,
@@ -66,19 +67,19 @@ function reviewDecisionPresentation(decision: PullRequestReviewDecision) {
     case "approved":
       return {
         Icon: UserCheckIcon,
-        label: "Approved",
+        label: translateUi("Approved"),
         toneClassName: CHECK_STATUS_PRESENTATION.success.toneClassName,
       };
     case "changes-requested":
       return {
         Icon: UserRoundXIcon,
-        label: "Changes requested",
+        label: translateUi("Changes requested"),
         toneClassName: "text-amber-600/90 dark:text-amber-400/80",
       };
     case "review-required":
       return {
         Icon: UserRoundIcon,
-        label: "Awaiting review",
+        label: translateUi("Awaiting review"),
         toneClassName: "text-muted-foreground/60",
       };
   }
@@ -125,7 +126,9 @@ function resolvePullRequestConflict(input: {
     return null;
   }
   return {
-    label: input.baseBranch ? `Conflicts with ${input.baseBranch}` : "Has conflicts",
+    label: input.baseBranch
+      ? translateUi("Conflicts with {0}", [input.baseBranch])
+      : translateUi("Has conflicts"),
     toneClassName: "text-destructive",
     Icon: PullRequestGlyph.conflicting,
   };

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { BookmarkIcon } from "lucide-react";
 import { memo } from "react";
 
@@ -54,7 +55,7 @@ export const ComposerStashBadge = memo(function ComposerStashBadge(props: {
         <ComposerBanner.Icon>
           <BookmarkIcon />
         </ComposerBanner.Icon>
-        <ComposerBanner.Content>Stash</ComposerBanner.Content>
+        <ComposerBanner.Content>{translateUi("Stash")}</ComposerBanner.Content>
         <ComposerBanner.Actions>{count}</ComposerBanner.Actions>
       </ComposerBanner.Row>
     </ComposerBanner.Root>

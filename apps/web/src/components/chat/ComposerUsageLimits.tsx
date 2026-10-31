@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, UsageLimitsReport } from "@t3tools/contracts";
 import type { TimestampFormat } from "@t3tools/contracts/settings";
 import { limitsNotice } from "@t3tools/shared/usageLimits";
@@ -31,7 +32,7 @@ function AccountSummary({ account }: { readonly account: UsageLimitsReport["acco
         <RedactedSensitiveText
           key={label}
           value={label}
-          ariaLabel="Toggle account label visibility"
+          ariaLabel={translateUi("Toggle account label visibility")}
           revealTooltip="Click to reveal account"
           hideTooltip="Click to hide account"
           className="max-w-full truncate align-bottom font-sans text-xs leading-normal"
@@ -55,13 +56,13 @@ export function usageLimitsBannerItem(
   const summary = single ? (
     <AccountSummary account={single} />
   ) : (
-    `${report.accounts.length} accounts`
+    translateUi("{0} accounts", [report.accounts.length])
   );
   return {
     id,
     variant: "info",
     icon: <GaugeIcon />,
-    title: "Usage limits",
+    title: translateUi("Usage limits"),
     description: summary,
     dismissLabel: "Dismiss usage limits",
     onDismiss,
@@ -90,8 +91,11 @@ export function modelFallbackBannerItem({
     id: "fallback-model",
     variant: "info",
     icon: <GaugeIcon />,
-    title: `Using ${fallbackModelName}`,
-    description: `${defaultProviderName} is out of usage${resetsAt ? ` · resets ${formatUpcomingTimestamp(resetsAt, timestampFormat)}` : ""}`,
+    title: translateUi("Using {0}", [fallbackModelName]),
+    description: translateUi("{0} is out of usage{1}", [
+      defaultProviderName,
+      resetsAt ? ` · resets ${formatUpcomingTimestamp(resetsAt, timestampFormat)}` : "",
+    ]),
     actions: (
       <Button size="xs" variant="ghost" onClick={onUseDefault}>
         Use {defaultModelName}
@@ -144,7 +148,7 @@ function UsageLimitsBannerBody({
                   className="self-start"
                   onClick={() => void ensureLocalApi().shell.openExternal(externalUsage.url)}
                 >
-                  Manage usage
+                  {translateUi("Manage usage")}
                 </Button>
               ) : null}
               {resetCreditInput && account.limits.resetCredits ? (

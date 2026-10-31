@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useComposerTypingGuard } from "./useComposerTypingGuard";
 import { insertAttachmentReferencesForDraft } from "./composerAttachmentReferences";
 import { DESKTOP_PASTE_AS_TEXT_EVENT } from "../../lib/desktopPasteAsText";
@@ -2065,8 +2066,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       event?.preventDefault();
       toastManager.add({
         type: "info",
-        title: "Still compressing a pasted image.",
-        description: "Send again once its thumbnail appears.",
+        title: translateUi("Still compressing a pasted image."),
+        description: translateUi("Send again once its thumbnail appears."),
       });
       return;
     }
@@ -2074,8 +2075,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       event?.preventDefault();
       toastManager.add({
         type: "info",
-        title: "Still bringing attached context into this message.",
-        description: "Send again once its chip resolves.",
+        title: translateUi("Still bringing attached context into this message."),
+        description: translateUi("Send again once its chip resolves."),
       });
       return;
     }
@@ -2479,7 +2480,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
     if (target === "remote") {
       toastManager.add({
         type: "error",
-        title: "Folders can only be referenced in the local desktop environment",
+        title: translateUi("Folders can only be referenced in the local desktop environment"),
       });
       return;
     }
@@ -2488,8 +2489,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       if (path === null) {
         toastManager.add({
           type: "error",
-          title: `Couldn't get the path of "${folder.name}"`,
-          description: "Type the folder path with @ instead.",
+          title: translateUi('Couldn\'t get the path of "{0}"', [folder.name]),
+          description: translateUi("Type the folder path with @ instead."),
         });
         continue;
       }
@@ -2499,8 +2500,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       if (!inserted) {
         toastManager.add({
           type: "error",
-          title: "Unable to add folder",
-          description: "The composer is busy; try again once it is ready.",
+          title: translateUi("Unable to add folder"),
+          description: translateUi("The composer is busy; try again once it is ready."),
         });
         break;
       }
@@ -2573,8 +2574,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
     onInsertRejected: () => {
       toastManager.add({
         type: "error",
-        title: "Unable to add to chat",
-        description: "The composer is busy; try again once it is ready.",
+        title: translateUi("Unable to add to chat"),
+        description: translateUi("The composer is busy; try again once it is ready."),
       });
     },
   });
@@ -2586,7 +2587,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       pendingDraftWork.begin(targetKey);
       const loadingToast = toastManager.add({
         type: "loading",
-        title: "Loading thread context…",
+        title: translateUi("Loading thread context…"),
         timeout: 0,
         data: { threadRef: routeThreadRef, hideCopyButton: true },
       });
@@ -2621,12 +2622,14 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
         const error = squashAtomCommandFailure(importResult);
         toastManager.add({
           type: "error",
-          title: "Unable to read the dropped thread",
+          title: translateUi("Unable to read the dropped thread"),
           description:
             isEnvironmentRequestInvalidError(error) &&
             error.reason === "thread_transcript_too_large"
-              ? "This thread exceeds the attachment size limit. Try a shorter thread."
-              : "Check that its environment is connected and up to date, then try again.",
+              ? translateUi("This thread exceeds the attachment size limit. Try a shorter thread.")
+              : translateUi(
+                  "Check that its environment is connected and up to date, then try again.",
+                ),
         });
       }
       toastManager.close(loadingToast);
@@ -2670,8 +2673,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
       if (!inserted) {
         toastManager.add({
           type: "error",
-          title: "Unable to add thread",
-          description: "The composer is busy; try again once it is ready.",
+          title: translateUi("Unable to add thread"),
+          description: translateUi("The composer is busy; try again once it is ready."),
         });
         return;
       }
@@ -3211,7 +3214,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
                   )}
                   onPointerDown={(event) => event.preventDefault()}
                   onClick={expandMobileComposerStable}
-                  aria-label="Expand composer"
+                  aria-label={translateUi("Expand composer")}
                 >
                   {prompt.trim() ||
                     (showProviderUnavailable ? "Enable a provider in Settings" : "Ask anything...")}

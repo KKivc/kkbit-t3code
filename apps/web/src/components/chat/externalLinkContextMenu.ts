@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ContextMenuItem } from "@t3tools/contracts";
 
 type ExternalLinkContextMenuAction =
@@ -41,7 +42,9 @@ function externalLinkContextMenuItems(options: {
     {
       id: options.threadLinkAction,
       label:
-        options.threadLinkAction === "link-to-thread" ? "Link to thread" : "Unlink from thread",
+        options.threadLinkAction === "link-to-thread"
+          ? translateUi("Link to thread")
+          : translateUi("Unlink from thread"),
     },
     ...items,
   ];

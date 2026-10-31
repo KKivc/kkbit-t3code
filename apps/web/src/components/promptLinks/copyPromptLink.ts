@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentProject } from "@t3tools/client-runtime/state/shell";
 import { isAttachmentOnlyBootstrapPrompt } from "@t3tools/shared/composerContextReferences";
 import {
@@ -70,13 +71,13 @@ export function composerPromptLink(input: {
 export async function copyPromptLink(link: string): Promise<void> {
   try {
     if (!(await writeTextToClipboard(link))) return;
-    toastManager.add({ type: "success", title: "Prompt link copied" });
+    toastManager.add({ type: "success", title: translateUi("Prompt link copied") });
   } catch (error) {
     toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: "Could not copy the prompt link",
-        description: error instanceof Error ? error.message : "An error occurred.",
+        title: translateUi("Could not copy the prompt link"),
+        description: error instanceof Error ? error.message : translateUi("An error occurred."),
       }),
     );
   }

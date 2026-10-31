@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   SimlockDeviceHostConfig,
   type EnvironmentId,
@@ -34,13 +35,13 @@ export function updateSimlockDeviceHosts(
 export function simlockDeviceHostProblem(host: SimlockDeviceHostConfigType): string | null {
   const withToken = { ...host, agentToken: "token" };
   if (Option.isSome(parseSimlockDeviceHostDraft(withToken))) return null;
-  if (!host.label.trim()) return "Give the host a label.";
+  if (!host.label.trim()) return translateUi("Give the host a label.");
   // With in-range limits, a draft that still fails has a bad gateway URL.
   return Option.isNone(
     parseSimlockDeviceHostDraft({ ...withToken, maxLeases: 1, maxLeaseMinutes: 60 }),
   )
-    ? "Enter the gateway's origin, such as https://gateway.example.ts.net:4700."
-    : "Keep the limits within the ranges shown.";
+    ? translateUi("Enter the gateway's origin, such as https://gateway.example.ts.net:4700.")
+    : translateUi("Keep the limits within the ranges shown.");
 }
 
 export function simlockLeaseLimits(host: SimlockDeviceHostConfigType) {

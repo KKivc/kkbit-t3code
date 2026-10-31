@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   type OrchestrationV2LimitRecovery,
   type OrchestrationV2LimitRecoveryUpdate,
@@ -30,10 +31,10 @@ export function usageLimitRecoveryBannerItem(props: RecoveryProps): ComposerBann
     id: `usage-limit-recovery:${runId}`,
     variant: "warning",
     icon: <GaugeIcon />,
-    title: "Usage limit reached",
+    title: translateUi("Usage limit reached"),
     description: resetAt
-      ? `Resets ${formatUpcomingTimestamp(resetAt, timestampFormat)}`
-      : "Reset time unavailable; retry manually",
+      ? translateUi("Resets {0}", [formatUpcomingTimestamp(resetAt, timestampFormat)])
+      : translateUi("Reset time unavailable; retry manually"),
     actions: canSchedule ? <RecoveryActions key={`${runId}:${resetAt}`} {...props} /> : null,
   };
 }
@@ -59,8 +60,8 @@ function RecoveryActions({ runId, resetAt, recovery, snoozedUntil, onChange }: R
     if (action === "snooze" && !snoozed && Date.parse(resetAt) <= Date.now()) {
       toastManager.add({
         type: "error",
-        title: "Could not snooze thread",
-        description: "The reset time has passed. Retry the thread manually.",
+        title: translateUi("Could not snooze thread"),
+        description: translateUi("The reset time has passed. Retry the thread manually."),
       });
       // The deadline timer can lag after a throttled tab or sleep; disable now.
       deadlineStore(Date.parse(resetAt)).refresh();
@@ -76,8 +77,11 @@ function RecoveryActions({ runId, resetAt, recovery, snoozedUntil, onChange }: R
     } catch (cause) {
       toastManager.add({
         type: "error",
-        title: action === "resume" ? "Could not change auto-resume" : "Could not snooze thread",
-        description: cause instanceof Error ? cause.message : "An error occurred.",
+        title:
+          action === "resume"
+            ? translateUi("Could not change auto-resume")
+            : translateUi("Could not snooze thread"),
+        description: cause instanceof Error ? cause.message : translateUi("An error occurred."),
       });
     }
     setPending(false);

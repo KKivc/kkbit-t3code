@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   parseScopedThreadKey,
   scopeProjectRef,
@@ -189,8 +190,8 @@ export async function navigateAfterThreadDeletion(navigate: () => Promise<void>)
     toastManager.add(
       stackedThreadToast({
         type: "error",
-        title: "Thread deleted, but navigation failed",
-        description: error instanceof Error ? error.message : "An error occurred.",
+        title: translateUi("Thread deleted, but navigation failed"),
+        description: error instanceof Error ? error.message : translateUi("An error occurred."),
       }),
     );
   }
@@ -617,7 +618,7 @@ export function useThreadActions() {
     if (cleanupFailure) {
       const removalFailed = removeResult._tag === "Failure";
       const error = squashAtomCommandFailure(cleanupFailure);
-      const message = error instanceof Error ? error.message : "An error occurred.";
+      const message = error instanceof Error ? error.message : translateUi("An error occurred.");
       console.error("Worktree cleanup failed after thread deletion", {
         threadId: threadRef.threadId,
         projectCwd: threadProject.workspaceRoot,
@@ -628,10 +629,13 @@ export function useThreadActions() {
         stackedThreadToast({
           type: "error",
           title: removalFailed
-            ? "Failed to delete worktree"
-            : "Worktree deleted, but Git status refresh failed",
+            ? translateUi("Failed to delete worktree")
+            : translateUi("Worktree deleted, but Git status refresh failed"),
           description: removalFailed
-            ? `Could not remove ${displayWorktreePath ?? orphanedWorktreePath}. ${message}`
+            ? translateUi("Could not remove {0}. {1}", [
+                displayWorktreePath ?? orphanedWorktreePath,
+                message,
+              ])
             : message,
         }),
       );
@@ -780,7 +784,7 @@ export function useThreadActions() {
     const resolved = resolveThreadTarget(target);
     const confirmationResult = await requestThreadUnpinConfirmation({
       enabled: confirmThreadUnpin,
-      title: resolved?.thread.title ?? "this thread",
+      title: resolved?.thread.title ?? translateUi("this thread"),
       confirm: localApi ? (message) => localApi.dialogs.confirm(message) : null,
     });
     if (confirmationResult._tag === "Failure") {

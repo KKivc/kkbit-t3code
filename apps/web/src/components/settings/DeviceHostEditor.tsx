@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useState } from "react";
 import * as Option from "effect/Option";
 import type { SshDeviceHostConfig } from "@t3tools/contracts";
@@ -92,8 +93,8 @@ function DeviceHostEditorForm({
     : results
       ? failed
         ? `${failed} of ${targets.length} failed`
-        : "Connection checks passed"
-      : "Check access before saving";
+        : translateUi("Connection checks passed")
+      : translateUi("Check access before saving");
   return (
     <form
       className="flex min-h-0 flex-col"
@@ -103,17 +104,19 @@ function DeviceHostEditorForm({
       }}
     >
       <DialogHeader>
-        <DialogTitle>{isNew ? "Add device host" : "Edit device host"}</DialogTitle>
+        <DialogTitle>
+          {isNew ? translateUi("Add device host") : translateUi("Edit device host")}
+        </DialogTitle>
         <DialogDescription>
           {targets.length === 1
             ? `Connect from ${targets[0]?.label}.`
             : `Connect from ${targets.length} selected environments.`}{" "}
-          Hosts on the same machine are skipped.
+          {translateUi("Hosts on the same machine are skipped.")}
         </DialogDescription>
       </DialogHeader>
       <DialogPanel>
         <label className="block space-y-1.5 text-sm">
-          <span>Name</span>
+          <span>{translateUi("Name")}</span>
           <Input
             autoFocus
             required
@@ -127,7 +130,7 @@ function DeviceHostEditorForm({
           />
         </label>
         <label className="block space-y-1.5 text-sm">
-          <span>SSH target</span>
+          <span>{translateUi("SSH target")}</span>
           <Input
             required
             value={draft.target}
@@ -136,17 +139,19 @@ function DeviceHostEditorForm({
               const target = event.target.value;
               setDraft((current) => ({ ...current, target }));
             }}
-            placeholder="user@host or SSH alias"
+            placeholder={translateUi("user@host or SSH alias")}
           />
         </label>
         <details
           open={host.port !== undefined || host.identityFile !== undefined || undefined}
           className="text-sm"
         >
-          <summary className="cursor-pointer text-muted-foreground">SSH options</summary>
+          <summary className="cursor-pointer text-muted-foreground">
+            {translateUi("SSH options")}
+          </summary>
           <div className="mt-3 grid grid-cols-[minmax(0,1fr)_7rem] gap-3">
             <label className="block space-y-1.5">
-              <span>Identity file</span>
+              <span>{translateUi("Identity file")}</span>
               <Input
                 value={draft.identityFile ?? ""}
                 disabled={busy}
@@ -157,11 +162,11 @@ function DeviceHostEditorForm({
                     return identityFile ? { ...rest, identityFile } : rest;
                   });
                 }}
-                placeholder="SSH config default"
+                placeholder={translateUi("SSH config default")}
               />
             </label>
             <label className="block space-y-1.5">
-              <span>Port</span>
+              <span>{translateUi("Port")}</span>
               <Input
                 type="number"
                 min={1}
@@ -175,12 +180,12 @@ function DeviceHostEditorForm({
                     return port ? { ...rest, port: Number(port) } : rest;
                   });
                 }}
-                placeholder="Default"
+                placeholder={translateUi("Default")}
               />
             </label>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            Optional. Resolved separately on each environment.
+            {translateUi("Optional. Resolved separately on each environment.")}
           </p>
         </details>
         <Collapsible
@@ -220,7 +225,8 @@ function DeviceHostEditorForm({
                 if (Option.isSome(input)) void testConnection(input.value);
               }}
             >
-              {checking ? <Spinner size="xs" /> : null} Test connection
+              {checking ? <Spinner size="xs" /> : null}
+              {translateUi("Test connection")}
             </Button>
           </div>
           {results ? (
@@ -239,7 +245,8 @@ function DeviceHostEditorForm({
                       >
                         {result.status === "pending" ? (
                           <>
-                            <Spinner size="xs" /> Checking…
+                            <Spinner size="xs" />
+                            {translateUi("Checking…")}
                           </>
                         ) : result.status === "local" ? (
                           <>
@@ -247,11 +254,13 @@ function DeviceHostEditorForm({
                           </>
                         ) : result.status === "failed" ? (
                           <>
-                            <XIcon className="size-3" /> Failed
+                            <XIcon className="size-3" />
+                            {translateUi("Failed")}
                           </>
                         ) : (
                           <>
-                            <CheckIcon className="size-3" /> Connected
+                            <CheckIcon className="size-3" />
+                            {translateUi("Connected")}
                           </>
                         )}
                       </span>
@@ -263,7 +272,7 @@ function DeviceHostEditorForm({
                     ) : null}
                     {result.status === "failed" ? (
                       <details className="mt-1.5 text-muted-foreground">
-                        <summary className="cursor-pointer">Show error</summary>
+                        <summary className="cursor-pointer">{translateUi("Show error")}</summary>
                         <p className="mt-1 max-h-32 overflow-auto whitespace-pre-wrap break-words">
                           {result.error}
                         </p>
@@ -278,10 +287,11 @@ function DeviceHostEditorForm({
       </DialogPanel>
       <DialogFooter>
         <Button type="button" variant="ghost" disabled={busy} onClick={onClose}>
-          Cancel
+          {translateUi("Cancel")}
         </Button>
         <Button type="submit" disabled={busy || checking || !valid || !draft.label.trim()}>
-          {busy ? <Spinner size="xs" /> : null} Save host
+          {busy ? <Spinner size="xs" /> : null}
+          {translateUi("Save host")}
         </Button>
       </DialogFooter>
     </form>

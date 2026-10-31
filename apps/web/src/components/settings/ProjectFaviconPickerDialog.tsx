@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import type { EnvironmentId } from "@t3tools/contracts";
 import { isWindowsAbsolutePath } from "@t3tools/shared/path";
@@ -22,7 +23,9 @@ import { ProjectFaviconThumbnail } from "./ProjectFaviconThumbnail";
 function emptyMessage(query: string, error: string | null, isPending: boolean): string {
   if (error) return error;
   if (isPending) return query.trim() ? "Searching project files…" : "Indexing project files…";
-  return query.trim() ? "No matching image files." : "No image files found.";
+  return query.trim()
+    ? translateUi("No matching image files.")
+    : translateUi("No image files found.");
 }
 export function canPickExternalProjectFavicon(cwd: string, platform: string): boolean {
   return !isWindowsPlatform(platform) || isWindowsAbsolutePath(cwd);
@@ -77,15 +80,15 @@ export function ProjectFaviconPickerDialog(props: {
     <CommandDialog open={props.open} onOpenChange={props.onOpenChange}>
       {props.open ? (
         <CommandDialogPopup
-          aria-label="Choose project icon"
+          aria-label={translateUi("Choose project icon")}
           className="overflow-hidden"
           onBackdropPointerDown={() => props.onOpenChange(false)}
         >
           <CommandPaletteContent
-            aria-label="Choose project icon"
+            aria-label={translateUi("Choose project icon")}
             autoHighlight="always"
-            escapeLabel="Close"
-            footerActionLabel="Select icon"
+            escapeLabel={translateUi("Close")}
+            footerActionLabel={translateUi("Select icon")}
             footerTrailing={
               pickExternal ? (
                 <CommandFooterAction
@@ -101,9 +104,11 @@ export function ProjectFaviconPickerDialog(props: {
                       .catch((error: unknown) => {
                         toastManager.add({
                           type: "error",
-                          title: "Could not open image picker",
+                          title: translateUi("Could not open image picker"),
                           description:
-                            error instanceof Error ? error.message : "An error occurred.",
+                            error instanceof Error
+                              ? error.message
+                              : translateUi("An error occurred."),
                         });
                       })
                       .finally(() => setIsPickingExternal(false));
@@ -113,7 +118,7 @@ export function ProjectFaviconPickerDialog(props: {
                 </CommandFooterAction>
               ) : null
             }
-            inputProps={{ placeholder: "Search image files…" }}
+            inputProps={{ placeholder: translateUi("Search image files…") }}
             mode="none"
             onItemHighlighted={(value) => {
               setHighlightedItemValue(typeof value === "string" ? value : null);

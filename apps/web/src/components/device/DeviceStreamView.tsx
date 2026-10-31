@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DevicePlatform, EnvironmentId } from "@t3tools/contracts";
 import { useAtomValue } from "@effect/atom-react";
 import { AsyncResult, Atom } from "effect/reactivity";
@@ -454,14 +455,16 @@ export function DeviceStreamView(props: {
               aria-pressed={!showPhone}
               onClick={() => setPresentation("flat")}
             >
-              Flat
+              {translateUi("Flat")}
             </Button>
           </div>
         ) : null}
         {status === "streaming" && !inputState.connected ? (
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-2">
             <span className="rounded-md bg-background/85 px-2 py-1 text-xs text-muted-foreground">
-              Input disconnected{inputState.detail ? ` (${inputState.detail})` : ""}, reconnecting…
+              {translateUi("Input disconnected")}
+              {inputState.detail ? ` (${inputState.detail})` : ""}
+              {translateUi(", reconnecting…")}
             </span>
           </div>
         ) : null}
@@ -469,7 +472,7 @@ export function DeviceStreamView(props: {
           // Shown only once the device has been silent for two seconds.
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center p-2 transition-opacity delay-2000 duration-0 starting:opacity-0">
             <span className="rounded-md bg-background/85 px-2 py-1 text-xs text-muted-foreground">
-              Waiting for device video…
+              {translateUi("Waiting for device video…")}
             </span>
           </div>
         ) : null}
@@ -492,7 +495,7 @@ export function DeviceStreamView(props: {
                     session?.reconnect();
                   }}
                 >
-                  Reconnect
+                  {translateUi("Reconnect")}
                 </Button>
               ) : null}
             </DeviceLoadingView>

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useRef, useSyncExternalStore, use } from "react";
 import { useSyncExternalStoreWithSelector } from "use-sync-external-store/with-selector";
 import { RegistryContext, useAtomValue } from "@effect/atom-react";
@@ -445,8 +446,8 @@ export function useUpdateEnvironmentModelPreferences(environmentId: EnvironmentI
     } catch {
       toastManager.add({
         type: "error",
-        title: "Model preferences not saved",
-        description: "Could not load saved model preferences. Try again.",
+        title: translateUi("Model preferences not saved"),
+        description: translateUi("Could not load saved model preferences. Try again."),
       });
       return;
     }
@@ -472,8 +473,8 @@ export function useToggleEnvironmentModelFavorite(environmentId: EnvironmentId |
       } catch {
         toastManager.add({
           type: "error",
-          title: "Favorites not saved",
-          description: "Could not load saved model preferences. Try again.",
+          title: translateUi("Favorites not saved"),
+          description: translateUi("Could not load saved model preferences. Try again."),
         });
         return;
       }
@@ -553,8 +554,9 @@ export function usePrimarySettings<T = UnifiedSettings>(
   return useMergedSettings(settings, selector);
 }
 
-export const PRIMARY_SETTINGS_UNAVAILABLE_MESSAGE =
-  "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.";
+export const PRIMARY_SETTINGS_UNAVAILABLE_MESSAGE = translateUi(
+  "This setting is saved on a server, and the hosted app is not anchored to one. Change it from the desktop app or from the server's own address.",
+);
 
 /** Hosted clients have no primary: usePrimarySettings reads defaults and cannot write. */
 export function usePrimarySettingsAvailable(): boolean {
@@ -597,8 +599,13 @@ function useUpdateSettingsTarget(environmentId: EnvironmentId | null) {
       const error = squashAtomCommandFailure(result);
       toastManager.add({
         type: "error",
-        title: "Setting not saved",
-        description: `Could not save on ${label}: ${error instanceof Error ? error.message : "The save failed. Try reconnecting and saving again."}`,
+        title: translateUi("Setting not saved"),
+        description: translateUi("Could not save on {0}: {1}", [
+          label,
+          error instanceof Error
+            ? error.message
+            : "The save failed. Try reconnecting and saving again.",
+        ]),
       });
     }
     return result;
@@ -615,8 +622,11 @@ function useUpdateSettingsTarget(environmentId: EnvironmentId | null) {
     if (Object.keys(serverPatch).length > 0 && !canWriteServerPatch) {
       toastManager.add({
         type: "warning",
-        title: "Setting not saved",
-        description: `This connection lacks permission to change settings on ${environments.find((target) => target.environmentId === environmentId)?.label ?? "the selected environment"}.`,
+        title: translateUi("Setting not saved"),
+        description: translateUi("This connection lacks permission to change settings on {0}.", [
+          environments.find((target) => target.environmentId === environmentId)?.label ??
+            "the selected environment",
+        ]),
       });
     }
     if (Object.keys(serverPatch).length > 0 && canWriteServerPatch) {
@@ -625,7 +635,7 @@ function useUpdateSettingsTarget(environmentId: EnvironmentId | null) {
       const warnUnsaved = (description = PRIMARY_SETTINGS_UNAVAILABLE_MESSAGE) =>
         toastManager.add({
           type: "warning",
-          title: "Setting not saved",
+          title: translateUi("Setting not saved"),
           description,
         });
       if (Object.keys(localPatch).length > 0) {
@@ -701,7 +711,10 @@ function useUpdateSettingsTarget(environmentId: EnvironmentId | null) {
               .map(({ label }) => label);
             toastManager.add({
               type: "error",
-              title: saved.length > 0 ? "Setting saved on some environments" : "Setting not saved",
+              title:
+                saved.length > 0
+                  ? translateUi("Setting saved on some environments")
+                  : translateUi("Setting not saved"),
               description: [
                 ...failures,
                 ...(saved.length > 0 ? [`Saved on ${saved.join(", ")}.`] : []),

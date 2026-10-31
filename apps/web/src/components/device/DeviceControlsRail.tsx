@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DeviceHostSummary, DevicePlatform } from "@t3tools/contracts";
 import {
   Camera,
@@ -63,7 +64,7 @@ export function DeviceControlsRail(props: {
       <div className="pointer-events-auto flex shrink-0 flex-col items-center gap-1 overflow-y-auto rounded-full border border-border/50 bg-background/80 p-2 shadow-sm [scrollbar-width:none]">
         <RailButton
           tooltipSide={popupSide}
-          label="Home"
+          label={translateUi("Home")}
           disabled={inputDisabled}
           onClick={() => handle?.pressButton("home")}
         >
@@ -73,7 +74,7 @@ export function DeviceControlsRail(props: {
           <>
             <RailButton
               tooltipSide={popupSide}
-              label="Back"
+              label={translateUi("Back")}
               disabled={inputDisabled}
               onClick={() => handle?.pressButton("back")}
             >
@@ -94,7 +95,7 @@ export function DeviceControlsRail(props: {
                     <Button
                       size="icon-sm"
                       variant="ghost"
-                      aria-label="Rotate device"
+                      aria-label={translateUi("Rotate device")}
                       disabled={controls.disabled}
                     />
                   }
@@ -105,7 +106,7 @@ export function DeviceControlsRail(props: {
                   <MenuItem
                     onClick={() => void controls.act({ type: "setOrientation", value: "portrait" })}
                   >
-                    Portrait
+                    {translateUi("Portrait")}
                   </MenuItem>
                   <MenuItem
                     onClick={() =>
@@ -121,7 +122,7 @@ export function DeviceControlsRail(props: {
         ) : props.hostKind === "simlock" ? null : (
           <RailButton
             tooltipSide={popupSide}
-            label="Rotate device"
+            label={translateUi("Rotate device")}
             disabled={inputDisabled || !!view.keyboard?.attached}
             onClick={() => handle?.rotate()}
           >
@@ -145,8 +146,8 @@ export function DeviceControlsRail(props: {
                   <Button
                     size="icon-sm"
                     variant="ghost"
-                    aria-label="Device text size"
-                    title="Device text size"
+                    aria-label={translateUi("Device text size")}
+                    title={translateUi("Device text size")}
                     disabled={controls.disabled || !settings?.textSize}
                   />
                 }
@@ -186,7 +187,7 @@ export function DeviceControlsRail(props: {
             </Menu>
             <RailButton
               tooltipSide={popupSide}
-              label="Device tools"
+              label={translateUi("Device tools")}
               pressed={props.toolsOpen}
               onClick={props.onTools}
             >
@@ -210,8 +211,8 @@ export function DeviceControlsRail(props: {
               <Button
                 size="icon-sm"
                 variant="ghost"
-                aria-label="More device actions"
-                title="More device actions"
+                aria-label={translateUi("More device actions")}
+                title={translateUi("More device actions")}
               />
             }
           >

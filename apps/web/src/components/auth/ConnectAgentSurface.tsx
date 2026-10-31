@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   type AuthMcpApprovalDecision,
   type AuthMcpApprovalDetails,
@@ -29,8 +30,10 @@ export const accessConfig: Record<
   { readonly label: string; readonly description: string; readonly icon: LucideIcon }
 > = {
   "read-only": {
-    label: "Read only",
-    description: "Read projects and threads. Cannot start, message or change anything.",
+    label: translateUi("Read only"),
+    description: translateUi(
+      "Read projects and threads. Cannot start, message or change anything.",
+    ),
     icon: EyeIcon,
   },
   ...runtimeModeConfig,
@@ -143,8 +146,10 @@ export function ConnectAgentSurface() {
     return (
       <StandalonePage>
         <ConnectAgentHeading
-          title="Checking the sign-in request"
-          description="One moment while this environment verifies the agent's request."
+          title={translateUi("Checking the sign-in request")}
+          description={translateUi(
+            "One moment while this environment verifies the agent's request.",
+          )}
         />
         <Spinner className="mt-6" size="lg" tone="muted" />
       </StandalonePage>
@@ -154,9 +159,12 @@ export function ConnectAgentSurface() {
   if (loaded.status === "invalid") {
     return (
       <StandalonePage>
-        <ConnectAgentHeading title="This sign-in cannot continue" description={loaded.message} />
+        <ConnectAgentHeading
+          title={translateUi("This sign-in cannot continue")}
+          description={loaded.message}
+        />
         <p className="mt-4 text-sm text-muted-foreground">
-          Close this page and start the sign-in again from your agent.
+          {translateUi("Close this page and start the sign-in again from your agent.")}
         </p>
       </StandalonePage>
     );
@@ -201,7 +209,7 @@ export function ConnectAgentSurface() {
       >
         <div className="space-y-2">
           <span id="connect-agent-access-label" className="text-sm font-medium">
-            What it may do
+            {translateUi("What it may do")}
           </span>
           <RadioGroup
             aria-labelledby="connect-agent-access-label"
@@ -213,15 +221,16 @@ export function ConnectAgentSurface() {
             ))}
           </RadioGroup>
           <p className="text-xs text-muted-foreground">
-            Beyond read only, it can start, message and stop threads, and none of them can run with
-            more than the mode you pick.
+            {translateUi(
+              "Beyond read only, it can start, message and stop threads, and none of them can run with more than the mode you pick.",
+            )}
           </p>
         </div>
 
         {oneClick ? null : (
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="connect-agent-pairing-code">
-              Pairing code
+              {translateUi("Pairing code")}
             </label>
             <Input
               id="connect-agent-pairing-code"
@@ -231,7 +240,7 @@ export function ConnectAgentSurface() {
               disabled={pending !== null}
               nativeInput
               onChange={(event) => setPairingCode(event.currentTarget.value)}
-              placeholder="Paste a one-time pairing code"
+              placeholder={translateUi("Paste a one-time pairing code")}
               spellCheck={false}
               value={pairingCode}
             />

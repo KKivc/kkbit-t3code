@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useState } from "react";
 import {
   DEFAULT_SNOOZE_PRESETS,
@@ -50,16 +51,16 @@ const SINGULAR_UNIT_LABELS: Record<DurationUnit, string> = {
 };
 
 const WHEN_LABELS: Record<"after" | SnoozePresetDay, string> = {
-  after: "In",
-  today: "Today",
-  tomorrow: "Tomorrow",
-  monday: "Monday",
-  tuesday: "Tuesday",
-  wednesday: "Wednesday",
-  thursday: "Thursday",
-  friday: "Friday",
-  saturday: "Saturday",
-  sunday: "Sunday",
+  after: translateUi("In"),
+  today: translateUi("Today"),
+  tomorrow: translateUi("Tomorrow"),
+  monday: translateUi("Monday"),
+  tuesday: translateUi("Tuesday"),
+  wednesday: translateUi("Wednesday"),
+  thursday: translateUi("Thursday"),
+  friday: translateUi("Friday"),
+  saturday: translateUi("Saturday"),
+  sunday: translateUi("Sunday"),
 };
 const WHEN_VALUES = ["after", ...SnoozePresetDay.literals] as const;
 
@@ -186,11 +187,13 @@ export function SnoozePresetsRow() {
       serverScoped
       settingKeys={["snoozePresets"]}
       {...searchableSetting("snooze-options")}
-      description="Choices in every snooze menu, listed soonest first. Weekdays mean the next one after today."
+      description={translateUi(
+        "Choices in every snooze menu, listed soonest first. Weekdays mean the next one after today.",
+      )}
       resetAction={
         !mixed && sameSnoozePresets(presets, DEFAULT_SNOOZE_PRESETS) ? null : (
           <SettingResetButton
-            label="snooze options"
+            label={translateUi("snooze options")}
             onClick={() => {
               const sorted = sortSnoozeRows(
                 DEFAULT_SNOOZE_PRESETS,
@@ -317,7 +320,7 @@ function SnoozePresetList(props: {
           onClick={props.onAdd}
         >
           <PlusIcon />
-          Add option
+          {translateUi("Add option")}
         </Button>
         {props.presets.length >= MAX_SNOOZE_PRESETS ? (
           <span className="ps-2 text-xs text-muted-foreground">
@@ -356,7 +359,7 @@ function SnoozePresetFields(props: {
           onChange(next);
         }}
       >
-        <SelectTrigger size="sm" className="w-32" aria-label="When">
+        <SelectTrigger size="sm" className="w-32" aria-label={translateUi("When")}>
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>
@@ -374,13 +377,13 @@ function SnoozePresetFields(props: {
         />
       ) : (
         <>
-          <span className="text-xs text-muted-foreground">at</span>
+          <span className="text-xs text-muted-foreground">{translateUi("at")}</span>
           <Input
             nativeInput
             size="sm"
             type="time"
             className="w-32"
-            aria-label="Time"
+            aria-label={translateUi("Time")}
             value={preset.time}
             onChange={(event) => {
               if (/^\d{2}:\d{2}$/.test(event.target.value)) {
@@ -430,9 +433,9 @@ function DurationFields(props: { minutes: number; onChange: (minutes: number) =>
         }}
       >
         <NumberFieldGroup>
-          <NumberFieldDecrement aria-label="Decrease" />
+          <NumberFieldDecrement aria-label={translateUi("Decrease")} />
           <NumberFieldInput
-            aria-label="Amount"
+            aria-label={translateUi("Amount")}
             // Base UI commits on blur but not on Enter; refocus so keyboard users stay put.
             onKeyDown={(event) => {
               if (event.key !== "Enter") return;
@@ -441,7 +444,7 @@ function DurationFields(props: { minutes: number; onChange: (minutes: number) =>
               input.focus();
             }}
           />
-          <NumberFieldIncrement aria-label="Increase" />
+          <NumberFieldIncrement aria-label={translateUi("Increase")} />
         </NumberFieldGroup>
       </NumberField>
       <Select
@@ -454,7 +457,7 @@ function DurationFields(props: { minutes: number; onChange: (minutes: number) =>
           }
         }}
       >
-        <SelectTrigger size="sm" className="w-28" aria-label="Unit">
+        <SelectTrigger size="sm" className="w-28" aria-label={translateUi("Unit")}>
           <SelectValue />
         </SelectTrigger>
         <SelectPopup>

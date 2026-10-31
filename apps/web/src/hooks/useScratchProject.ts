@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { RegistryContext } from "@effect/atom-react";
 import { scopeProjectRef } from "@t3tools/client-runtime/environment";
 import { availableScratchWorkspaceRoot } from "@t3tools/client-runtime/operations/projects";
@@ -25,7 +26,7 @@ function reportScratchFailure(title: string, error: unknown) {
     stackedThreadToast({
       type: "error",
       title,
-      description: error instanceof Error ? error.message : "An error occurred.",
+      description: error instanceof Error ? error.message : translateUi("An error occurred."),
     }),
   );
 }

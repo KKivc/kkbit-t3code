@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ThreadStructure, ThreadStructureRuntime } from "@t3tools/client-runtime/state/shell";
 import { resolveThreadWorkingStartedAt } from "@t3tools/client-runtime/state/models";
 import {
@@ -368,7 +369,7 @@ export function providerErrorPresentation(
     return {
       label:
         item.failure.class === "usage_limit"
-          ? "Usage limit reached"
+          ? translateUi("Usage limit reached")
           : item.title?.trim() || "Provider error",
       detail: item.failure.message,
     };
@@ -383,7 +384,7 @@ export function providerErrorPresentation(
       : item.status === "completed"
         ? `Provider recovered (${progress} retries)`
         : item.status === "failed"
-          ? `${item.failure.class === "usage_limit" ? "Usage limit reached" : "Provider error"} after ${progress} retries`
+          ? `${item.failure.class === "usage_limit" ? translateUi("Usage limit reached") : "Provider error"} after ${progress} retries`
           : `Provider retry stopped (${progress})`;
   const retryDelay =
     item.status === "running" && item.retry.retryDelayMs !== null && item.retry.retryDelayMs > 0
@@ -428,7 +429,7 @@ function projectedWorkEntry(row: OrchestrationV2ProjectedTurnItem): WorkLogEntry
     case "reasoning":
       return {
         ...common,
-        label: title ?? "Thinking",
+        label: title ?? translateUi("Thinking"),
         ...(item.text ? { detail: item.text } : {}),
       };
     case "command_execution":

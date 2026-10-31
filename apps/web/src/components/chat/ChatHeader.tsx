@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthOrchestrationOperateScope,
   type EnvironmentId,
@@ -177,7 +178,7 @@ export const ChatHeader = memo(function ChatHeader({
     if (!readEnvironmentScope(activeThreadEnvironmentId, AuthOrchestrationOperateScope)) return;
     const resolution = resolveRenameCommit({ title, originalTitle: activeThreadTitle });
     if (resolution.action === "reject-empty") {
-      toastManager.add({ type: "warning", title: "Thread title cannot be empty" });
+      toastManager.add({ type: "warning", title: translateUi("Thread title cannot be empty") });
       return;
     }
     if (resolution.action === "noop") return;
@@ -189,8 +190,8 @@ export const ChatHeader = memo(function ChatHeader({
         const error = squashAtomCommandFailure(result);
         toastManager.add({
           type: "error",
-          title: "Failed to rename thread",
-          description: error instanceof Error ? error.message : "An error occurred.",
+          title: translateUi("Failed to rename thread"),
+          description: error instanceof Error ? error.message : translateUi("An error occurred."),
         });
       }
     });
@@ -255,10 +256,13 @@ export const ChatHeader = memo(function ChatHeader({
       const api = readLocalApi();
       if (!api) return;
       void api.contextMenu
-        .show([{ id: "project-settings", label: "Project settings", icon: "settings" }], {
-          x: event.clientX,
-          y: event.clientY,
-        })
+        .show(
+          [{ id: "project-settings", label: translateUi("Project settings"), icon: "settings" }],
+          {
+            x: event.clientX,
+            y: event.clientY,
+          },
+        )
         .then((action) => {
           if (action === "project-settings") onOpenProjectSettings?.();
         });
@@ -286,7 +290,7 @@ export const ChatHeader = memo(function ChatHeader({
       onContextMenu={handleHeaderContextMenu}
     >
       <WorkspaceBreadcrumb
-        ariaLabel="Thread breadcrumb"
+        ariaLabel={translateUi("Thread breadcrumb")}
         className="flex-1 overflow-clip [overflow-clip-margin:2px]"
       >
         {activeProject ? (
@@ -308,7 +312,10 @@ export const ChatHeader = memo(function ChatHeader({
                     {activeProjectName}
                   </WorkspaceBreadcrumbText>
                 </TooltipTrigger>
-                <TooltipPopup side="top">New thread in {activeProjectName}</TooltipPopup>
+                <TooltipPopup side="top">
+                  {translateUi("New thread in")}
+                  {activeProjectName}
+                </TooltipPopup>
               </Tooltip>
             </WorkspaceBreadcrumbItem>
             <WorkspaceBreadcrumbSeparator>
@@ -355,7 +362,7 @@ export const ChatHeader = memo(function ChatHeader({
             <input
               autoFocus
               dir="auto"
-              aria-label="Thread title"
+              aria-label={translateUi("Thread title")}
               className="min-w-0 flex-1 rounded-sm bg-transparent text-sm font-medium text-foreground outline-none ring-1 ring-inset ring-ring/50 focus:ring-ring"
               defaultValue={renamingTitle}
               onBlur={(event) => {
@@ -418,7 +425,8 @@ export const ChatHeader = memo(function ChatHeader({
           {renamingTitle === null && activeThreadLinkOrigin ? (
             <Tooltip>
               <TooltipTrigger render={<Badge variant="info" size="sm" />}>
-                From {activeThreadLinkOrigin}
+                {translateUi("From")}
+                {activeThreadLinkOrigin}
               </TooltipTrigger>
               <TooltipPopup side="top">
                 Started by an agent on {activeThreadLinkOrigin} through a linked environment.

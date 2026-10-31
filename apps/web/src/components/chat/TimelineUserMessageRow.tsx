@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { InlineAudioPreview } from "../files/InlineAudioPreview";
 import { filePreviewKind } from "@t3tools/shared/filePreview";
 import { findRevealRef } from "./markdownFindContext";
@@ -164,7 +165,10 @@ function UserFileCard({
             >
               <DownloadIcon />
             </TooltipTrigger>
-            <TooltipPopup side="top">Download {label}</TooltipPopup>
+            <TooltipPopup side="top">
+              {translateUi("Download")}
+              {label}
+            </TooltipPopup>
           </Tooltip>
         </>
       )}
@@ -288,10 +292,10 @@ function AutomationMessageRow({ row }: { row: Extract<TimelineRow, { kind: "mess
           expanded && "w-full",
         )}
       >
-        <MessageAuthorHeading>Automation</MessageAuthorHeading>
+        <MessageAuthorHeading>{translateUi("Automation")}</MessageAuthorHeading>
         <FoldedMessageHeader
           icon={CalendarClockIcon}
-          label="Automation"
+          label={translateUi("Automation")}
           summary={summary}
           expanded={expanded}
           onToggle={() => setExpanded((value) => !value)}
@@ -318,7 +322,7 @@ function AutomationMessageRow({ row }: { row: Extract<TimelineRow, { kind: "mess
                 search={{ environmentId: ctx.activeThreadEnvironmentId, taskId: scheduledTaskId }}
                 className="rounded-sm text-xs text-muted-foreground hover:underline focus-visible:outline-2 focus-visible:outline-ring"
               >
-                Open automation
+                {translateUi("Open automation")}
               </Link>
             ) : null}
             <TimelineRowTimestamp
@@ -334,7 +338,7 @@ function AutomationMessageRow({ row }: { row: Extract<TimelineRow, { kind: "mess
               {promptLink !== null && (
                 <MessageCopyButton
                   text={promptLink}
-                  label="Copy prompt link"
+                  label={translateUi("Copy prompt link")}
                   icon={LinkIconNode}
                   variant="ghost"
                 />
@@ -767,7 +771,7 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
     >
       {folded && senderThreadId ? (
         <InlineButton onClick={() => ctx.onOpenThread(senderThreadId)} tone="muted">
-          Open thread
+          {translateUi("Open thread")}
         </InlineButton>
       ) : null}
       <Tooltip>
@@ -798,7 +802,7 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
         {promptLink !== null && (
           <MessageCopyButton
             text={promptLink}
-            label="Copy prompt link"
+            label={translateUi("Copy prompt link")}
             icon={LinkIconNode}
             variant="ghost"
           />
@@ -816,7 +820,7 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
           className="me-1 text-2xs text-muted-foreground/70"
           data-user-message-attribution="t3code"
         >
-          Sent by T3 Code
+          {translateUi("Sent by T3 Code")}
         </p>
       ) : null}
       {/* The row's heading already names the guest for screen readers. */}
@@ -961,7 +965,10 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
                           >
                             <DownloadIcon />
                           </TooltipTrigger>
-                          <TooltipPopup side="top">Download {label}</TooltipPopup>
+                          <TooltipPopup side="top">
+                            {translateUi("Download")}
+                            {label}
+                          </TooltipPopup>
                         </Tooltip>
                       </div>
                     );
@@ -1044,7 +1051,7 @@ function UserMessageIntentMarker({
         }
       >
         <Redo2Icon aria-hidden="true" className="size-3" />
-        Steer
+        {translateUi("Steer")}
       </TooltipTrigger>
       <TooltipPopup side="top">
         {intent === "promoted_queued_to_steer"
@@ -1075,13 +1082,13 @@ function RevertUserMessageButton({
             variant="ghost"
             disabled={activity.isRevertingCheckpoint || activity.isWorking}
             onClick={() => ctx.onRevertToTurnCount(turnCount, messageId)}
-            aria-label="Edit from here"
+            aria-label={translateUi("Edit from here")}
           />
         }
       >
         <PencilIcon className="size-3" />
       </TooltipTrigger>
-      <TooltipPopup side="top">Edit from here</TooltipPopup>
+      <TooltipPopup side="top">{translateUi("Edit from here")}</TooltipPopup>
     </Tooltip>
   );
 }

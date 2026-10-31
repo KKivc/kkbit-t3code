@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { settlePromise } from "@t3tools/client-runtime/state/runtime";
 import { AsyncResult } from "effect/reactivity";
 import { PlayIcon, RotateCwIcon, TriangleAlertIcon } from "lucide-react";
@@ -138,7 +139,8 @@ export function MediaVideoPlayer({
         >
           <span className="inline-flex items-center gap-1.5">
             <TriangleAlertIcon aria-hidden className="size-3.5 shrink-0" />
-            Video unavailable{label ? ` · ${label}` : ""}
+            {translateUi("Video unavailable")}
+            {label ? ` · ${label}` : ""}
           </span>
           <span className="flex flex-wrap items-center justify-center gap-2">
             {latestSrc !== null || onRetry ? (

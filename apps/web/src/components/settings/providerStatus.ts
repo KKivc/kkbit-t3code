@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type {
   ServerProvider,
   ServerProviderVersionAdvisory,
@@ -47,27 +48,30 @@ export function getProviderStatusKey(provider: ServerProvider | undefined): Prov
 export function getProviderSummary(provider: ServerProvider | undefined) {
   if (!provider) {
     return {
-      headline: "Checking provider status",
-      detail: "Waiting for the server to report installation and authentication details.",
+      headline: translateUi("Checking provider status"),
+      detail: translateUi(
+        "Waiting for the server to report installation and authentication details.",
+      ),
     };
   }
   if (!provider.enabled || provider.status === "disabled") {
     return {
-      headline: "Disabled",
+      headline: translateUi("Disabled"),
       detail:
-        provider.message ?? "This provider is installed but disabled for new sessions in T3 Code.",
+        provider.message ??
+        translateUi("This provider is installed but disabled for new sessions in T3 Code."),
     };
   }
   if (!provider.installed) {
     return {
-      headline: "Not found",
+      headline: translateUi("Not found"),
       detail: provider.message ?? "CLI not detected on PATH.",
     };
   }
   if (provider.auth.status === "unauthenticated") {
     const authLabel = provider.auth.label ?? provider.auth.type;
     return {
-      headline: authLabel ? `Not authenticated · ${authLabel}` : "Not authenticated",
+      headline: authLabel ? `Not authenticated · ${authLabel}` : translateUi("Not authenticated"),
       detail: provider.message ?? null,
     };
   }
@@ -79,26 +83,27 @@ export function getProviderSummary(provider: ServerProvider | undefined) {
   }
   if (provider.status === "warning") {
     return {
-      headline: "Needs attention",
+      headline: translateUi("Needs attention"),
       detail:
-        provider.message ?? "The provider is installed, but the server could not fully verify it.",
+        provider.message ??
+        translateUi("The provider is installed, but the server could not fully verify it."),
     };
   }
   if (provider.status === "error") {
     return {
-      headline: "Unavailable",
-      detail: provider.message ?? "The provider failed its startup checks.",
+      headline: translateUi("Unavailable"),
+      detail: provider.message ?? translateUi("The provider failed its startup checks."),
     };
   }
   if (provider.auth.status === "authenticated") {
     const authLabel = provider.auth.label ?? provider.auth.type;
     return {
-      headline: authLabel ? `Authenticated · ${authLabel}` : "Authenticated",
+      headline: authLabel ? `Authenticated · ${authLabel}` : translateUi("Authenticated"),
       detail: provider.message ?? null,
     };
   }
   return {
-    headline: "Available",
+    headline: translateUi("Available"),
     detail: provider.message ?? null,
   };
 }
@@ -166,7 +171,7 @@ export function getProviderVersionAdvisoryPresentation(
     return null;
   }
 
-  const label = "Update available";
+  const label = translateUi("Update available");
   const version = advisory.latestVersion;
   const versionLabel = getProviderVersionLabel(version);
 

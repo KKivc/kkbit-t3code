@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { ChevronDownIcon } from "lucide-react";
 
 import { updateClientSettings, useClientSettings } from "../../hooks/useSettings";
@@ -19,11 +20,13 @@ export function ThreadDetailsItemsRow() {
   return (
     <SettingsRow
       {...searchableSetting("thread-details-items")}
-      description="Choose what the thread details card shows. You can also right-click the card."
+      description={translateUi(
+        "Choose what the thread details card shows. You can also right-click the card.",
+      )}
       resetAction={
         isDefaultThreadDetailsVisibility(visibility) ? null : (
           <SettingResetButton
-            label="thread details"
+            label={translateUi("thread details")}
             onClick={() => updateClientSettings(RESET_THREAD_DETAILS_ITEMS)}
           />
         )
@@ -40,7 +43,10 @@ export function ThreadDetailsItemsRow() {
               />
             }
           >
-            {enabled} of {THREAD_DETAILS_ITEMS.length} on
+            {enabled}
+            {translateUi("of")}
+            {THREAD_DETAILS_ITEMS.length}
+            {translateUi("on")}
             <ChevronDownIcon aria-hidden />
           </MenuTrigger>
           <MenuPopup align="end">

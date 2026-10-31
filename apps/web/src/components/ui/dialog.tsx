@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
 import { type ComponentProps, createContext, type ReactNode, use, useState } from "react";
@@ -119,7 +120,7 @@ function DialogPopup({
           {children}
           {showCloseButton && (
             <DialogPrimitive.Close
-              aria-label="Close"
+              aria-label={translateUi("Close")}
               className="absolute end-2 top-2"
               render={<Button size="icon" variant="ghost" />}
             >

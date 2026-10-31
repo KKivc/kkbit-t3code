@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, ScopedThreadRef } from "@t3tools/contracts";
 import {
   HTML_RENDER_COLUMN_WIDTH,
@@ -83,7 +84,7 @@ export function HtmlRenderFrame(props: {
               <TooltipTrigger
                 render={
                   <Button
-                    aria-label="Open full screen"
+                    aria-label={translateUi("Open full screen")}
                     size="icon-xs"
                     variant="glass"
                     onClick={async () => {
@@ -96,7 +97,7 @@ export function HtmlRenderFrame(props: {
                         toastManager.add({
                           type: "error",
                           title: "Page unavailable",
-                          description: "Reconnect to the environment and try again.",
+                          description: translateUi("Reconnect to the environment and try again."),
                         });
                     }}
                   />
@@ -104,7 +105,7 @@ export function HtmlRenderFrame(props: {
               >
                 <Maximize2Icon className="size-3.5" />
               </TooltipTrigger>
-              <TooltipPopup side="left">Open full screen</TooltipPopup>
+              <TooltipPopup side="left">{translateUi("Open full screen")}</TooltipPopup>
             </Tooltip>
           </div>
           {expandedSrc !== null ? (

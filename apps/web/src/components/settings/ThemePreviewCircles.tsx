@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { MoonIcon, SunIcon } from "lucide-react";
 import type { CSSProperties } from "react";
 import {
@@ -205,7 +206,9 @@ export function ThemePreviewCircles({
               }
             />
             <TooltipPopup>
-              {mode === "light" ? "Use for light mode only" : "Use for dark mode only"}
+              {mode === "light"
+                ? translateUi("Use for light mode only")
+                : translateUi("Use for dark mode only")}
             </TooltipPopup>
           </Tooltip>
         );

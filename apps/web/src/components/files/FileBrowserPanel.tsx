@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { RefreshIcon } from "~/components/ui/refresh-icon";
 import type {
   ContextMenuItem as TreeContextMenuItem,
@@ -199,7 +200,7 @@ export default function FileBrowserPanel({
           [
             ...fileMenuItems,
             { id: "copy-mention", label: "Copy mention" },
-            { id: "add-to-chat", label: "Add to chat" },
+            { id: "add-to-chat", label: translateUi("Add to chat") },
           ],
           position,
         );
@@ -223,7 +224,8 @@ export default function FileBrowserPanel({
             toastManager.add({
               type: "error",
               title: "Failed to copy mention",
-              description: error instanceof Error ? error.message : "An error occurred.",
+              description:
+                error instanceof Error ? error.message : translateUi("An error occurred."),
             });
           }
           return;
@@ -233,7 +235,7 @@ export default function FileBrowserPanel({
           if (!composer) {
             toastManager.add({
               type: "error",
-              title: "Unable to add to chat",
+              title: translateUi("Unable to add to chat"),
               description: "Open a chat for this project and try again.",
             });
             return;
@@ -242,7 +244,7 @@ export default function FileBrowserPanel({
           if (!inserted) {
             toastManager.add({
               type: "error",
-              title: "Unable to add to chat",
+              title: translateUi("Unable to add to chat"),
               description: "The chat isn't ready to accept input right now.",
             });
           }
@@ -290,7 +292,7 @@ export default function FileBrowserPanel({
       row.kind === "directory" &&
       row.isExpanded &&
       loadingDirectoriesRef.current.has(item.path.replace(/\/$/, ""))
-        ? { icon: "t3-tree-icon-loading", title: "Loading…" }
+        ? { icon: "t3-tree-icon-loading", title: translateUi("Loading…") }
         : null,
     search: false,
     onSearchChange: (value) => setQuery(value ?? ""),
@@ -553,7 +555,7 @@ export default function FileBrowserPanel({
       {hasNoSearchMatches ? (
         ready && !isPending && !pathSearch.isPending && !error && !pathSearch.error ? (
           <div role="status" className="px-3 py-4 text-xs text-muted-foreground">
-            No matching files.
+            {translateUi("No matching files.")}
           </div>
         ) : null
       ) : (

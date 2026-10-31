@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useState } from "react";
 
 import { isLocalEnvironmentDisabled } from "../../localEnvironment";
@@ -42,15 +43,17 @@ export function LocalEnvironmentSetting() {
         {...searchableSetting("local-environment")}
         description={
           enabled
-            ? "Run agents on this computer. Turn off to use T3 Code only with remote environments."
-            : "Turned off. Agents only run in remote environments."
+            ? translateUi(
+                "Run agents on this computer. Turn off to use T3 Code only with remote environments.",
+              )
+            : translateUi("Turned off. Agents only run in remote environments.")
         }
         control={
           <Switch
             checked={enabled}
             disabled={isUpdating}
             onCheckedChange={() => setConfirmOpen(true)}
-            aria-label="Local environment"
+            aria-label={translateUi("Local environment")}
           />
         }
       />
@@ -65,7 +68,9 @@ export function LocalEnvironmentSetting() {
         <AlertDialogPopup>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {enabled ? "Turn off local environment?" : "Turn on local environment?"}
+              {enabled
+                ? translateUi("Turn off local environment?")
+                : translateUi("Turn on local environment?")}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {enabled
@@ -76,7 +81,7 @@ export function LocalEnvironmentSetting() {
           {error ? <p className="px-6 pb-4 text-sm text-destructive">{error}</p> : null}
           <AlertDialogFooter>
             <AlertDialogClose disabled={isUpdating} render={<Button variant="outline" />}>
-              Cancel
+              {translateUi("Cancel")}
             </AlertDialogClose>
             <Button
               variant={enabled ? "destructive" : "default"}
@@ -86,12 +91,12 @@ export function LocalEnvironmentSetting() {
               {isUpdating ? (
                 <>
                   <Spinner size="sm" />
-                  Restarting…
+                  {translateUi("Restarting…")}
                 </>
               ) : enabled ? (
-                "Restart and turn off"
+                translateUi("Restart and turn off")
               ) : (
-                "Restart and turn on"
+                translateUi("Restart and turn on")
               )}
             </Button>
           </AlertDialogFooter>

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   EDITORS,
   type ContextMenuItem,
@@ -63,7 +64,7 @@ function buildFileContextMenuItems(input: {
   if (!input.hasAbsolutePath) return [];
   const items: ContextMenuItem<FileContextMenuAction>[] = [];
   if (input.capabilities.canOpenDefault) {
-    items.push({ id: "open", label: "Open", icon: "pencil" });
+    items.push({ id: "open", label: translateUi("Open"), icon: "pencil" });
   }
   if (input.capabilities.revealLabel !== undefined) {
     items.push({
@@ -130,7 +131,7 @@ export function useFileContextMenu(environmentId: EnvironmentId | null) {
         action === "open"
           ? "Could not open file"
           : reveal
-            ? "Unable to reveal file"
+            ? translateUi("Unable to reveal file")
             : `Could not open in ${EDITOR_LABEL_BY_ID.get(editor) ?? editor}`,
       description: absolutePath,
     });

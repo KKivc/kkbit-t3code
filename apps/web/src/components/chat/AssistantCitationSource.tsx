@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { LegendListRef } from "@legendapp/list/react";
 import type { AssistantCitation, MessageId, ScopedThreadRef } from "@t3tools/contracts";
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
@@ -194,8 +195,8 @@ function observeAssistantCitationSource({
             request.onComplete();
             toastManager.add({
               type: "warning",
-              title: "Could not open the cited response",
-              description: "Click the citation to try again.",
+              title: translateUi("Could not open the cited response"),
+              description: translateUi("Click the citation to try again."),
             });
           },
         );
@@ -207,8 +208,8 @@ function observeAssistantCitationSource({
       if (!range) {
         toastManager.add({
           type: "warning",
-          title: "The quoted text has changed",
-          description: "Showing the source response. The saved quote is unchanged.",
+          title: translateUi("The quoted text has changed"),
+          description: translateUi("Showing the source response. The saved quote is unchanged."),
         });
       }
     }

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 /* oxlint-disable react/no-array-index-key -- Spreadsheet rows and columns retain their source positions. */
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import type { OfficePreviewKind } from "@t3tools/shared/filePreview";
@@ -160,7 +161,7 @@ function ExtendedOfficeViewer(props: {
         role="alert"
         className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 px-6 text-center"
       >
-        <p className="text-sm font-medium">No preview for this file</p>
+        <p className="text-sm font-medium">{translateUi("No preview for this file")}</p>
         <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
           {error} Save it or open it in another app.
         </p>
@@ -199,7 +200,7 @@ function ExtendedOfficeViewer(props: {
                   if (value !== null) selectPage(value);
                 }}
               >
-                <SelectTrigger aria-label="Sheet" size="xs">
+                <SelectTrigger aria-label={translateUi("Sheet")} size="xs">
                   <SelectValue>{sheet?.name}</SelectValue>
                 </SelectTrigger>
                 <SelectPopup>
@@ -219,7 +220,7 @@ function ExtendedOfficeViewer(props: {
                   if (value !== null) selectPage(value);
                 }}
               >
-                <SelectTrigger aria-label="Chapter" size="xs">
+                <SelectTrigger aria-label={translateUi("Chapter")} size="xs">
                   <SelectValue>{documentPage?.title}</SelectValue>
                 </SelectTrigger>
                 <SelectPopup>
@@ -233,7 +234,9 @@ function ExtendedOfficeViewer(props: {
             </div>
           ) : (
             <span className="flex-1 text-center tabular-nums" aria-live="polite">
-              {navigation === "slide" ? "Slide" : "Page"} {page + 1} of {count}
+              {navigation === "slide" ? "Slide" : "Page"} {page + 1}
+              {translateUi("of")}
+              {count}
             </span>
           )}
           <FileSurfaceAction
@@ -250,8 +253,11 @@ function ExtendedOfficeViewer(props: {
           className="flex min-h-10 shrink-0 flex-wrap items-center gap-x-1 border-b border-border/60 px-3 py-2 text-xs text-muted-foreground tabular-nums"
           role="status"
         >
-          Sheet {page + 1} of {count} · {sheet.rowCount.toLocaleString()} rows ·{" "}
-          {sheet.columns.toLocaleString()} columns
+          {translateUi("Sheet")}
+          {page + 1}
+          {translateUi("of")}
+          {count} · {sheet.rowCount.toLocaleString()} rows · {sheet.columns.toLocaleString()}{" "}
+          columns
           {fileSize !== undefined
             ? ` · ${fileSize === 0 ? "0 bytes" : formatAttachmentSize(fileSize)}`
             : ""}
@@ -283,7 +289,9 @@ function ExtendedOfficeViewer(props: {
               : ""}
           </FileSurfaceNotice>
           {sheet.rowCount === 0 ? (
-            <p className="p-6 text-xs text-muted-foreground">This sheet is empty.</p>
+            <p className="p-6 text-xs text-muted-foreground">
+              {translateUi("This sheet is empty.")}
+            </p>
           ) : (
             <VirtualTablePreview
               key={page}

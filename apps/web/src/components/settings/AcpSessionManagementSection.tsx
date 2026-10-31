@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthOrchestrationOperateScope,
   AuthProvidersManageScope,
@@ -40,7 +41,7 @@ function reportFailure(title: string, result: AtomCommandResult<unknown, unknown
   toastManager.add({
     type: "error",
     title,
-    description: error instanceof Error ? error.message : "The ACP operation failed.",
+    description: error instanceof Error ? error.message : translateUi("The ACP operation failed."),
   });
 }
 
@@ -56,7 +57,7 @@ function parseProviderHeaders(
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : "Headers must be valid JSON.",
+      error: error instanceof Error ? error.message : translateUi("Headers must be valid JSON."),
     };
   }
   if (
@@ -65,7 +66,7 @@ function parseProviderHeaders(
     Array.isArray(parsed) ||
     !Object.values(parsed).every((value) => typeof value === "string")
   ) {
-    return { ok: false, error: "Headers must be a JSON object with string values." };
+    return { ok: false, error: translateUi("Headers must be a JSON object with string values.") };
   }
   return { ok: true, headers: parsed as Record<string, string> };
 }
@@ -147,7 +148,7 @@ export function AcpSessionManagementSection(props: {
       setNextCursor(result.value.nextCursor);
       return;
     }
-    reportFailure("Could not list ACP sessions", result);
+    reportFailure(translateUi("Could not list ACP sessions"), result);
   };
 
   const importNativeSession = async (session: AcpRegistrySession) => {
@@ -179,11 +180,13 @@ export function AcpSessionManagementSection(props: {
       );
       toastManager.add({
         type: "success",
-        title: result.value.imported ? "ACP session imported" : "ACP session already imported",
+        title: result.value.imported
+          ? translateUi("ACP session imported")
+          : translateUi("ACP session already imported"),
       });
       return;
     }
-    reportFailure("Could not import ACP session", result);
+    reportFailure(translateUi("Could not import ACP session"), result);
   };
 
   const deleteNativeSession = async (session: AcpRegistrySession) => {
@@ -205,10 +208,10 @@ export function AcpSessionManagementSection(props: {
       setSessions((current) =>
         current.filter((candidate) => candidate.sessionId !== session.sessionId),
       );
-      toastManager.add({ type: "success", title: "ACP session deleted" });
+      toastManager.add({ type: "success", title: translateUi("ACP session deleted") });
       return;
     }
-    reportFailure("Could not delete ACP session", result);
+    reportFailure(translateUi("Could not delete ACP session"), result);
   };
 
   const loadProviders = async (resetProviderId?: string) => {
@@ -237,7 +240,7 @@ export function AcpSessionManagementSection(props: {
       );
       return;
     }
-    reportFailure("Could not list ACP providers", result);
+    reportFailure(translateUi("Could not list ACP providers"), result);
   };
 
   const saveProvider = async (provider: AcpRegistryConfigurableProvider) => {
@@ -254,7 +257,7 @@ export function AcpSessionManagementSection(props: {
     if (!parsedHeaders.ok) {
       toastManager.add({
         type: "error",
-        title: "Invalid provider headers",
+        title: translateUi("Invalid provider headers"),
         description: parsedHeaders.error,
       });
       return;
@@ -274,11 +277,11 @@ export function AcpSessionManagementSection(props: {
     });
     setSavingProviderId(null);
     if (result._tag === "Success") {
-      toastManager.add({ type: "success", title: "ACP provider configured" });
+      toastManager.add({ type: "success", title: translateUi("ACP provider configured") });
       await loadProviders(provider.providerId);
       return;
     }
-    reportFailure("Could not configure ACP provider", result);
+    reportFailure(translateUi("Could not configure ACP provider"), result);
   };
 
   const disableConfiguredProvider = async (provider: AcpRegistryConfigurableProvider) => {
@@ -296,11 +299,11 @@ export function AcpSessionManagementSection(props: {
     });
     setSavingProviderId(null);
     if (result._tag === "Success") {
-      toastManager.add({ type: "success", title: "ACP provider disabled" });
+      toastManager.add({ type: "success", title: translateUi("ACP provider disabled") });
       await loadProviders(provider.providerId);
       return;
     }
-    reportFailure("Could not disable ACP provider", result);
+    reportFailure(translateUi("Could not disable ACP provider"), result);
   };
 
   const logoutProvider = async () => {
@@ -314,20 +317,20 @@ export function AcpSessionManagementSection(props: {
     if (result._tag === "Success") {
       setSessions([]);
       setNextCursor(null);
-      toastManager.add({ type: "success", title: "Logged out of ACP agent" });
+      toastManager.add({ type: "success", title: translateUi("Logged out of ACP agent") });
       return;
     }
-    reportFailure("Could not log out of ACP agent", result);
+    reportFailure(translateUi("Could not log out of ACP agent"), result);
   };
 
   return (
     <div className="grid gap-3">
       <SettingsRow
-        title="Native sessions"
-        description="Resume agent-owned conversations as T3 threads."
+        title={translateUi("Native sessions")}
+        description={translateUi("Resume agent-owned conversations as T3 threads.")}
         status={
           canList && props.projects.length === 0
-            ? "Add a project before importing sessions."
+            ? translateUi("Add a project before importing sessions.")
             : undefined
         }
         control={
@@ -340,7 +343,7 @@ export function AcpSessionManagementSection(props: {
                 disabled={props.readOnly || loggingOut}
                 onClick={() => void logoutProvider()}
               >
-                {loggingOut ? "Logging out" : "Log out"}
+                {loggingOut ? translateUi("Logging out") : translateUi("Log out")}
               </Button>
             ) : null}
             {canList && props.projects.length > 0 ? (
@@ -357,7 +360,11 @@ export function AcpSessionManagementSection(props: {
                     setProviderDrafts({});
                   }}
                 >
-                  <SelectTrigger aria-label="Project for ACP sessions" className="w-40" size="sm">
+                  <SelectTrigger
+                    aria-label={translateUi("Project for ACP sessions")}
+                    className="w-40"
+                    size="sm"
+                  >
                     <SelectValue>
                       {props.projects.find((project) => project.id === projectId)?.title}
                     </SelectValue>
@@ -377,7 +384,11 @@ export function AcpSessionManagementSection(props: {
                   disabled={!canRead || loading || projectId === null}
                   onClick={() => void loadSessions()}
                 >
-                  {loading ? "Loading" : sessions.length === 0 ? "List sessions" : "Refresh"}
+                  {loading
+                    ? translateUi("Loading")
+                    : sessions.length === 0
+                      ? translateUi("List sessions")
+                      : translateUi("Refresh")}
                 </Button>
               </>
             ) : null}
@@ -415,10 +426,10 @@ export function AcpSessionManagementSection(props: {
                         onClick={() => void importNativeSession(session)}
                       >
                         {session.importedThreadId !== null
-                          ? "Imported"
+                          ? translateUi("Imported")
                           : importingSessionId === session.sessionId
-                            ? "Importing"
-                            : "Import"}
+                            ? translateUi("Importing")
+                            : translateUi("Import")}
                       </Button>
                       {canDelete ? (
                         <Button
@@ -432,7 +443,9 @@ export function AcpSessionManagementSection(props: {
                           }
                           onClick={() => void deleteNativeSession(session)}
                         >
-                          {deletingSessionId === session.sessionId ? "Deleting" : "Delete"}
+                          {deletingSessionId === session.sessionId
+                            ? translateUi("Deleting")
+                            : translateUi("Delete")}
                         </Button>
                       ) : null}
                     </div>
@@ -450,7 +463,7 @@ export function AcpSessionManagementSection(props: {
                 disabled={!canRead || loading}
                 onClick={() => void loadSessions(nextCursor)}
               >
-                {loading ? "Loading" : "Load more"}
+                {loading ? translateUi("Loading") : translateUi("Load more")}
               </Button>
             ) : null}
           </>
@@ -461,9 +474,11 @@ export function AcpSessionManagementSection(props: {
         <div className="grid gap-3 border-t border-border/60 px-3 py-3 sm:px-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p className="text-xs font-medium text-foreground">Agent providers</p>
+              <p className="text-xs font-medium text-foreground">
+                {translateUi("Agent providers")}
+              </p>
               <p className="text-xs text-muted-foreground">
-                Configure non-secret routing. Headers are write-only.
+                {translateUi("Configure non-secret routing. Headers are write-only.")}
               </p>
             </div>
             <Button
@@ -475,7 +490,11 @@ export function AcpSessionManagementSection(props: {
               }
               onClick={() => void loadProviders()}
             >
-              {loadingProviders ? "Loading" : providers.length === 0 ? "List providers" : "Refresh"}
+              {loadingProviders
+                ? translateUi("Loading")
+                : providers.length === 0
+                  ? translateUi("List providers")
+                  : translateUi("Refresh")}
             </Button>
           </div>
 
@@ -490,7 +509,11 @@ export function AcpSessionManagementSection(props: {
                 setProviderDrafts({});
               }}
             >
-              <SelectTrigger aria-label="Project for ACP providers" className="min-w-48" size="xs">
+              <SelectTrigger
+                aria-label={translateUi("Project for ACP providers")}
+                className="min-w-48"
+                size="xs"
+              >
                 <SelectValue>
                   {props.projects.find((project) => project.id === projectId)?.title}
                 </SelectValue>
@@ -526,7 +549,9 @@ export function AcpSessionManagementSection(props: {
                           {provider.providerId}
                         </p>
                         <p className="text-3xs text-muted-foreground">
-                          {provider.current === null ? "Disabled" : "Configured"}
+                          {provider.current === null
+                            ? translateUi("Disabled")
+                            : translateUi("Configured")}
                           {provider.required ? " · Required" : ""}
                         </p>
                       </div>
@@ -544,7 +569,9 @@ export function AcpSessionManagementSection(props: {
                           }
                           onClick={() => void saveProvider(provider)}
                         >
-                          {savingProviderId === provider.providerId ? "Saving" : "Save"}
+                          {savingProviderId === provider.providerId
+                            ? translateUi("Saving")
+                            : translateUi("Save")}
                         </Button>
                         {!provider.required && provider.current !== null ? (
                           <Button
@@ -556,7 +583,7 @@ export function AcpSessionManagementSection(props: {
                             }
                             onClick={() => void disableConfiguredProvider(provider)}
                           >
-                            Disable
+                            {translateUi("Disable")}
                           </Button>
                         ) : null}
                       </div>
@@ -594,7 +621,9 @@ export function AcpSessionManagementSection(props: {
                       size="sm"
                       type="password"
                       aria-label={`${provider.providerId} write-only headers JSON`}
-                      placeholder='Write-only headers JSON, e.g. {"Authorization":"Bearer …"}'
+                      placeholder={translateUi(
+                        'Write-only headers JSON, e.g. {"Authorization":"Bearer …"}',
+                      )}
                       value={draft.headers}
                       disabled={props.readOnly || savingProviderId !== null}
                       onValueChange={(value) => updateDraft({ headers: value })}

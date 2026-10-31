@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   capitalizeTerm,
   sourceControlClients,
@@ -173,7 +174,7 @@ function OpenOnHostButton({ url, onOpen }: { url: string | null; onOpen: (url: s
       size="icon-xs"
       variant="ghost-muted"
       className="-mr-1 shrink-0"
-      aria-label="Open activity on host"
+      aria-label={translateUi("Open activity on host")}
       onClick={() => onOpen(url)}
     >
       <ExternalLinkIcon className="size-3" />
@@ -211,7 +212,7 @@ function ConversationCard({
     });
     setSaving(false);
     if (result._tag === "Failure") {
-      toastManager.add({ type: "error", title: "Could not save the comment" });
+      toastManager.add({ type: "error", title: translateUi("Could not save the comment") });
       return;
     }
     setEditing(false);
@@ -241,7 +242,10 @@ function ConversationCard({
             </PullRequestMetaLine>
           </div>
           {editable !== null && !editing ? (
-            <PullRequestEditButton aria-label="Edit comment" onClick={() => setEditing(true)} />
+            <PullRequestEditButton
+              aria-label={translateUi("Edit comment")}
+              onClick={() => setEditing(true)}
+            />
           ) : null}
           {reactions.canReact || event.reactions.length > 0 ? (
             <PullRequestReactionBar
@@ -264,7 +268,7 @@ function ConversationCard({
             cwd={cwd}
             environmentId={reactions.environmentId}
             threadRef={reactions.threadRef}
-            label="Edit comment"
+            label={translateUi("Edit comment")}
             saving={saving}
             onSave={(body) => void save(body)}
             onCancel={() => setEditing(false)}
@@ -408,11 +412,15 @@ function ReviewThreadEvent({
         {thread.isResolved ? (
           <span className="inline-flex shrink-0 items-center gap-1 font-medium text-success-foreground">
             <CircleCheckIcon aria-hidden className="size-3" />
-            Resolved
+            {translateUi("Resolved")}
           </span>
         ) : null}
-        {dismissed ? <span className="shrink-0 font-medium">Review dismissed</span> : null}
-        {thread.isOutdated ? <span className="shrink-0 font-medium">Outdated</span> : null}
+        {dismissed ? (
+          <span className="shrink-0 font-medium">{translateUi("Review dismissed")}</span>
+        ) : null}
+        {thread.isOutdated ? (
+          <span className="shrink-0 font-medium">{translateUi("Outdated")}</span>
+        ) : null}
         {expanded ? null : (
           <span className="shrink-0">
             · {event.actor?.login ?? "ghost"}
@@ -581,7 +589,9 @@ function ReviewVerdictEvent({
                 }
               >
                 {pullRequestReviewOutcomeLabel(outcome)}
-                {stale ? <span className="sr-only">, before the latest commits</span> : null}
+                {stale ? (
+                  <span className="sr-only">{translateUi(", before the latest commits")}</span>
+                ) : null}
               </TooltipTrigger>
               <TooltipPopup>{pullRequestReviewOutcomeStaleLabel(outcome)}</TooltipPopup>
             </Tooltip>
@@ -723,7 +733,7 @@ export function PullRequestTimelineTab({
       <div ref={scrollerRef} className="scrollbar-gutter-both h-full overflow-y-auto px-4 py-5">
         <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
           <PullRequestGlyph.pullRequest className="mb-2 size-5" />
-          <p className="text-xs">No activity yet.</p>
+          <p className="text-xs">{translateUi("No activity yet.")}</p>
         </div>
       </div>
     );

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { type SlowRpcAckRequest, subscribeSlowRpcAckRequests } from "../rpc/requestLatencyState";
 import { toastManager } from "./ui/toast";
 
@@ -49,7 +50,7 @@ export function startSlowRpcRequestToasts(): () => void {
       },
       description: describeSlowRequests(slowRequests),
       timeout: 0,
-      title: "Some requests are slow",
+      title: translateUi("Some requests are slow"),
       type: "warning" as const,
     };
 

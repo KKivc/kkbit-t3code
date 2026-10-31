@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { squashAtomCommandFailure } from "@t3tools/client-runtime/state/runtime";
 import type { EnvironmentId, PullRequestDetail, PullRequestRef } from "@t3tools/contracts";
 import { useState } from "react";
@@ -54,7 +55,7 @@ export function PullRequestTitleEditor({
     if (result._tag === "Failure") {
       toastManager.add({
         type: "error",
-        title: "The title could not be saved",
+        title: translateUi("The title could not be saved"),
         description: readableFailure(
           squashAtomCommandFailure(result),
           "The host refused the new title.",
@@ -81,7 +82,7 @@ export function PullRequestTitleEditor({
         </Tooltip>
         {canEditPullRequestChangeRequest(detail) ? (
           <PullRequestEditButton
-            aria-label="Edit title"
+            aria-label={translateUi("Edit title")}
             onClick={() => setTitleScope({ pullRequestKey, text: detail.title })}
           />
         ) : null}
@@ -115,7 +116,7 @@ export function PullRequestTitleEditor({
           disabled={titleSaving}
           onClick={() => setTitleScope(null)}
         >
-          Cancel
+          {translateUi("Cancel")}
         </Button>
         <Button
           size="xs"

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { workspaceAreaProps } from "../lib/workspaceFocus";
 import { useAtomMount, useAtomValue } from "@effect/atom-react";
 import {
@@ -406,7 +407,7 @@ function terminalSelectionMenuItems(options?: {
     ...(options?.canAddToChat === false
       ? []
       : ([{ id: "add-to-chat", label: "Add to chat" }] satisfies ContextMenuItem<"add-to-chat">[])),
-    { id: "copy", label: "Copy" },
+    { id: "copy", label: translateUi("Copy") },
   ];
 }
 
@@ -421,9 +422,9 @@ function terminalContextMenuItems(options: {
       ...item,
       disabled: !hasSelection,
     })),
-    { id: "paste", label: "Paste", ...(options.readOnly ? { disabled: true } : {}) },
-    { id: "select-all", label: "Select all" },
-    { id: "scroll-to-bottom", label: "Jump to latest" },
+    { id: "paste", label: translateUi("Paste"), ...(options.readOnly ? { disabled: true } : {}) },
+    { id: "select-all", label: translateUi("Select all") },
+    { id: "scroll-to-bottom", label: translateUi("Jump to latest") },
   ];
 }
 
@@ -1017,8 +1018,9 @@ function TerminalSessionViewport({
               toastManager.add(
                 stackedThreadToast({
                   type: "error",
-                  title: "Unable to open link",
-                  description: error instanceof Error ? error.message : "An error occurred.",
+                  title: translateUi("Unable to open link"),
+                  description:
+                    error instanceof Error ? error.message : translateUi("An error occurred."),
                 }),
               );
             },
@@ -1763,7 +1765,7 @@ export default function ThreadTerminalDrawer({
           />
         ) : null}
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 px-4 py-6 text-center text-sm text-muted-foreground">
-          <p>No terminal sessions for this thread yet.</p>
+          <p>{translateUi("No terminal sessions for this thread yet.")}</p>
           <Button
             size="xs"
             variant="outline"

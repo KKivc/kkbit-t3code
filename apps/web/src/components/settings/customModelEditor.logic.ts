@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   type ModelCapabilities,
   ProviderDriverKind,
@@ -47,66 +48,76 @@ export const DESCRIPTOR_PRESETS_BY_KIND: Partial<
   Record<ProviderDriverKind, ReadonlyArray<DescriptorPreset>>
 > = {
   [ProviderDriverKind.make("codex")]: [
-    { id: "reasoningEffort", label: "Reasoning", type: "select", choices: EFFORT_CHOICES },
+    {
+      id: "reasoningEffort",
+      label: translateUi("Reasoning"),
+      type: "select",
+      choices: EFFORT_CHOICES,
+    },
     {
       id: "serviceTier",
-      label: "Speed",
+      label: translateUi("Speed"),
       type: "select",
       choices: [
-        { id: "default", label: "Standard", isDefault: true },
-        { id: "fast", label: "Fast" },
+        { id: "default", label: translateUi("Standard"), isDefault: true },
+        { id: "fast", label: translateUi("Fast") },
       ],
     },
   ],
   [ProviderDriverKind.make("claudeAgent")]: [
     {
       id: "effort",
-      label: "Reasoning",
+      label: translateUi("Reasoning"),
       type: "select",
       choices: [
-        { id: "low", label: "Low" },
-        { id: "medium", label: "Medium" },
-        { id: "high", label: "High", isDefault: true },
-        { id: "xhigh", label: "Extra High" },
-        { id: "max", label: "Max" },
+        { id: "low", label: translateUi("Low") },
+        { id: "medium", label: translateUi("Medium") },
+        { id: "high", label: translateUi("High"), isDefault: true },
+        { id: "xhigh", label: translateUi("Extra High") },
+        { id: "max", label: translateUi("Max") },
       ],
     },
-    { id: "fastMode", label: "Fast Mode", type: "boolean" },
-    { id: "thinking", label: "Thinking", type: "boolean" },
+    { id: "fastMode", label: translateUi("Fast Mode"), type: "boolean" },
+    { id: "thinking", label: translateUi("Thinking"), type: "boolean" },
   ],
   [ProviderDriverKind.make("cursor")]: [
-    { id: "reasoning", label: "Reasoning", type: "select", choices: EFFORT_CHOICES },
-    { id: "fastMode", label: "Fast Mode", type: "boolean" },
-    { id: "thinking", label: "Thinking", type: "boolean" },
+    { id: "reasoning", label: translateUi("Reasoning"), type: "select", choices: EFFORT_CHOICES },
+    { id: "fastMode", label: translateUi("Fast Mode"), type: "boolean" },
+    { id: "thinking", label: translateUi("Thinking"), type: "boolean" },
   ],
   [ProviderDriverKind.make("grok")]: [
-    { id: "reasoningEffort", label: "Reasoning", type: "select", choices: EFFORT_CHOICES },
+    {
+      id: "reasoningEffort",
+      label: translateUi("Reasoning"),
+      type: "select",
+      choices: EFFORT_CHOICES,
+    },
   ],
   [ProviderDriverKind.make("pi")]: [
     {
       id: "thinking",
-      label: "Thinking",
+      label: translateUi("Thinking"),
       type: "select",
       choices: [
-        { id: "off", label: "Off" },
-        { id: "minimal", label: "Minimal" },
-        { id: "low", label: "Low" },
-        { id: "medium", label: "Medium", isDefault: true },
-        { id: "high", label: "High" },
-        { id: "xhigh", label: "Extra High" },
-        { id: "max", label: "Max" },
+        { id: "off", label: translateUi("Off") },
+        { id: "minimal", label: translateUi("Minimal") },
+        { id: "low", label: translateUi("Low") },
+        { id: "medium", label: translateUi("Medium"), isDefault: true },
+        { id: "high", label: translateUi("High") },
+        { id: "xhigh", label: translateUi("Extra High") },
+        { id: "max", label: translateUi("Max") },
       ],
     },
   ],
   [ProviderDriverKind.make("opencode")]: [
-    { id: "variant", label: "Reasoning", type: "select", choices: EFFORT_CHOICES },
+    { id: "variant", label: translateUi("Reasoning"), type: "select", choices: EFFORT_CHOICES },
     {
       id: "agent",
-      label: "Agent",
+      label: translateUi("Agent"),
       type: "select",
       choices: [
-        { id: "build", label: "Build", isDefault: true },
-        { id: "plan", label: "Plan" },
+        { id: "build", label: translateUi("Build"), isDefault: true },
+        { id: "plan", label: translateUi("Plan") },
       ],
     },
   ],

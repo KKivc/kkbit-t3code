@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { type OrchestrationV2ProviderTurn, type RunAttemptId } from "@t3tools/contracts";
 import {
   deriveLatestThreadRun,
@@ -452,7 +453,7 @@ export function buildLocalDraftThread(
   return presentThreadShell(draftThread.environmentId, {
     id: threadId,
     projectId: draftThread.projectId,
-    title: "New thread",
+    title: translateUi("New thread"),
     providerInstanceId: fallbackModelSelection.instanceId,
     modelSelection: fallbackModelSelection,
     runtimeMode: draftThread.runtimeMode,
@@ -782,7 +783,7 @@ export function buildExpiredTerminalContextToastCopy(
 ): { title: string; description: string } {
   const count = Math.max(1, Math.floor(expiredTerminalContextCount));
   const noun = count === 1 ? "Expired terminal context" : "Expired terminal contexts";
-  const pronoun = count === 1 ? "it" : "them";
+  const pronoun = count === 1 ? translateUi("it") : "them";
   if (variant === "empty") {
     return {
       title: `${noun} won't be sent`,

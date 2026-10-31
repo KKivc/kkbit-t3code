@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import { Fragment, useState, type ReactNode } from "react";
 import * as Cause from "effect/Cause";
@@ -112,18 +113,22 @@ function hostStatus(
   state: DeviceServiceState | undefined,
   hostId: string,
 ): SourceStatus | undefined {
-  if (!state) return { tone: "pending", label: "Loading" };
+  if (!state) return { tone: "pending", label: translateUi("Loading") };
   const status = state.hostStatuses[hostId];
   switch (status?.status) {
     case "ready":
       return status.androidDiscoveryIncomplete
-        ? { tone: "warning", label: "Android list may be incomplete", detail: status.detail }
+        ? {
+            tone: "warning",
+            label: translateUi("Android list may be incomplete"),
+            detail: status.detail,
+          }
         : undefined;
     case "installing":
     case "starting":
-      return { tone: "pending", label: "Starting", detail: status.detail };
+      return { tone: "pending", label: translateUi("Starting"), detail: status.detail };
     case "failed":
-      return { tone: "error", label: "Failed", detail: status.detail };
+      return { tone: "error", label: translateUi("Failed"), detail: status.detail };
     default:
       return undefined;
   }
@@ -186,7 +191,9 @@ export function DeviceSourcesSettings(props: {
       toastManager.add({
         type: "error",
         title: failedTitle,
-        description: `This connection cannot change settings on ${unwritable.map((patch) => name(patch.environmentId)).join(", ")}.`,
+        description: translateUi("This connection cannot change settings on {0}.", [
+          unwritable.map((patch) => name(patch.environmentId)).join(", "),
+        ]),
       });
       return false;
     }
@@ -229,13 +236,15 @@ export function DeviceSourcesSettings(props: {
               ),
             },
           })),
-        remove ? "Device host not removed everywhere" : "Device host not saved everywhere",
+        remove
+          ? translateUi("Device host not removed everywhere")
+          : translateUi("Device host not saved everywhere"),
       );
       if (saved) setEditing(null);
     } catch (error) {
       toastManager.add({
         type: "error",
-        title: "Device host not saved",
+        title: translateUi("Device host not saved"),
         description: error instanceof Error ? error.message : String(error),
       });
     }
@@ -280,7 +289,7 @@ export function DeviceSourcesSettings(props: {
         environmentId: patch.environmentId,
         patch: { simlockDeviceHosts: patch.hosts },
       })),
-      "Simlock host not saved everywhere",
+      translateUi("Simlock host not saved everywhere"),
     );
     if (saved) setEditing(null);
   };
@@ -292,7 +301,7 @@ export function DeviceSourcesSettings(props: {
           environmentId: environment.environmentId,
           patch: { simlockDeviceHosts: updateSimlockDeviceHosts(environment.hosts, host, true) },
         })),
-      "Simlock host not removed everywhere",
+      translateUi("Simlock host not removed everywhere"),
     );
 
   const [testing, setTesting] = useState<ReadonlySet<string>>(new Set());
@@ -310,8 +319,12 @@ export function DeviceSourcesSettings(props: {
     toastManager.add({
       type: failed.length ? "error" : "success",
       title: failed.length
-        ? `${host.label}: ${failed.length} of ${targets.length} environments failed`
-        : `${host.label}: connection checks passed`,
+        ? translateUi("{0}: {1} of {2} environments failed", [
+            host.label,
+            failed.length,
+            targets.length,
+          ])
+        : translateUi("{0}: connection checks passed", [host.label]),
       description: failed.length
         ? failed
             .map((target) => {
@@ -319,7 +332,7 @@ export function DeviceSourcesSettings(props: {
               return `${target.label}: ${result?.status === "failed" ? result.error : "failed"}`;
             })
             .join("\n")
-        : "Connected or already available locally on each selected environment.",
+        : translateUi("Connected or already available locally on each selected environment."),
     });
   };
 
@@ -329,12 +342,17 @@ export function DeviceSourcesSettings(props: {
   const rowActions = (onEdit: () => void, onRemove: () => void, extra?: ReactNode) => (
     <>
       <Button size="sm" variant="outline" disabled={disabled} onClick={onEdit}>
-        Edit
+        {translateUi("Edit")}
       </Button>
       <Menu>
         <MenuTrigger
           render={
-            <Button size="icon-sm" variant="ghost-muted" disabled={disabled} aria-label="More" />
+            <Button
+              size="icon-sm"
+              variant="ghost-muted"
+              disabled={disabled}
+              aria-label={translateUi("More")}
+            />
           }
         >
           <MoreVertical />
@@ -342,7 +360,7 @@ export function DeviceSourcesSettings(props: {
         <MenuPopup align="end">
           {extra}
           <MenuItem variant="destructive" onClick={onRemove}>
-            Remove
+            {translateUi("Remove")}
           </MenuItem>
         </MenuPopup>
       </Menu>
@@ -354,11 +372,11 @@ export function DeviceSourcesSettings(props: {
   rows.push({
     key: "local",
     shared: false,
-    title: "Local simulators",
+    title: translateUi("Local simulators"),
     description:
       members.length > 1
-        ? "Simulators and emulators installed on each environment's own machine."
-        : "Simulators and emulators installed on this environment's machine.",
+        ? translateUi("Simulators and emulators installed on each environment's own machine.")
+        : translateUi("Simulators and emulators installed on this environment's machine."),
     environments: active.map((member) => {
       const local = member.state?.hosts.find((host) => host.kind === "local");
       const status = local ? hostStatus(member.state, local.id) : hostStatus(member.state, "");
@@ -372,7 +390,7 @@ export function DeviceSourcesSettings(props: {
             ? {
                 ...status,
                 action: {
-                  label: "Refresh",
+                  label: translateUi("Refresh"),
                   run: () => void list({ environmentId: member.environmentId, input: {} }),
                 },
               }
@@ -424,8 +442,11 @@ export function DeviceSourcesSettings(props: {
             status?.tone === "error" && member.state?.supportsHostRetry
               ? {
                   ...status,
-                  label: "Can't connect",
-                  action: { label: "Retry", run: () => retry(member.environmentId, held.host.id) },
+                  label: translateUi("Can't connect"),
+                  action: {
+                    label: translateUi("Retry"),
+                    run: () => retry(member.environmentId, held.host.id),
+                  },
                 }
               : status,
         };
@@ -434,7 +455,7 @@ export function DeviceSourcesSettings(props: {
         () =>
           setEditing({ kind: "ssh", host, original: host, ...(grouped ? {} : { only: holders }) }),
         () => void saveSsh(host, true, host, holders),
-        <MenuItem onClick={() => void testSsh(host)}>Test connection</MenuItem>,
+        <MenuItem onClick={() => void testSsh(host)}>{translateUi("Test connection")}</MenuItem>,
       ),
     });
   }
@@ -521,7 +542,8 @@ export function DeviceSourcesSettings(props: {
       <MenuTrigger
         render={<Button size="sm" variant="outline" disabled={disabled || editing !== null} />}
       >
-        <PlusIcon className="size-3.5" /> Add source
+        <PlusIcon className="size-3.5" />
+        {translateUi("Add source")}
         <ChevronDownIcon className="size-3.5" />
       </MenuTrigger>
       <MenuPopup align="end">
@@ -534,7 +556,7 @@ export function DeviceSourcesSettings(props: {
             })
           }
         >
-          Machine over SSH
+          {translateUi("Machine over SSH")}
         </MenuItem>
         {props.supportsEas ? (
           <MenuItem
@@ -548,7 +570,7 @@ export function DeviceSourcesSettings(props: {
               })
             }
           >
-            EAS Simulator
+            {translateUi("EAS Simulator")}
           </MenuItem>
         ) : null}
         {props.supportsSimlock && simlockEnabled ? (
@@ -557,7 +579,7 @@ export function DeviceSourcesSettings(props: {
               setEditing({ kind: "simlock", host: newSimlockDeviceHost(randomUUID()), isNew: true })
             }
           >
-            Simlock pool (alpha)
+            {translateUi("Simlock pool (alpha)")}
           </MenuItem>
         ) : null}
       </MenuPopup>
@@ -565,7 +587,11 @@ export function DeviceSourcesSettings(props: {
   );
 
   return (
-    <SettingsSection id="device-sources" title="Device sources" headerAction={addMenu}>
+    <SettingsSection
+      id="device-sources"
+      title={translateUi("Device sources")}
+      headerAction={addMenu}
+    >
       {rows.map((row) => (
         <DeviceSourceRow key={row.key} row={row} />
       ))}
@@ -723,7 +749,9 @@ function PlatformIcon(props: {
                 <Fragment key={environment.environmentId}>
                   <dt className="text-muted-foreground">{environment.label}</dt>
                   <dd className={entry?.available ? "" : "text-muted-foreground"}>
-                    {entry?.available ? "Available" : (entry?.reason ?? "Not available")}
+                    {entry?.available
+                      ? translateUi("Available")
+                      : (entry?.reason ?? translateUi("Not available"))}
                   </dd>
                 </Fragment>
               );
@@ -731,7 +759,7 @@ function PlatformIcon(props: {
           </dl>
         ) : !available ? (
           <p className="mt-1 text-xs text-muted-foreground">
-            {availability(props.known[0]!)?.reason ?? "Not set up on this machine."}
+            {availability(props.known[0]!)?.reason ?? translateUi("Not set up on this machine.")}
           </p>
         ) : null}
       </PopoverPopup>

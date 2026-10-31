@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAtomValue } from "@effect/atom-react";
 import {
   AuthEnvironmentMaintainScope,
@@ -126,7 +127,7 @@ export function useServerUpdate() {
       if (!quiet) {
         toastManager.add({
           type: "error",
-          title: `${serverLabel} update failed`,
+          title: translateUi("{0} update failed", [serverLabel]),
           description: message,
         });
       }
@@ -135,11 +136,11 @@ export function useServerUpdate() {
     if (!quiet) {
       toastManager.add({
         type: "success",
-        title: `${serverLabel} updated`,
+        title: translateUi("{0} updated", [serverLabel]),
         description:
           selfUpdate === "desktop-managed"
             ? `Desktop app relaunched on ${result.value.targetVersion}.`
-            : `Reconnected on t3@${result.value.targetVersion}.`,
+            : translateUi("Reconnected on t3@{0}.", [result.value.targetVersion]),
       });
     }
     return { status: "updated" };
@@ -256,7 +257,9 @@ export function ServerUpdateAction({
       toastManager.add({
         type: "success",
         title:
-          installation?.kind === "npm-global" ? "Update command copied" : "Relaunch command copied",
+          installation?.kind === "npm-global"
+            ? translateUi("Update command copied")
+            : "Relaunch command copied",
         description:
           installation?.kind === "npm-global"
             ? `Run \`${command}\` on ${serverLabel}, then restart t3 with your usual options.`
@@ -266,7 +269,7 @@ export function ServerUpdateAction({
     onError: (error) => {
       toastManager.add({
         type: "error",
-        title: "Could not copy update command",
+        title: translateUi("Could not copy update command"),
         description: error.message,
       });
     },
@@ -301,7 +304,7 @@ export function ServerUpdateAction({
   if (selfUpdate === "desktop-managed" && !desktopAppUpdate) {
     return (
       <span className="text-muted-foreground text-xs">
-        Update the desktop app on that machine to update this server.
+        {translateUi("Update the desktop app on that machine to update this server.")}
       </span>
     );
   }
@@ -386,15 +389,15 @@ export function OutdatedServerUpdateAction({
       if (isAtomCommandInterrupted(result)) return;
       toastManager.add({
         type: "error",
-        title: `${serverLabel} update failed`,
+        title: translateUi("{0} update failed", [serverLabel]),
         description: updateFailureMessage(squashAtomCommandFailure(result)),
       });
       return;
     }
     toastManager.add({
       type: "success",
-      title: `${serverLabel} updated`,
-      description: `Reconnected on t3@${result.value.targetVersion}.`,
+      title: translateUi("{0} updated", [serverLabel]),
+      description: translateUi("Reconnected on t3@{0}.", [result.value.targetVersion]),
     });
   };
   if (fromVersion !== undefined && crossesReleaseTrack(fromVersion, targetVersion)) {

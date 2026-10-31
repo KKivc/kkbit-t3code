@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { type EnvironmentId, SourceControlProviderKind } from "@t3tools/contracts";
 import { runAtomCommand } from "@t3tools/client-runtime/state/runtime";
 import * as Schema from "effect/Schema";
@@ -27,12 +28,12 @@ function dismiss() {
 function showStarPrompt() {
   const close = () => toastManager.close(id);
   const id = toastManager.add({
-    title: "Enjoying T3 Code?",
-    description: "Give us a star on GitHub to let us know!",
+    title: translateUi("Enjoying T3 Code?"),
+    description: translateUi("Give us a star on GitHub to let us know!"),
     timeout: 0,
     onClose: dismiss,
     actionProps: {
-      children: "Star on GitHub",
+      children: translateUi("Star on GitHub"),
       onClick: () => {
         close();
         void readLocalApi()
@@ -43,7 +44,7 @@ function showStarPrompt() {
     data: {
       actionLayout: "stacked-end",
       leadingIcon: <StarIcon aria-hidden className="size-4 text-warning-foreground" />,
-      secondaryActionProps: { children: "Dismiss", onClick: close },
+      secondaryActionProps: { children: translateUi("Dismiss"), onClick: close },
       secondaryActionVariant: "ghost",
     },
   });

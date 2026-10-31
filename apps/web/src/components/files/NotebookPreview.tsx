@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 /* oxlint-disable react/no-array-index-key -- Notebook cells and outputs retain their saved source order. */
 import { formatAttachmentSize } from "@t3tools/client-runtime/state/attachments";
 import { useEffect, useRef, useState } from "react";
@@ -103,7 +104,9 @@ export default function NotebookPreview(props: {
           ? ` · ${props.sizeBytes === 0 ? "0 bytes" : formatAttachmentSize(props.sizeBytes)}`
           : ""}
       </div>
-      <FileSurfaceNotice>Saved outputs only. Code is never executed.</FileSurfaceNotice>
+      <FileSurfaceNotice>
+        {translateUi("Saved outputs only. Code is never executed.")}
+      </FileSurfaceNotice>
       <div ref={scroll} className="scrollbar-gutter-both min-h-0 flex-1 overflow-auto">
         <div className="mx-auto max-w-4xl space-y-5 px-5 py-6">
           {props.notebook.cells.slice(0, visible).map((cell, index) => (
@@ -168,7 +171,9 @@ export default function NotebookPreview(props: {
             </section>
           ))}
           {props.notebook.cells.length === 0 ? (
-            <p className="text-sm text-muted-foreground">This notebook is empty.</p>
+            <p className="text-sm text-muted-foreground">
+              {translateUi("This notebook is empty.")}
+            </p>
           ) : null}
           {visible < props.notebook.cells.length ? (
             <Button variant="outline" size="sm" onClick={() => setVisible((count) => count + 20)}>

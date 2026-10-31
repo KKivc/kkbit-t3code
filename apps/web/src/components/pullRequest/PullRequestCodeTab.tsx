@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   capitalizeTerm,
   sourceControlClients,
@@ -220,10 +221,10 @@ function FileViewedToggle({
         {stale ? (
           <Tooltip>
             <TooltipTrigger render={<span className="text-warning-foreground" />}>
-              Changed
+              {translateUi("Changed")}
             </TooltipTrigger>
             <TooltipPopup side="bottom">
-              This file has been pushed to since you marked it viewed.
+              {translateUi("This file has been pushed to since you marked it viewed.")}
             </TooltipPopup>
           </Tooltip>
         ) : (
@@ -821,9 +822,9 @@ function PullRequestCodeTab({
       >
         {diffQuery.error !== null ? (
           <>
-            <span>The rest of this diff could not be loaded.</span>
+            <span>{translateUi("The rest of this diff could not be loaded.")}</span>
             <Button size="xs" variant="outline" onClick={() => diffQuery.refresh()}>
-              Retry
+              {translateUi("Retry")}
             </Button>
           </>
         ) : diffQuery.isPending ? (
@@ -929,7 +930,7 @@ function PullRequestCodeTab({
         if (result._tag === "Failure") {
           toastManager.add({
             type: "error",
-            title: "More comments could not be loaded",
+            title: translateUi("More comments could not be loaded"),
           });
           return null;
         }
@@ -989,7 +990,7 @@ function PullRequestCodeTab({
           {...(canCommentOnLines && onAddToAgentSelection
             ? {
                 secondaryAction: {
-                  label: "Add to agent",
+                  label: translateUi("Add to agent"),
                   onAction: (text: string) =>
                     finishSelection(draft, text, (comment) =>
                       onAddToAgentSelection({ comment, request: text }),
@@ -1052,7 +1053,7 @@ function PullRequestCodeTab({
                 onValueChange={(value) => onSelectedCommitChange(value === "all" ? null : value)}
               >
                 <DropdownMenuRadioItem value="all" closeOnClick>
-                  <span>All commits</span>
+                  <span>{translateUi("All commits")}</span>
                 </DropdownMenuRadioItem>
                 {orderedCommits.slice(0, visibleCommitCount).map((entry) => (
                   <DropdownMenuRadioItem key={entry.oid} value={entry.oid} closeOnClick>
@@ -1090,7 +1091,8 @@ function PullRequestCodeTab({
           </span>
           {hiddenTestFileCount > 0 ? (
             <Button type="button" size="xs" variant="link" onClick={() => setHideTestFiles(false)}>
-              {hiddenTestFileCount} test {hiddenTestFileCount === 1 ? "file" : "files"} hidden
+              {hiddenTestFileCount} test {hiddenTestFileCount === 1 ? "file" : "files"}
+              {translateUi("hidden")}
             </Button>
           ) : null}
           {filesViewed.enabled && files.length > 0 ? (
@@ -1105,14 +1107,14 @@ function PullRequestCodeTab({
                 <Tooltip>
                   <TooltipTrigger render={<span className="flex shrink-0 items-center" />}>
                     <InfoIcon
-                      aria-label="These ticks are kept here, not on the host"
+                      aria-label={translateUi("These ticks are kept here, not on the host")}
                       className="text-muted-foreground size-3.5"
                     />
                   </TooltipTrigger>
                   <TooltipPopup side="bottom">
-                    This host keeps no shared record of which files you have read, so these ticks
-                    are kept by this environment. They follow you between the apps connected to it,
-                    but the host's own web UI will not show them.
+                    {translateUi(
+                      "This host keeps no shared record of which files you have read, so these ticks are kept by this environment. They follow you between the apps connected to it, but the host's own web UI will not show them.",
+                    )}
                   </TooltipPopup>
                 </Tooltip>
               ) : null}
@@ -1120,13 +1122,15 @@ function PullRequestCodeTab({
                 <Tooltip>
                   <TooltipTrigger render={<span className="flex shrink-0 items-center" />}>
                     <TriangleAlertIcon
-                      aria-label="Your ticks could not be read"
+                      aria-label={translateUi("Your ticks could not be read")}
                       className="size-3.5 text-warning-foreground"
                     />
                   </TooltipTrigger>
                   <TooltipPopup side="bottom">
-                    The boxes below are whatever was last read, and empty if nothing has been read
-                    yet. {filesViewed.error}
+                    {translateUi(
+                      "The boxes below are whatever was last read, and empty if nothing has been read yet.",
+                    )}
+                    {filesViewed.error}
                   </TooltipPopup>
                 </Tooltip>
               ) : null}
@@ -1134,13 +1138,14 @@ function PullRequestCodeTab({
                 <Tooltip>
                   <TooltipTrigger render={<span className="flex shrink-0 items-center" />}>
                     <TriangleAlertIcon
-                      aria-label="This count covers only part of the change"
+                      aria-label={translateUi("This count covers only part of the change")}
                       className="size-3.5 text-warning-foreground"
                     />
                   </TooltipTrigger>
                   <TooltipPopup side="bottom">
-                    This change has more files than the host will report ticks for in one read, so
-                    the count is short and some boxes below start empty.
+                    {translateUi(
+                      "This change has more files than the host will report ticks for in one read, so the count is short and some boxes below start empty.",
+                    )}
                   </TooltipPopup>
                 </Tooltip>
               ) : null}
@@ -1150,12 +1155,14 @@ function PullRequestCodeTab({
             <Tooltip>
               <TooltipTrigger render={<span className="flex shrink-0 items-center" />}>
                 <TriangleAlertIcon
-                  aria-label="Some of this diff was not shown"
+                  aria-label={translateUi("Some of this diff was not shown")}
                   className="size-3.5 text-warning-foreground"
                 />
               </TooltipTrigger>
               <TooltipPopup side="bottom">
-                The host withheld part of this diff: a binary file, or a change too large to inline.
+                {translateUi(
+                  "The host withheld part of this diff: a binary file, or a change too large to inline.",
+                )}
               </TooltipPopup>
             </Tooltip>
           ) : null}
@@ -1163,12 +1170,14 @@ function PullRequestCodeTab({
             <Tooltip>
               <TooltipTrigger render={<span className="flex shrink-0 items-center" />}>
                 <MessageSquareOffIcon
-                  aria-label="Line comments are written from the whole change"
+                  aria-label={translateUi("Line comments are written from the whole change")}
                   className="size-3.5"
                 />
               </TooltipTrigger>
               <TooltipPopup side="bottom">
-                A comment is anchored to the whole change, so switch to All commits to write one.
+                {translateUi(
+                  "A comment is anchored to the whole change, so switch to All commits to write one.",
+                )}
               </TooltipPopup>
             </Tooltip>
           ) : null}
@@ -1182,26 +1191,26 @@ function PullRequestCodeTab({
                 <DropdownMenuTrigger
                   render={<Button size="icon-sm" variant="ghost" />}
                   className="@lg:hidden"
-                  aria-label="Diff options"
+                  aria-label={translateUi("Diff options")}
                 />
               }
             >
               <Settings2Icon className="size-3.5" />
             </TooltipTrigger>
-            <TooltipPopup side="top">Diff options</TooltipPopup>
+            <TooltipPopup side="top">{translateUi("Diff options")}</TooltipPopup>
           </Tooltip>
           <DropdownMenuContent align="end">
             <DropdownMenuCheckboxItem
               checked={ignoreWhitespace}
               onCheckedChange={(checked) => changeIgnoreWhitespace(checked)}
             >
-              Hide whitespace changes
+              {translateUi("Hide whitespace changes")}
             </DropdownMenuCheckboxItem>
             <DropdownMenuCheckboxItem
               checked={wordWrap}
               onCheckedChange={(checked) => setWordWrap(checked)}
             >
-              Wrap lines
+              {translateUi("Wrap lines")}
             </DropdownMenuCheckboxItem>
             <DropdownMenuSeparator />
             <DropdownMenuRadioGroup
@@ -1213,10 +1222,10 @@ function PullRequestCodeTab({
               }}
             >
               <DropdownMenuRadioItem value="stacked" closeOnClick>
-                Stacked
+                {translateUi("Stacked")}
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="split" closeOnClick>
-                Split
+                {translateUi("Split")}
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>
@@ -1243,7 +1252,7 @@ function PullRequestCodeTab({
             </TooltipPopup>
           </Tooltip>
           <ToggleGroup
-            aria-label="Diff layout"
+            aria-label={translateUi("Diff layout")}
             className="shrink-0"
             variant="segmented"
             value={[diffLayout]}
@@ -1254,10 +1263,10 @@ function PullRequestCodeTab({
               }
             }}
           >
-            <Toggle aria-label="Stacked diff view" value="stacked">
+            <Toggle aria-label={translateUi("Stacked diff view")} value="stacked">
               <Rows3Icon className="size-3.5" />
             </Toggle>
-            <Toggle aria-label="Split diff view" value="split">
+            <Toggle aria-label={translateUi("Split diff view")} value="split">
               <Columns2Icon className="size-3.5" />
             </Toggle>
           </ToggleGroup>
@@ -1310,7 +1319,7 @@ function PullRequestCodeTab({
             <TooltipTrigger
               render={
                 <Toggle
-                  aria-label="Hide test files"
+                  aria-label={translateUi("Hide test files")}
                   variant="ghost"
                   size="sm"
                   pressed={hideTestFiles}
@@ -1453,7 +1462,10 @@ function PullRequestCodeTab({
                       {threads.map((thread) => (
                         <div key={thread.id}>
                           {thread.line === null ? null : (
-                            <p className="px-3 text-xs text-muted-foreground">Line {thread.line}</p>
+                            <p className="px-3 text-xs text-muted-foreground">
+                              {translateUi("Line")}
+                              {thread.line}
+                            </p>
                           )}
                           {renderThreadCard(thread)}
                         </div>

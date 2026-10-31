@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useParams } from "@tanstack/react-router";
 import { scopeProjectRef } from "@t3tools/client-runtime/environment";
 import {
@@ -59,7 +60,7 @@ async function runCloneAction(
       stackedThreadToast({
         type: "error",
         title,
-        description: error instanceof Error ? error.message : "An error occurred.",
+        description: error instanceof Error ? error.message : translateUi("An error occurred."),
       }),
     );
   }
@@ -120,11 +121,11 @@ function EnvironmentCloneToasts({ environmentId }: { environmentId: EnvironmentI
       if (clone.phase === "running") {
         const options = stackedThreadToast({
           type: "loading",
-          title: `Cloning ${name}`,
+          title: translateUi("Cloning {0}", [name]),
           description: projectCloneProgressSummary(clone),
           timeout: 0,
           actionProps: {
-            children: "Cancel",
+            children: translateUi("Cancel"),
             onClick: () => {
               void runCloneAction("Failed to cancel clone", () =>
                 cancelClone({ environmentId, input: { projectId: clone.projectId } }),
@@ -146,11 +147,11 @@ function EnvironmentCloneToasts({ environmentId }: { environmentId: EnvironmentI
       if (clone.phase === "done") {
         const options = stackedThreadToast({
           type: "success",
-          title: `Cloned ${name}`,
+          title: translateUi("Cloned {0}", [name]),
           description: clone.destinationPath,
           timeout: 8_000,
           actionProps: {
-            children: "Open project",
+            children: translateUi("Open project"),
             onClick: () => {
               closeToast();
               openProject(clone.projectId);
@@ -171,11 +172,15 @@ function EnvironmentCloneToasts({ environmentId }: { environmentId: EnvironmentI
       const cancelled = clone.phase === "cancelled";
       const options = stackedThreadToast({
         type: cancelled ? "info" : "error",
-        title: cancelled ? `Cancelled cloning ${name}` : `Failed to clone ${name}`,
-        description: cancelled ? clone.destinationPath : (clone.error ?? "The clone failed."),
+        title: cancelled
+          ? translateUi("Cancelled cloning {0}", [name])
+          : translateUi("Failed to clone {0}", [name]),
+        description: cancelled
+          ? clone.destinationPath
+          : (clone.error ?? translateUi("The clone failed.")),
         timeout: 0,
         actionProps: {
-          children: "Retry",
+          children: translateUi("Retry"),
           onClick: () => {
             void runCloneAction("Failed to retry clone", () =>
               retryClone({ environmentId, input: { projectId: clone.projectId } }),
@@ -185,7 +190,7 @@ function EnvironmentCloneToasts({ environmentId }: { environmentId: EnvironmentI
         data: {
           ...(cancelled ? { hideCopyButton: true } : {}),
           secondaryActionProps: {
-            children: "Remove project",
+            children: translateUi("Remove project"),
             onClick: () => {
               void removeClonedProject({ environmentId, projectId: clone.projectId });
             },

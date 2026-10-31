@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   isModifierPairShortcut,
   type SnapShotModifier,
@@ -70,7 +71,9 @@ export function useSnapShotShortcutRecorder({
     } catch (error) {
       if (!requests.owns(request)) return;
       requests.clear();
-      onError(error instanceof Error ? error.message : "Could not start shortcut recording.");
+      onError(
+        error instanceof Error ? error.message : translateUi("Could not start shortcut recording."),
+      );
     }
   };
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- releases the desktop bridge's SnapShot shortcut suppression on unmount
@@ -96,7 +99,7 @@ export function useSnapShotShortcutRecorder({
       const [left, right] = MODIFIER_CODES[modifier];
       if (held.has(left) && held.has(right)) {
         if (!allowModifierPairs) {
-          onError("Add a letter, number, or function key to your shortcut.");
+          onError(translateUi("Add a letter, number, or function key to your shortcut."));
           return;
         }
         stopRecording();
@@ -128,7 +131,7 @@ export function useSnapShotShortcutRecorder({
         aria-label={
           displayShortcut
             ? `Record snapshot shortcut, currently ${formatSnapShotShortcutLabel(displayShortcut)}`
-            : "Change snapshot shortcut"
+            : translateUi("Change snapshot shortcut")
         }
         aria-pressed={recording}
         data-keybinding-capture=""
@@ -140,9 +143,9 @@ export function useSnapShotShortcutRecorder({
         {recording ? (
           "Press shortcut…"
         ) : !displayShortcut ? (
-          "Change shortcut"
+          translateUi("Change shortcut")
         ) : !allowModifierPairs && isModifierPairShortcut(displayShortcut) ? (
-          "Choose shortcut"
+          translateUi("Choose shortcut")
         ) : (
           <SnapShotShortcutKeys shortcut={displayShortcut} />
         )}

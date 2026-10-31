@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useState } from "react";
 
 import {
@@ -26,8 +27,12 @@ export function CliCommandSettingsRow() {
         toastManager.add(
           stackedThreadToast({
             type: "error",
-            title: action === "install" ? "Could not install t3" : "Could not remove t3",
-            description: error instanceof Error ? error.message : "Something went wrong.",
+            title:
+              action === "install"
+                ? translateUi("Could not install t3")
+                : translateUi("Could not remove t3"),
+            description:
+              error instanceof Error ? error.message : translateUi("Something went wrong."),
           }),
         );
       })
@@ -55,7 +60,7 @@ export function CliCommandSettingsRow() {
           disabled={pending || query.isPending}
           onClick={() => change(installed ? "uninstall" : "install")}
         >
-          {installed ? "Remove" : "Install"}
+          {installed ? translateUi("Remove") : translateUi("Install")}
         </Button>
       }
     />

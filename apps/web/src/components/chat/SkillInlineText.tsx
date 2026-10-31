@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ScopedThreadRef, ServerProviderSkill } from "@t3tools/contracts";
 import { formatProviderSkillDisplayName } from "@t3tools/shared/inlineSkills";
 import { Children, cloneElement, isValidElement, type ReactNode } from "react";
@@ -102,7 +103,7 @@ export function SkillChipPopover(props: {
         <p>{props.description || "No description is available for this skill."}</p>
         {props.onViewInstructions ? (
           <Button variant="outline" size="sm" onClick={props.onViewInstructions}>
-            View instructions
+            {translateUi("View instructions")}
           </Button>
         ) : null}
       </div>

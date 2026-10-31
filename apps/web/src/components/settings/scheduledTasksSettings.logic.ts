@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { isWebhookDedupeTemplate } from "@t3tools/contracts";
 import {
   EnvironmentId,
@@ -112,14 +113,14 @@ export function webhookDraftErrors(draft: DraftState) {
   ] as const) {
     if (value.trim() && !isWebhookDedupeTemplate(value.trim()))
       errors.push({
-        title: "Invalid webhook settings",
+        title: translateUi("Invalid webhook settings"),
         description: `${label} must contain a valid request placeholder.`,
       });
   }
   const window = draft.coalesceWindowSeconds.trim();
   if (window && (!Number.isInteger(Number(window)) || Number(window) < 10 || Number(window) > 3600))
     errors.push({
-      title: "Invalid webhook settings",
+      title: translateUi("Invalid webhook settings"),
       description: "Coalesce window must be whole seconds from 10 to 3600.",
     });
   return errors;

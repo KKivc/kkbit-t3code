@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { AnyRouter } from "@tanstack/react-router";
 
 import {
@@ -73,7 +74,9 @@ export function installCommandPaletteCommands(
         }
         toastManager.add({
           id: "appearance-cycle",
-          title: `Appearance: ${APPEARANCE_OPTIONS.find((option) => option.mode === nextMode)?.label}`,
+          title: translateUi("Appearance: {0}", [
+            APPEARANCE_OPTIONS.find((option) => option.mode === nextMode)?.label,
+          ]),
           timeout: 1500,
         });
       },

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { lucideIconNames } from "./lib/lucideIconByName";
 export { PROJECT_ICON_COLORS, projectIconColorClassName } from "./projectIconColors";
 
@@ -29,18 +30,18 @@ const POPULAR_PROJECT_ICONS: ReadonlyArray<string> = [
 ];
 
 export const PROJECT_EMOJIS: ReadonlyArray<{ readonly emoji: string; readonly label: string }> = [
-  { emoji: "💻", label: "Computer" },
-  { emoji: "🛠️", label: "Tools" },
+  { emoji: "💻", label: translateUi("Computer") },
+  { emoji: "🛠️", label: translateUi("Tools") },
   { emoji: "🚀", label: "Rocket" },
   { emoji: "🤖", label: "Robot" },
   { emoji: "✨", label: "Sparkles" },
   { emoji: "⚡", label: "Lightning" },
   { emoji: "🌐", label: "Web" },
-  { emoji: "📱", label: "Mobile" },
-  { emoji: "🖥️", label: "Desktop" },
+  { emoji: "📱", label: translateUi("Mobile") },
+  { emoji: "🖥️", label: translateUi("Desktop") },
   { emoji: "⌨️", label: "Keyboard" },
   { emoji: "⚙️", label: "Gear" },
-  { emoji: "🗄️", label: "Database" },
+  { emoji: "🗄️", label: translateUi("Database") },
   { emoji: "☁️", label: "Cloud" },
   { emoji: "📦", label: "Package" },
   { emoji: "📚", label: "Books" },

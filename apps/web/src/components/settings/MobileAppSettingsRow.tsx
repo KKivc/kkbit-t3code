@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { AndroidIcon, AppleIcon } from "../Icons";
 import { Button } from "../ui/button";
 import { Popover, PopoverPopup, PopoverTitle, PopoverTrigger } from "../ui/popover";
@@ -7,7 +8,7 @@ import { searchableSetting } from "./settingsSearch";
 
 const stores = [
   {
-    label: "iPhone and iPad",
+    label: translateUi("iPhone and iPad"),
     store: "App Store",
     url: "https://apps.apple.com/us/app/t3-code-remote-claude-more/id6787819824",
     Icon: AppleIcon,
@@ -24,7 +25,7 @@ export function MobileAppSettingsRow() {
   return (
     <SettingsRow
       {...searchableSetting("mobile-app")}
-      description="Connect to your server from your phone or tablet."
+      description={translateUi("Connect to your server from your phone or tablet.")}
       control={
         <div className="flex items-center gap-2">
           {stores.map(({ label, store, url, Icon }) => (
@@ -36,7 +37,9 @@ export function MobileAppSettingsRow() {
               <PopoverPopup align="end">
                 <div className="flex flex-col items-center gap-3">
                   <PopoverTitle>{store}</PopoverTitle>
-                  <p className="text-xs text-muted-foreground">Scan with your phone camera.</p>
+                  <p className="text-xs text-muted-foreground">
+                    {translateUi("Scan with your phone camera.")}
+                  </p>
                   <div className="rounded-lg bg-white p-1.5">
                     <QRCodeSvg
                       value={url}
@@ -51,7 +54,8 @@ export function MobileAppSettingsRow() {
                     variant="outline"
                     render={<a href={url} target="_blank" rel="noreferrer noopener" />}
                   >
-                    Open {store}
+                    {translateUi("Open")}
+                    {store}
                   </Button>
                 </div>
               </PopoverPopup>

@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { ThreadDetailsControl } from "./chat/ThreadDetailsControl";
 import {
   AuthSettingsWriteScope,
@@ -156,7 +157,7 @@ export default function ProjectScriptsControl({
     <>
       {scripts.length > 0 && <MenuSeparator />}
       <MenuGroup>
-        <MenuGroupLabel>From t3.json</MenuGroupLabel>
+        <MenuGroupLabel>{translateUi("From t3.json")}</MenuGroupLabel>
         {importableScripts.map((fileScript) => (
           <MenuItem
             density={presentation === "menu" ? "touch" : "default"}
@@ -166,7 +167,7 @@ export default function ProjectScriptsControl({
             <ScriptIcon icon={fileScript.icon ?? "play"} className="size-4" />
             <MenuItemLabel>{fileScript.name}</MenuItemLabel>
             <MenuShortcut>
-              <DownloadIcon className="size-3.5" aria-label="Import" />
+              <DownloadIcon className="size-3.5" aria-label={translateUi("Import")} />
             </MenuShortcut>
           </MenuItem>
         ))}
@@ -245,7 +246,10 @@ export default function ProjectScriptsControl({
               onClick={() => onRunScript?.(primaryScript)}
             >
               <ScriptIcon icon={primaryScript.icon} className="size-4" />
-              <MenuItemLabel>Run {primaryScript.name}</MenuItemLabel>
+              <MenuItemLabel>
+                {translateUi("Run")}
+                {primaryScript.name}
+              </MenuItemLabel>
               <MenuShortcut>
                 {shortcutLabelForCommand(keybindings, commandForProjectScript(primaryScript.id))}
               </MenuShortcut>
@@ -260,7 +264,7 @@ export default function ProjectScriptsControl({
             >
               <MenuSubTrigger density="touch">
                 <ScriptIcon icon="play" className="size-4" />
-                <MenuItemLabel>Project actions</MenuItemLabel>
+                <MenuItemLabel>{translateUi("Project actions")}</MenuItemLabel>
               </MenuSubTrigger>
               <MenuSubPopup>{scriptItems}</MenuSubPopup>
             </MenuSub>
@@ -270,14 +274,14 @@ export default function ProjectScriptsControl({
               onClick={openAddDialog}
             >
               <PlusIcon className="size-4" />
-              <MenuItemLabel>Add project action…</MenuItemLabel>
+              <MenuItemLabel>{translateUi("Add project action…")}</MenuItemLabel>
             </MenuItem>
           )}
         </>
       ) : primaryScript ? (
         <ActionGroup
           role="group"
-          aria-label="Project scripts"
+          aria-label={translateUi("Project scripts")}
           {...(isPanel
             ? { className: THREAD_DETAILS_PANEL_SPLIT_GROUP_CLASS, ref: panelAnchorRef }
             : {})}
@@ -336,7 +340,7 @@ export default function ProjectScriptsControl({
                   variant={isPanel ? "ghost" : "outline"}
                   part="secondary"
                   panel={isPanel}
-                  aria-label="Script actions"
+                  aria-label={translateUi("Script actions")}
                 />
               }
             >
@@ -357,7 +361,7 @@ export default function ProjectScriptsControl({
         isPanel ? (
           <div
             role="group"
-            aria-label="Project actions"
+            aria-label={translateUi("Project actions")}
             className={THREAD_DETAILS_PANEL_SPLIT_GROUP_CLASS}
             ref={panelAnchorRef}
           >
@@ -365,12 +369,12 @@ export default function ProjectScriptsControl({
               size="sm"
               variant="ghost"
               part="primary"
-              aria-label="Project actions"
+              aria-label={translateUi("Project actions")}
               onClick={() => setActionsMenuOpen({ presentation, scripts: false, imports: true })}
             >
               <WrenchIcon className={THREAD_DETAILS_PANEL_ICON_CLASS} />
               <span className={cn("min-w-0 truncate", THREAD_DETAILS_PANEL_LABEL_CLASS)}>
-                Actions
+                {translateUi("Actions")}
               </span>
             </ThreadDetailsControl>
             <span aria-hidden="true" className={THREAD_DETAILS_PANEL_SPLIT_SEPARATOR_CLASS} />
@@ -387,7 +391,7 @@ export default function ProjectScriptsControl({
                     size="sm"
                     variant="ghost"
                     part="secondary"
-                    aria-label="Choose project action"
+                    aria-label={translateUi("Choose project action")}
                   />
                 }
               >
@@ -407,11 +411,13 @@ export default function ProjectScriptsControl({
             }
           >
             <MenuTrigger
-              render={<Button size="xs" variant="outline" aria-label="Project actions" />}
+              render={
+                <Button size="xs" variant="outline" aria-label={translateUi("Project actions")} />
+              }
             >
               <WrenchIcon className="size-3.5" />
               <span className="sr-only @3xl/header-actions:not-sr-only @3xl/header-actions:ml-0.5">
-                Actions
+                {translateUi("Actions")}
               </span>
               <ChevronDownIcon className="size-3.5" />
             </MenuTrigger>

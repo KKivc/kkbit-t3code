@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { DeviceHubAccess } from "@t3tools/client-runtime/state/deviceHubAccess";
 import type { DevicePermission, DeviceSummary, DeviceTextSize } from "@t3tools/contracts";
 import { ChevronDown, X } from "lucide-react";
@@ -23,7 +24,7 @@ import { deviceEventLogAtom } from "./deviceHubAtoms";
 
 const TEXT_SIZES: ReadonlyArray<{ value: DeviceTextSize; label: string }> = [
   { value: "small", label: "Small" },
-  { value: "default", label: "Default" },
+  { value: "default", label: translateUi("Default") },
   { value: "large", label: "Large" },
   { value: "extra-large", label: "Extra large" },
 ];
@@ -44,27 +45,27 @@ const ORIENTATIONS = [
 ] as const;
 
 const IOS_PERMISSIONS: ReadonlyArray<{ value: DevicePermission; label: string }> = [
-  { value: "camera", label: "Camera" },
-  { value: "microphone", label: "Microphone" },
-  { value: "photos", label: "Photos" },
-  { value: "contacts", label: "Contacts" },
-  { value: "calendar", label: "Calendar" },
+  { value: "camera", label: translateUi("Camera") },
+  { value: "microphone", label: translateUi("Microphone") },
+  { value: "photos", label: translateUi("Photos") },
+  { value: "contacts", label: translateUi("Contacts") },
+  { value: "calendar", label: translateUi("Calendar") },
   { value: "reminders", label: "Reminders" },
-  { value: "location", label: "Location" },
-  { value: "notifications", label: "Notifications" },
-  { value: "motion", label: "Motion" },
+  { value: "location", label: translateUi("Location") },
+  { value: "notifications", label: translateUi("Notifications") },
+  { value: "motion", label: translateUi("Motion") },
   { value: "media-library", label: "Media library" },
   { value: "faceid", label: "Face ID" },
 ];
 
 const ANDROID_PERMISSIONS: ReadonlyArray<{ value: DevicePermission; label: string }> = [
-  { value: "camera", label: "Camera" },
-  { value: "microphone", label: "Microphone" },
-  { value: "photos", label: "Photos" },
-  { value: "contacts", label: "Contacts" },
-  { value: "calendar", label: "Calendar" },
-  { value: "location", label: "Location" },
-  { value: "notifications", label: "Notifications" },
+  { value: "camera", label: translateUi("Camera") },
+  { value: "microphone", label: translateUi("Microphone") },
+  { value: "photos", label: translateUi("Photos") },
+  { value: "contacts", label: translateUi("Contacts") },
+  { value: "calendar", label: translateUi("Calendar") },
+  { value: "location", label: translateUi("Location") },
+  { value: "notifications", label: translateUi("Notifications") },
   { value: "motion", label: "Physical activity" },
 ];
 
@@ -96,7 +97,7 @@ export function DeviceToolsPanel(props: {
       className={cn("flex min-h-0 flex-col border-border bg-background text-sm", props.className)}
     >
       <div className="flex h-9 shrink-0 items-center gap-2 border-b px-3">
-        <span className="font-medium">Tools</span>
+        <span className="font-medium">{translateUi("Tools")}</span>
         {pending ? <Spinner size="sm" /> : null}
         <Button
           size="icon-xs"
@@ -126,7 +127,7 @@ export function DeviceToolsPanel(props: {
           </Section>
         ) : null}
 
-        <Section title="App">
+        <Section title={translateUi("App")}>
           <Row label="Foreground">
             <span className="truncate font-mono text-xs">{foregroundApp?.id ?? "-"}</span>
           </Row>
@@ -165,9 +166,9 @@ export function DeviceToolsPanel(props: {
         </Section>
 
         <Section title={isIos ? "Simulator" : "Emulator"}>
-          <Row label="Appearance">
+          <Row label={translateUi("Appearance")}>
             <ToggleGroup
-              aria-label="Appearance"
+              aria-label={translateUi("Appearance")}
               value={settings?.appearance ? [settings.appearance] : []}
               disabled={disabled}
               onValueChange={(value) => {
@@ -176,8 +177,8 @@ export function DeviceToolsPanel(props: {
                   void act({ type: "setAppearance", value: next });
               }}
             >
-              <Toggle value="light">Light</Toggle>
-              <Toggle value="dark">Dark</Toggle>
+              <Toggle value="light">{translateUi("Light")}</Toggle>
+              <Toggle value="dark">{translateUi("Dark")}</Toggle>
             </ToggleGroup>
           </Row>
           <Row label="Text size">
@@ -203,7 +204,7 @@ export function DeviceToolsPanel(props: {
                     }
                   }}
                 >
-                  <Toggle value="clear">Clear</Toggle>
+                  <Toggle value="clear">{translateUi("Clear")}</Toggle>
                   <Toggle value="tinted">Tinted</Toggle>
                 </ToggleGroup>
               </Row>
@@ -274,7 +275,7 @@ export function DeviceToolsPanel(props: {
           )}
         </Section>
 
-        <Section title="Accessibility">
+        <Section title={translateUi("Accessibility")}>
           <SwitchRow
             label="Overlay element frames"
             checked={props.axOverlay}
@@ -457,7 +458,7 @@ function LocationSection(props: {
     Math.abs(parsed.latitude) <= 90 &&
     Math.abs(parsed.longitude) <= 180;
   return (
-    <Section title="Location">
+    <Section title={translateUi("Location")}>
       <div className="flex gap-1.5">
         <Input
           size="compact"
@@ -524,7 +525,7 @@ function LocationSection(props: {
               void props.onClear();
             }}
           >
-            Clear
+            {translateUi("Clear")}
           </Button>
         ) : null}
       </div>
@@ -549,7 +550,7 @@ function PermissionsSection(props: {
   const decide = (decision: "grant" | "revoke" | "reset") =>
     void props.onDecide(resolvedAppId, permission, decision);
   return (
-    <Section title="Permissions">
+    <Section title={translateUi("Permissions")}>
       <Input
         size="compact"
         font="mono"
@@ -583,7 +584,7 @@ function PermissionsSection(props: {
           disabled={props.disabled || !resolvedAppId}
           onClick={() => decide("revoke")}
         >
-          Revoke
+          {translateUi("Revoke")}
         </Button>
         {props.canReset ? (
           <Button

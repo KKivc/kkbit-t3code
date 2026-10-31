@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useAuth } from "@clerk/react";
 import { useAtomValue } from "@effect/atom-react";
 import { AuthRelayReadScope, AuthRelayWriteScope, type AuthSessionState } from "@t3tools/contracts";
@@ -179,10 +180,10 @@ function ConfiguredConnectOnboardingDialog() {
     if (!ok) return;
     toastManager.add({
       type: "success",
-      title: "T3 Connect enabled",
+      title: translateUi("T3 Connect enabled"),
       description: exposeEnvironment
-        ? "This environment is available to your other devices through T3 Connect."
-        : "This environment publishes agent activity to your mobile clients.",
+        ? translateUi("This environment is available to your other devices through T3 Connect.")
+        : translateUi("This environment publishes agent activity to your mobile clients."),
     });
     setStep("devices");
   };
@@ -205,11 +206,12 @@ function ConfiguredConnectOnboardingDialog() {
     >
       <WizardPopup>
         <WizardHeader
-          title="Set up T3 Connect"
+          title={translateUi("Set up T3 Connect")}
           description={
             <>
-              Mesh your devices together. Publish this environment and connect the rest, all in one
-              place.
+              {translateUi(
+                "Mesh your devices together. Publish this environment and connect the rest, all in one place.",
+              )}
             </>
           }
         >
@@ -269,14 +271,14 @@ function ConfiguredConnectOnboardingDialog() {
                 checked={dontShowAgain}
                 onCheckedChange={(checked) => setDontShowAgain(checked === true)}
               />
-              Don&apos;t show this again
+              {translateUi("Don't show this again")}
             </label>
           }
         >
           {step === "publish" ? (
             <>
               <Button variant="ghost" disabled={isApplying} onClick={() => setStep("devices")}>
-                Not now
+                {translateUi("Not now")}
               </Button>
               <Button
                 disabled={isApplying || !canManageRelay || linkStateData === null}
@@ -287,7 +289,7 @@ function ConfiguredConnectOnboardingDialog() {
             </>
           ) : (
             <Button disabled={isApplying} onClick={complete}>
-              Done
+              {translateUi("Done")}
             </Button>
           )}
         </WizardFooter>
@@ -326,15 +328,19 @@ function PublishStep({
     <div className="space-y-3">
       <div className="rounded-lg border">
         <OnboardingToggleRow
-          title="Publish this environment"
-          description="Make this environment available to your other devices through T3 Connect."
+          title={translateUi("Publish this environment")}
+          description={translateUi(
+            "Make this environment available to your other devices through T3 Connect.",
+          )}
           checked={exposeEnvironment}
           disabled={disabled}
           onCheckedChange={onExposeEnvironmentChange}
         />
         <OnboardingToggleRow
-          title="Publish agent activity"
-          description="Send activity from this environment to your mobile clients for push notifications and Live Activities."
+          title={translateUi("Publish agent activity")}
+          description={translateUi(
+            "Send activity from this environment to your mobile clients for push notifications and Live Activities.",
+          )}
           checked={publishAgentActivity}
           disabled={disabled}
           onCheckedChange={onPublishAgentActivityChange}
@@ -407,8 +413,9 @@ function DevicesStep() {
         showSavedEnvironments
         empty={
           <p className="px-4 py-6 text-center text-sm text-muted-foreground">
-            No other environments are published to your account yet. Publish one from another device
-            and it will show up here.
+            {translateUi(
+              "No other environments are published to your account yet. Publish one from another device and it will show up here.",
+            )}
           </p>
         }
       />

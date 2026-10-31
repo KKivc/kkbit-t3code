@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   DEFAULT_SERVER_SETTINGS,
   PROJECT_FILE_BACKED_SETTINGS,
@@ -32,38 +33,38 @@ interface InheritanceLayer {
 }
 
 const WRITING_STYLE_LABELS: Record<string, string> = {
-  repo_conventions: "Repository conventions",
+  repo_conventions: translateUi("Repository conventions"),
   conventional_commits: "Conventional Commits",
-  custom: "Custom instructions",
+  custom: translateUi("Custom instructions"),
 };
 
 const BACKGROUND_ACTIVITY_PROFILE_LABELS: Record<string, string> = {
-  balanced: "Balanced",
-  performance: "Performance",
-  "battery-saver": "Battery saver",
-  custom: "Advanced",
+  balanced: translateUi("Balanced"),
+  performance: translateUi("Performance"),
+  "battery-saver": translateUi("Battery saver"),
+  custom: translateUi("Advanced"),
 };
 
 function formatValue(key: keyof ServerSettings, value: unknown): string {
   if (value === null || value === undefined) {
     return key === "pullRequestMergeMethod"
-      ? "Last selected"
+      ? translateUi("Last selected")
       : key === "sidebarAutoSettleAfterDays"
-        ? "Never"
+        ? translateUi("Never")
         : key === "defaultModelSelection"
-          ? "Automatic"
+          ? translateUi("Automatic")
           : key === "sourceControlWriterModelSelection"
-            ? "Text generation model"
+            ? translateUi("Text generation model")
             : key === "reviewGuideModelSelection"
-              ? "Source control writer model"
+              ? translateUi("Source control writer model")
               : key === "defaultThreadEnvMode" || key === "worktreeSubmodules"
-                ? "Inherit"
-                : "Not set";
+                ? translateUi("Inherit")
+                : translateUi("Not set");
   }
-  if (typeof value === "boolean") return value ? "On" : "Off";
+  if (typeof value === "boolean") return value ? translateUi("On") : translateUi("Off");
   if (typeof value === "number") {
     return key === "sidebarAutoSettleAfterDays"
-      ? `${value} ${value === 1 ? "day" : "days"}`
+      ? `${value} ${translateUi(value === 1 ? "day" : "days")}`
       : String(value);
   }
   if (typeof value === "string") {
@@ -78,7 +79,7 @@ function formatValue(key: keyof ServerSettings, value: unknown): string {
         value as keyof typeof PULL_REQUEST_MERGE_METHOD_LABELS
       ];
     }
-    return value === "" ? "Empty" : value;
+    return value === "" ? translateUi("Empty") : value;
   }
   if (Array.isArray(value)) return `${value.length} ${value.length === 1 ? "item" : "items"}`;
   if (typeof value === "object") {
@@ -87,13 +88,14 @@ function formatValue(key: keyof ServerSettings, value: unknown): string {
     }
     if ("model" in value && typeof value.model === "string") return value.model;
     if ("mode" in value && typeof value.mode === "string") {
-      if (key === "worktreeCleanup") return value.mode === "off" ? "Off" : "Custom";
+      if (key === "worktreeCleanup")
+        return value.mode === "off" ? translateUi("Off") : translateUi("Custom");
       return key === "sourceControlWritingStyle"
         ? (WRITING_STYLE_LABELS[value.mode] ?? value.mode)
         : value.mode;
     }
   }
-  return "Custom";
+  return translateUi("Custom");
 }
 
 /** Matches resolveProjectSettings order. */
@@ -110,8 +112,9 @@ export function settingInheritanceLayers(
   if (target.projectId !== null && isProjectScopedSettingKey(key)) {
     layers.push({
       key: "project",
-      label: "Project",
-      value: source === "project" ? formatValue(key, target.settings[key]) : "Inherits",
+      label: translateUi("Project"),
+      value:
+        source === "project" ? formatValue(key, target.settings[key]) : translateUi("Inherits"),
       effective: source === "project",
       set: source === "project",
     });
@@ -119,7 +122,7 @@ export function settingInheritanceLayers(
   layers.push({
     key: "environment",
     label: target.label,
-    value: environmentSet ? formatValue(key, environmentValue) : "Inherits",
+    value: environmentSet ? formatValue(key, environmentValue) : translateUi("Inherits"),
     effective: source === "environment" && environmentSet,
     set: environmentSet,
   });
@@ -127,7 +130,8 @@ export function settingInheritanceLayers(
     layers.push({
       key: "t3.json",
       label: "t3.json",
-      value: source === "t3.json" ? formatValue(key, target.settings[key]) : "Inherits",
+      value:
+        source === "t3.json" ? formatValue(key, target.settings[key]) : translateUi("Inherits"),
       effective: source === "t3.json",
       set: source === "t3.json",
     });
@@ -138,7 +142,7 @@ export function settingInheritanceLayers(
     : DEFAULT_SERVER_SETTINGS[key];
   layers.push({
     key: "built-in",
-    label: "Default",
+    label: translateUi("Default"),
     value: formatValue(key, builtIn),
     effective: source === "environment" && !environmentSet,
     set: true,
@@ -290,7 +294,7 @@ export function SettingInheritance({
                         layer.effective ? "font-medium text-foreground" : "text-muted-foreground",
                       )}
                     >
-                      {layer.key === "environment" ? "Environment" : layer.label}
+                      {layer.key === "environment" ? translateUi("Environment") : layer.label}
                     </span>
                     <span
                       className={cn(
@@ -343,7 +347,7 @@ export function SettingInheritance({
                           </span>
                           <span className="text-xs text-muted-foreground">
                             {winningLayer?.key === "environment"
-                              ? "Environment"
+                              ? translateUi("Environment")
                               : winningLayer?.label}
                           </span>
                           <ChevronRightIcon
@@ -377,7 +381,7 @@ export function SettingInheritance({
                     {chain}
                     {hasMultipleEnvironments ? (
                       <p className="px-2 pt-1.5 text-xs text-muted-foreground">
-                        Same on all machines
+                        {translateUi("Same on all machines")}
                       </p>
                     ) : null}
                   </>
@@ -396,10 +400,10 @@ export function SettingInheritance({
                             aria-hidden
                             className="size-3 [[data-panel-open]_&]:rotate-90"
                           />
-                          Overridden by
+                          {translateUi("Overridden by")}
                         </CollapsibleTrigger>
                       ) : (
-                        <span>Overridden by</span>
+                        <span>{translateUi("Overridden by")}</span>
                       )}
                       {onClearOverrides ? (
                         <InlineButton onClick={() => onClearOverrides(overriding)}>

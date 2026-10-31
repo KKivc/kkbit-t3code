@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentThreadShell } from "@t3tools/client-runtime/state/models";
 import { scopedThreadKey, scopeThreadRef } from "@t3tools/client-runtime/environment";
 import { ChevronDownIcon, SquarePenIcon } from "lucide-react";
@@ -115,7 +116,10 @@ export const SidebarProjectFolderHeader = memo(function SidebarProjectFolderHead
           >
             <SquarePenIcon aria-hidden />
           </TooltipTrigger>
-          <TooltipPopup>New thread in {group.displayName}</TooltipPopup>
+          <TooltipPopup>
+            {translateUi("New thread in")}
+            {group.displayName}
+          </TooltipPopup>
         </Tooltip>
       </span>
     </li>
