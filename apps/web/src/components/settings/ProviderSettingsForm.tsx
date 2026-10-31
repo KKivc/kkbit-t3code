@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { useState, type ReactNode } from "react";
 import * as Option from "effect/Option";
 import * as Schema from "effect/Schema";
@@ -122,14 +123,15 @@ export function deriveProviderSettingsFields(
         {
           key,
           control: formAnnotation.control ?? "text",
-          label:
+          label: translateUi(
             isLocalAcp && key === "commandPath"
               ? "Executable"
               : (annotatedTitle ?? titleizeFieldKey(key)),
+          ),
           ...(isLocalAcp && key === "commandPath"
-            ? { description: "Executable name or path on this environment." }
+            ? { description: translateUi("Executable name or path on this environment.") }
             : annotatedDescription !== undefined
-              ? { description: annotatedDescription }
+              ? { description: translateUi(annotatedDescription) }
               : {}),
           ...(isLocalAcp && key === "commandPath"
             ? { placeholder: "e.g. dsh" }
@@ -143,7 +145,12 @@ export function deriveProviderSettingsFields(
             ? { defaultBooleanValue: readFieldBooleanDefault(fieldSchema) }
             : {}),
           ...(formAnnotation.control === "select" && formAnnotation.options
-            ? { options: formAnnotation.options }
+            ? {
+                options: formAnnotation.options.map((option) => ({
+                  ...option,
+                  label: translateUi(option.label),
+                })),
+              }
             : {}),
         } satisfies ProviderSettingsFieldModel,
       ];

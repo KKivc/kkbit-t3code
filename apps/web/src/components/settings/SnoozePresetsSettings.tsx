@@ -1,4 +1,5 @@
 import { translateUi } from "~/i18n/translate";
+import { localizeSnoozePreset } from "../Sidebar.snooze";
 import { useState } from "react";
 import {
   DEFAULT_SNOOZE_PRESETS,
@@ -40,14 +41,14 @@ import {
 const UNIT_MINUTES = { minutes: 1, hours: 60, days: 24 * 60 } as const;
 type DurationUnit = keyof typeof UNIT_MINUTES;
 const UNIT_LABELS: Record<DurationUnit, string> = {
-  minutes: "minutes",
-  hours: "hours",
-  days: "days",
+  minutes: translateUi("minutes"),
+  hours: translateUi("hours"),
+  days: translateUi("days"),
 };
 const SINGULAR_UNIT_LABELS: Record<DurationUnit, string> = {
-  minutes: "minute",
-  hours: "hour",
-  days: "day",
+  minutes: translateUi("minute"),
+  hours: translateUi("hour"),
+  days: translateUi("day"),
 };
 
 const WHEN_LABELS: Record<"after" | SnoozePresetDay, string> = {
@@ -241,19 +242,25 @@ function SnoozePresetList(props: {
   const seenWakes = new Set<string>();
   const previews = props.presets.map((preset) => {
     const resolved = resolveSnoozePreset(preset, now, formatTime);
-    if (resolved === null) return { tone: "muted", text: "Passed for today" } as const;
+    if (resolved === null) return { tone: "muted", text: translateUi("Passed for today") } as const;
     if (seenIds.has(resolved.id)) {
-      return { tone: "muted", text: "Duplicate of an option above" } as const;
+      return { tone: "muted", text: translateUi("Duplicate of an option above") } as const;
     }
     if (seenWakes.has(resolved.snoozedUntil)) {
-      return { tone: "muted", text: "Same time as an option above" } as const;
+      return { tone: "muted", text: translateUi("Same time as an option above") } as const;
     }
     seenIds.add(resolved.id);
     seenWakes.add(resolved.snoozedUntil);
-    return { tone: "menu", label: resolved.label, when: resolved.whenLabel } as const;
+    return {
+      tone: "menu",
+      label: localizeSnoozePreset(resolved).label,
+      when: resolved.whenLabel,
+    } as const;
   });
 
-  const menuPresets = resolveSnoozePresets(now, { presets: props.presets, formatTime });
+  const menuPresets = resolveSnoozePresets(now, { presets: props.presets, formatTime }).map(
+    localizeSnoozePreset,
+  );
   const repeatedLabels = new Set(
     menuPresets
       .map((preset) => preset.label)
@@ -284,7 +291,7 @@ function SnoozePresetList(props: {
           <div
             key={props.keys[index]}
             role="group"
-            aria-label={`Snooze option ${index + 1}`}
+            aria-label={translateUi("Snooze option {0}", [index + 1])}
             className="flex flex-wrap items-center gap-2"
           >
             <SnoozePresetFields preset={preset} onChange={(next) => props.onChange(index, next)} />
@@ -300,7 +307,7 @@ function SnoozePresetList(props: {
               <Button
                 variant="ghost-muted"
                 size="icon-sm"
-                aria-label={`Remove snooze option ${index + 1}`}
+                aria-label={translateUi("Remove snooze option {0}", [index + 1])}
                 onClick={() => props.onRemove(index)}
               >
                 <XIcon />
@@ -310,7 +317,9 @@ function SnoozePresetList(props: {
         );
       })}
       <p className="text-xs text-muted-foreground">
-        {menuOrder.length === 0 ? "Menus offer only Custom…" : `Menu now: ${menuOrder.join(" · ")}`}
+        {menuOrder.length === 0
+          ? translateUi("Menus offer only Custom…")
+          : translateUi("Menu now: {0}", [menuOrder.join(" · ")])}
       </p>
       <div>
         <Button
@@ -324,7 +333,7 @@ function SnoozePresetList(props: {
         </Button>
         {props.presets.length >= MAX_SNOOZE_PRESETS ? (
           <span className="ps-2 text-xs text-muted-foreground">
-            Up to {MAX_SNOOZE_PRESETS} options
+            {translateUi("Up to {0} options", [MAX_SNOOZE_PRESETS])}
           </span>
         ) : null}
       </div>

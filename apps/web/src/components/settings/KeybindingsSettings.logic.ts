@@ -243,7 +243,7 @@ export function groupKeybindingRows(
   }
   return [...KEYBINDING_GROUPS, OTHER_KEYBINDING_GROUP].flatMap((group) => {
     const groupRows = rowsByGroup.get(group.id);
-    return groupRows ? [{ id: group.id, title: group.title, rows: groupRows }] : [];
+    return groupRows ? [{ id: group.id, title: translateUi(group.title), rows: groupRows }] : [];
   });
 }
 
@@ -371,23 +371,31 @@ export function buildKeybindingCommandOptions(
 export function commandLabel(command: KeybindingCommand): string {
   if (command === "workspace.focusNext") return translateUi("Focus Next Workspace Area");
   if (command === "workspace.focusPrevious") return translateUi("Focus Previous Workspace Area");
-  if (command === "composer.sendAlternate") return "Composer: Opposite Queue or Steer Action";
-  if (command === "composer.sendBackground") return "Composer: Start in Background";
-  if (command === "composer.sendAndNewThread") return "Composer: Send and Start New Thread";
-  if (command === "thread.steerQueuedMessage") return "Queue: Send First Queued Message";
-  if (command === "thread.editQueuedMessage") return "Queue: Edit Last Queued Message";
+  if (command === "composer.sendAlternate")
+    return translateUi("Composer: Opposite Queue or Steer Action");
+  if (command === "composer.sendBackground") return translateUi("Composer: Start in Background");
+  if (command === "composer.sendAndNewThread")
+    return translateUi("Composer: Send and Start New Thread");
+  if (command === "thread.steerQueuedMessage")
+    return translateUi("Queue: Send First Queued Message");
+  if (command === "thread.editQueuedMessage") return translateUi("Queue: Edit Last Queued Message");
   if (command === "thread.copyReference") return translateUi("Pull Request: Copy Link or Thread");
   const usageMetric = METRIC_OPTIONS.find((option) => option.command === command);
-  if (usageMetric) return `Usage: ${usageMetric.label}`;
+  if (usageMetric) return translateUi("Usage: {0}", [translateUi(usageMetric.label)]);
   const usagePeriod = WINDOW_OPTIONS.find((option) => option.command === command);
-  if (usagePeriod) return `Usage: Period: ${usagePeriod.label}`;
-  if (command === "view.reopenClosed") return "Reopen Closed Tab";
-  if (command === "preview.focusUrl") return "Preview: Focus URL";
+  if (usagePeriod) return translateUi("Usage: Period: {0}", [translateUi(usagePeriod.label)]);
+  if (command === "view.reopenClosed") return translateUi("Reopen Closed Tab");
+  if (command === "preview.focusUrl") return translateUi("Preview: Focus URL");
   const raw = String(command);
   if (raw.startsWith("script.") && raw.endsWith(".run")) {
-    return `Run Script: ${titleCaseCommandSegment(raw.slice("script.".length, -".run".length))}`;
+    return translateUi("Run Script: {0}", [
+      titleCaseCommandSegment(raw.slice("script.".length, -".run".length)),
+    ]);
   }
-  return raw.split(".").map(titleCaseCommandSegment).join(": ");
+  return raw
+    .split(".")
+    .map((segment) => translateUi(titleCaseCommandSegment(segment)))
+    .join(": ");
 }
 
 function titleCaseCommandSegment(segment: string): string {

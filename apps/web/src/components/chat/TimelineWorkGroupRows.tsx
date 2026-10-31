@@ -282,15 +282,15 @@ export function WorkingTimelineRow({ row }: { row: Extract<TimelineRow, { kind: 
   const compacting = row.compacting === true || isCompacting;
   const shimmer = isPreparingWorktree || compacting;
   const label = isPreparingWorktree ? (
-    "Setting up worktree…"
+    translateUi("Setting up worktree…")
   ) : compacting ? (
     <CompactingLabel createdAt={row.createdAt} />
   ) : row.createdAt ? (
     <>
-      Working for <WorkingTimer createdAt={row.createdAt} />
+      {translateUi("Working for")} <WorkingTimer createdAt={row.createdAt} />
     </>
   ) : (
-    "Working..."
+    translateUi("Working...")
   );
   return (
     <div className="border-b border-border/60 pb-2 pt-1">
@@ -555,9 +555,9 @@ export function LiveWorkEntryTimelineRow({
         label={
           thoughtIsStatus ? (
             row.active ? (
-              "Thinking"
+              translateUi("Thinking")
             ) : (
-              "Thought"
+              translateUi("Thought")
             )
           ) : row.entry.itemType === "reasoning" ? (
             <ChatMarkdown

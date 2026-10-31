@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { ChatComposerProps } from "./ChatComposer";
 import type { PromptUltrathink } from "./TraitsPicker";
 import type { ProviderInstanceEntry } from "../../providerInstances";
@@ -262,7 +263,9 @@ export function ComposerControlsBar(props: {
       className="shrink-0"
     >
       <CircleAlertIcon className="size-4" />
-      {providerSetupInstanceId ? "Open provider settings" : "No provider available"}
+      {providerSetupInstanceId
+        ? translateUi("Open provider settings")
+        : translateUi("No provider available")}
     </ComposerControl>
   ) : (
     <>

@@ -21,10 +21,14 @@ const PREVIEW_SKILLS: ReadonlyArray<ServerProviderSkill> = [
   { name: "frontend-design", path: ".agents/skills/frontend-design/SKILL.md", enabled: true },
 ];
 
-const PROMPT_PREVIEW_TEXT =
-  "Use $frontend-design to fix the flaky test in " +
-  "[surface.test.ts](apps/web/src/terminal/ghostty/surface.test.ts) and align the header with " +
-  "[SettingsPanels.tsx](apps/web/src/components/settings/SettingsPanels.tsx) before shipping.";
+const PROMPT_PREVIEW_TEXT = translateUi(
+  "Use {0} to fix the flaky test in {1} and align the header with {2} before shipping.",
+  [
+    "$frontend-design",
+    "[surface.test.ts](apps/web/src/terminal/ghostty/surface.test.ts)",
+    "[SettingsPanels.tsx](apps/web/src/components/settings/SettingsPanels.tsx)",
+  ],
+);
 
 function noop() {}
 

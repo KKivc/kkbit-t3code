@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import { type ProviderInstanceId, type ServerProvider } from "@t3tools/contracts";
 import { memo } from "react";
 import { InfoIcon, XIcon } from "lucide-react";
@@ -102,10 +103,15 @@ export const ProviderStatusBanner = memo(function ProviderStatusBanner({
   const isUnauthenticated = status.status === "error" && status.auth.status === "unauthenticated";
   const incompatible = getIncompatibleVersion(status);
   const title = isUnauthenticated
-    ? `${providerName} is unauthenticated`
+    ? translateUi("{0} is unauthenticated", [providerName])
     : incompatible
-      ? `${providerName} ${status.version ?? ""} is ${incompatible.status === "broken" ? "known to be broken" : "unsupported"}`
-      : `${providerName} provider status`;
+      ? translateUi(
+          incompatible.status === "broken"
+            ? "{0} {1} is known to be broken"
+            : "{0} {1} is unsupported",
+          [providerName, status.version ?? ""],
+        )
+      : translateUi("{0} provider status", [providerName]);
   const message = incompatible?.message ?? getProviderStatusMessage(status);
   const isWarning =
     incompatible?.status !== "broken" && (status.status === "warning" || incompatible !== null);
@@ -129,7 +135,7 @@ export const ProviderStatusBanner = memo(function ProviderStatusBanner({
           </Tooltip>
           {onOpenProviderSetup && hasProviderSetup(status) ? (
             <InlineButton onClick={() => onOpenProviderSetup(status.instanceId)}>
-              Open provider setup
+              {translateUi("Open provider setup")}
             </InlineButton>
           ) : null}
         </AlertDescription>

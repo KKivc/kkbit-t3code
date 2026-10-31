@@ -110,7 +110,7 @@ export function describeComposerEffort(
     ? (glyph.special ?? (effortDisplay === "label" ? glyph.label : null))
     : display.label;
   return {
-    detail: display.label,
+    detail: translateUi(display.label),
     suffix: (
       <span
         className={cn(
@@ -120,7 +120,7 @@ export function describeComposerEffort(
         )}
       >
         {word !== null ? (
-          <span data-composer-control-label>{word}</span>
+          <span data-composer-control-label>{translateUi(word)}</span>
         ) : glyph ? (
           <EffortGlyph count={glyph.count} filled={glyph.filled} size={size} />
         ) : null}
@@ -171,7 +171,7 @@ function ColumnRow(props: {
   } as const;
   const content = (
     <>
-      <span className="min-w-0 flex-1 truncate">{props.label}</span>
+      <span className="min-w-0 flex-1 truncate">{translateUi(props.label)}</span>
       {props.isDefault ? (
         <span className="text-muted-foreground/70 text-xs">{translateUi("Default")}</span>
       ) : null}
@@ -183,7 +183,7 @@ function ColumnRow(props: {
     <Tooltip>
       <TooltipTrigger render={<button {...rowProps} />}>{content}</TooltipTrigger>
       <TooltipPopup side="right" className="max-w-56">
-        {props.description}
+        {translateUi(props.description)}
       </TooltipPopup>
     </Tooltip>
   );
@@ -218,8 +218,10 @@ function EffortLevels(props: { traits: TraitsSelectionInput }) {
           const value = traits.currentLabel(descriptor);
           return value ? (
             <div key={descriptor.id}>
-              <div className={COLUMN_LABEL}>{descriptor.label}</div>
-              <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">{value}</div>
+              <div className={COLUMN_LABEL}>{translateUi(descriptor.label)}</div>
+              <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
+                {translateUi(value)}
+              </div>
             </div>
           ) : null;
         })}
@@ -235,10 +237,10 @@ function EffortLevels(props: { traits: TraitsSelectionInput }) {
         <div
           key={descriptor.id}
           role="radiogroup"
-          aria-label={descriptor.label}
+          aria-label={translateUi(descriptor.label)}
           className="flex flex-col gap-0.5"
         >
-          {isEffort ? null : <div className={COLUMN_LABEL}>{descriptor.label}</div>}
+          {isEffort ? null : <div className={COLUMN_LABEL}>{translateUi(descriptor.label)}</div>}
           {([true, false] as const).map((value) => (
             <ColumnRow
               key={String(value)}
@@ -258,13 +260,13 @@ function EffortLevels(props: { traits: TraitsSelectionInput }) {
       <div
         key={descriptor.id}
         role="radiogroup"
-        aria-label={descriptor.label}
+        aria-label={translateUi(descriptor.label)}
         className="flex flex-col gap-0.5"
       >
-        {isEffort ? null : <div className={COLUMN_LABEL}>{descriptor.label}</div>}
+        {isEffort ? null : <div className={COLUMN_LABEL}>{translateUi(descriptor.label)}</div>}
         {locked ? (
           <div className="px-2 pb-1.5 text-muted-foreground/80 text-xs">
-            {ULTRATHINK_IN_BODY_NOTE}
+            {translateUi(ULTRATHINK_IN_BODY_NOTE)}
           </div>
         ) : null}
         {selectableProviderOptionChoices(control.descriptor).map((option) => (
@@ -315,7 +317,9 @@ export function ComposerEffortColumn(props: { traits: TraitsSelectionInput | nul
       {/* Matches the search row's box, so one rule runs across the top of the popup. */}
       <div className="shrink-0 px-3 pt-2.5">
         <div className="flex h-8.25 -translate-y-px items-center gap-2 border-b border-border/70 pb-1.5 text-sm">
-          <span className="text-muted-foreground">{effort?.descriptor.label ?? "Effort"}</span>
+          <span className="text-muted-foreground">
+            {translateUi(effort?.descriptor.label ?? "Effort")}
+          </span>
           <span className="ms-auto min-w-0 truncate text-muted-foreground text-xs">
             {picker.modelLabel}
           </span>
@@ -354,14 +358,14 @@ function SpeedSegment(props: {
       {props.label === "Fast" || props.label === "Ultrafast" ? (
         <FastBolt ultra={props.label === "Ultrafast"} />
       ) : null}
-      {props.label}
+      {translateUi(props.label)}
     </>
   );
   if (!props.description) return <button {...buttonProps}>{content}</button>;
   return (
     <Tooltip>
       <TooltipTrigger render={<button {...buttonProps} />}>{content}</TooltipTrigger>
-      <TooltipPopup side="top">{props.description}</TooltipPopup>
+      <TooltipPopup side="top">{translateUi(props.description)}</TooltipPopup>
     </Tooltip>
   );
 }
@@ -377,7 +381,7 @@ function SpeedControl(props: { traits: TraitsSelectionInput }) {
   return (
     <div
       role="radiogroup"
-      aria-label={speedSelect?.label ?? fastToggle?.label}
+      aria-label={translateUi(speedSelect?.label ?? fastToggle?.label ?? "Speed")}
       className="flex rounded-lg bg-input/40 p-0.5"
     >
       {speedSelect
@@ -426,7 +430,7 @@ function PermissionsMenu(props: {
             ref={triggerRef}
             type="button"
             data-composer-permissions-trigger
-            aria-label={`Permissions: ${current.label}`}
+            aria-label={translateUi("Permissions: {0}", [current.label])}
             className="ms-auto flex h-7 cursor-pointer items-center gap-1.5 rounded-md px-2 text-muted-foreground text-xs outline-none hover:bg-foreground/[0.09] hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset data-popup-open:bg-foreground/[0.09] data-popup-open:text-foreground"
           />
         }

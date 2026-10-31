@@ -3217,7 +3217,9 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
                   aria-label={translateUi("Expand composer")}
                 >
                   {prompt.trim() ||
-                    (showProviderUnavailable ? "Enable a provider in Settings" : "Ask anything...")}
+                    (showProviderUnavailable
+                      ? translateUi("Enable a provider in Settings")
+                      : translateUi("Ask anything..."))}
                 </button>
                 {collapsedComposerImagePreviews}
                 <button
@@ -3367,7 +3369,7 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
                     onCitationSubmitAndSend={submitCitationAndSendStable}
                     onCitationDraftSave={saveCitationDraftToPromptStable}
                     onPaste={onComposerPasteStable}
-                    placeholder={
+                    placeholder={translateUi(
                       isComposerApprovalState
                         ? activePendingApproval?.supportsFeedback
                           ? "Send feedback to decline this request"
@@ -3382,8 +3384,8 @@ export const ChatComposer = memo(function ChatComposer(props: ChatComposerProps)
                               ? "Choose a project above to start a thread"
                               : showProviderUnavailable
                                 ? "Enable a provider in Settings to send a message"
-                                : DEFAULT_COMPOSER_PLACEHOLDER
-                    }
+                                : DEFAULT_COMPOSER_PLACEHOLDER,
+                    )}
                     disabled={
                       projectSelectionRequired ||
                       isChoiceOnlyPendingQuestion ||

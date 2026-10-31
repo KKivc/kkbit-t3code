@@ -39,14 +39,14 @@ export function ThreadDetailsItemsRow() {
                 variant="outline"
                 size="sm"
                 className="w-full justify-between sm:w-40"
-                aria-label={`Thread details: ${enabled} of ${THREAD_DETAILS_ITEMS.length} on`}
+                aria-label={translateUi("Thread details: {0} of {1} enabled", [
+                  enabled,
+                  THREAD_DETAILS_ITEMS.length,
+                ])}
               />
             }
           >
-            {enabled}
-            {translateUi("of")}
-            {THREAD_DETAILS_ITEMS.length}
-            {translateUi("on")}
+            {translateUi("{0} of {1} enabled", [enabled, THREAD_DETAILS_ITEMS.length])}
             <ChevronDownIcon aria-hidden />
           </MenuTrigger>
           <MenuPopup align="end">

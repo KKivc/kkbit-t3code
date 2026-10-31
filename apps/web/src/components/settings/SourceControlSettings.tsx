@@ -489,7 +489,7 @@ export function SourceControlSettingsPanel() {
       ) : isInitialScanPending ? (
         <>
           <SourceControlSectionSkeleton
-            title={`Version Control${environmentSuffix}`}
+            title={translateUi("Version Control{0}", [environmentSuffix])}
             headerAction={scanButton}
           />
           <SourceControlSectionSkeleton title={translateUi("Source control providers")} />
@@ -499,7 +499,7 @@ export function SourceControlSettingsPanel() {
           {hasVersionControlSystems ? (
             <SettingsSection
               id={searchableSetting("source-control").id}
-              title={`Version Control${environmentSuffix}`}
+              title={translateUi("Version Control{0}", [environmentSuffix])}
               headerAction={scanButton}
             >
               {result.versionControlSystems.map((item) => (

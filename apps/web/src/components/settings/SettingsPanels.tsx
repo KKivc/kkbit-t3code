@@ -125,9 +125,9 @@ const SIDEBAR_PROJECT_SORT_ORDER_LABELS: Record<SidebarProjectSortOrder, string>
 const isSidebarProjectSortOrder = Schema.is(SidebarProjectSortOrder);
 
 const TIMESTAMP_FORMAT_LABELS = {
-  locale: "System default",
-  "12-hour": "12-hour",
-  "24-hour": "24-hour",
+  locale: translateUi("System default"),
+  "12-hour": translateUi("12-hour"),
+  "24-hour": translateUi("24-hour"),
 } as const;
 
 const DIFF_LAYOUT_LABELS: Record<DiffLayout, string> = {
@@ -1213,10 +1213,16 @@ export function ChatSettingsPanel() {
         <SettingsRow
           {...searchableSetting("follow-up-behavior")}
           description={
-            "Queue follow-ups while the agent runs or steer the current run. " +
+            translateUi("Queue follow-ups while the agent runs or steer the current run.") +
+            " " +
             (settings.sendShortcut === "mod-enter-multiline"
-              ? `Press ${modifierLabel} + Enter for single-line prompts or ${modifierLabel} + Shift + Enter for multiline prompts to do the opposite for one message.`
-              : `Press ${modifierLabel}${settings.sendShortcut === "mod-enter" ? " + Shift" : ""} + Enter to do the opposite for one message.`)
+              ? translateUi(
+                  "Press {0} + Enter for single-line prompts or {0} + Shift + Enter for multiline prompts to do the opposite for one message.",
+                  [modifierLabel],
+                )
+              : translateUi("Press {0} + Enter to do the opposite for one message.", [
+                  modifierLabel + (settings.sendShortcut === "mod-enter" ? " + Shift" : ""),
+                ]))
           }
           resetAction={
             settings.followUpBehavior !== DEFAULT_UNIFIED_SETTINGS.followUpBehavior ? (
@@ -1527,7 +1533,9 @@ function ScopedCompactIdleThreadsRow() {
               {(value: string | null) =>
                 value === null
                   ? translateUi("Mixed")
-                  : IDLE_COMPACTION_MODES.find((mode) => mode.value === value)?.label
+                  : translateUi(
+                      IDLE_COMPACTION_MODES.find((mode) => mode.value === value)?.label ?? "",
+                    )
               }
             </SelectValue>
           </SelectTrigger>
@@ -1540,7 +1548,7 @@ function ScopedCompactIdleThreadsRow() {
                 // A server from before modes has only the on/off switch, so it cannot store "Never".
                 disabled={mode.value === "off" && !idleCompaction.neverAvailable}
               >
-                {mode.label}
+                {translateUi(mode.label)}
               </SelectItem>
             ))}
           </SelectPopup>

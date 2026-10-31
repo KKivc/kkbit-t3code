@@ -30,7 +30,7 @@ export function ThreadDetailsItemsMenuItems() {
               })
             }
           >
-            {item.label}
+            {translateUi(item.label)}
           </MenuCheckboxItem>
         ))}
       </MenuGroup>

@@ -837,7 +837,7 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
       {mediaAboveText ? (
         <div className="flex max-w-[80%] justify-end">
           {/* The heading leads the media so screen readers reach it before the images. */}
-          <MessageAuthorHeading>You</MessageAuthorHeading>
+          <MessageAuthorHeading>{translateUi("You")}</MessageAuthorHeading>
           {mediaBlock}
         </div>
       ) : null}
@@ -860,8 +860,8 @@ function UserTimelineRow({ row }: { row: Extract<TimelineRow, { kind: "message" 
             {folded
               ? senderLabel
               : userMessage.guestName === undefined
-                ? "You"
-                : `${userMessage.guestName} (guest)`}
+                ? translateUi("You")
+                : translateUi("{0} (guest)", [userMessage.guestName])}
           </MessageAuthorHeading>
         )}
         {folded ? (

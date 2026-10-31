@@ -79,12 +79,12 @@ export function NotificationSettings() {
             className="w-full sm:w-56"
             aria-label={translateUi("Thread notifications")}
           >
-            <SelectValue>{NOTIFICATION_MODE_LABELS[mode]}</SelectValue>
+            <SelectValue>{translateUi(NOTIFICATION_MODE_LABELS[mode])}</SelectValue>
           </SelectTrigger>
           <SelectPopup align="end" alignItemWithTrigger={false}>
             {Object.entries(NOTIFICATION_MODE_LABELS).map(([value, label]) => (
               <SelectItem key={value} hideIndicator value={value}>
-                {label}
+                {translateUi(label)}
               </SelectItem>
             ))}
           </SelectPopup>
