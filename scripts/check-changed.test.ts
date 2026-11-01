@@ -15,6 +15,7 @@ import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import * as TestClock from "effect/testing/TestClock";
 
 import {
+  cacheInputFiles,
   comparisonBase,
   defaultConcurrency,
   gitLines,
@@ -25,6 +26,29 @@ import {
 const GiB = 1024 ** 3;
 
 describe("check:changed", () => {
+  it("保留生成文件并跳过依赖目录中的循环联接", () => {
+    using project = fixture({});
+    for (const file of [
+      "apps/web/.generated/schema.ts",
+      "apps/web/types.d.ts",
+      "apps/web/.env.test",
+      "apps/web/node_modules/dependency/types.d.ts",
+    ]) {
+      const path = NodePath.join(project.root, file);
+      NodeFS.mkdirSync(NodePath.dirname(path), { recursive: true });
+      NodeFS.writeFileSync(path, "");
+    }
+    NodeFS.symlinkSync(
+      project.root,
+      NodePath.join(project.root, "apps/web/node_modules/loop"),
+      "junction",
+    );
+    const files = cacheInputFiles(project.root).map((file) => file.replaceAll("\\", "/"));
+    assert.ok(files.includes("apps/web/.generated/schema.ts"));
+    assert.ok(files.includes("apps/web/types.d.ts"));
+    assert.ok(files.includes("apps/web/.env.test"));
+    assert.ok(files.every((file) => !file.split("/").includes("node_modules")));
+  });
   it("bounds the default concurrency by the scarcer of cores and available memory", () => {
     assert.strictEqual(defaultConcurrency(32, 128 * GiB), 16);
     assert.strictEqual(defaultConcurrency(32, 20 * GiB), 3);
@@ -168,14 +192,15 @@ describe("check:changed", () => {
 
 // Hooks export GIT_DIR and GIT_INDEX_FILE, and user config or the default
 // ~/.config/git/ignore can ignore or sign fixture files.
+const gitNull = "/dev/null";
 const fixtureConfig = {
-  "core.excludesFile": NodeOS.devNull,
+  "core.excludesFile": gitNull,
   "user.name": "Fixture",
   "user.email": "fixture@example.invalid",
 };
 const env = {
   ...Object.fromEntries(Object.entries(process.env).filter(([name]) => !name.startsWith("GIT_"))),
-  GIT_CONFIG_GLOBAL: NodeOS.devNull,
+  GIT_CONFIG_GLOBAL: gitNull,
   GIT_CONFIG_NOSYSTEM: "1",
   GIT_CONFIG_COUNT: String(Object.keys(fixtureConfig).length),
   ...Object.fromEntries(

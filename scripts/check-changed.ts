@@ -19,6 +19,8 @@
 // TIMEOUT. A rerun on exactly the files of the last passing run prints that
 // run's summary.
 import * as NodeCrypto from "node:crypto";
+import * as NodeFS from "node:fs";
+import * as NodeModule from "node:module";
 import * as NodeOS from "node:os";
 
 import * as NodeRuntime from "@effect/platform-node/NodeRuntime";
@@ -41,6 +43,14 @@ import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { decide, readWorkspace } from "../.github/scripts/ci-changes.cjs";
 
 const GiB = 1024 ** 3;
+
+export const cacheInputFiles = (root: string) =>
+  NodeFS.globSync(["**/.generated/**", "**/.astro/**", "**/*.d.ts", "**/.env*"], {
+    cwd: root,
+    // Windows 的工作区依赖使用目录联接，必须在进入目录前排除，避免循环遍历。
+    exclude: (file) =>
+      file.split(/[\\/]/).some((part) => part === "node_modules" || part === ".git"),
+  }).sort();
 
 // A typecheck or test step can take several cores and gigabytes of memory, so
 // allow one step per two cores and per 6 GiB of available memory.
@@ -250,18 +260,7 @@ const checkChanged = Effect.fn("checkChanged")(function* (input: {
         "--",
       ]),
     );
-    const ignored = yield* lines(
-      "ls-files",
-      "--others",
-      "--ignored",
-      "--exclude-standard",
-      "--",
-      ":(glob)**/.generated/**",
-      ":(glob)**/.astro/**",
-      ":(glob)**/*.d.ts",
-      ":(glob)**/.env*",
-      ":(exclude,glob)**/node_modules/**",
-    );
+    const ignored = yield* Effect.try(() => cacheInputFiles(root));
     for (const file of [
       // Raw bytes of changed files too: .gitattributes normalizes line endings in
       // the diff, but the formatter reads the file as it is on disk.
@@ -380,11 +379,21 @@ const checkChanged = Effect.fn("checkChanged")(function* (input: {
 
   // Output is piped, so keep the colors a terminal would get.
   const env = process.stdout.isTTY ? { FORCE_COLOR: "1" } : {};
+  const node = yield* HostProcess.ExecutablePath;
+  const vpEntry = path.join(
+    path.dirname(NodeModule.createRequire(import.meta.url).resolve("vite-plus/package.json")),
+    "bin/vp",
+  );
   const vp = (args: ReadonlyArray<string>, cwd = root) =>
     Effect.scoped(
       Effect.gen(function* () {
         const handle = yield* spawner.spawn(
-          ChildProcess.make("vp", args, { cwd, env, extendEnv: true, forceKillAfter: "5 seconds" }),
+          ChildProcess.make(node, [vpEntry, ...args], {
+            cwd,
+            env,
+            extendEnv: true,
+            forceKillAfter: "5 seconds",
+          }),
         );
         const [output, exitCode] = yield* Effect.all(
           [Stream.mkString(Stream.decodeText(handle.all)), handle.exitCode],
