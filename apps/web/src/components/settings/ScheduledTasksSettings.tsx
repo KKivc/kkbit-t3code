@@ -580,7 +580,7 @@ function ScheduledTaskEnvironmentList({
         <SettingsRow
           title={translateUi("Task unavailable")}
           description={translateUi(
-            "This task no longer exists or is outside the selected project scope.",
+            "This task was deleted or belongs to a different project. Check your project filter.",
           )}
           role="status"
         />
@@ -685,7 +685,7 @@ function ScheduledTaskEnvironmentSection({
             <SettingsRow
               title={translateUi("Task unavailable")}
               description={translateUi(
-                "This task no longer exists or is outside the selected project scope.",
+                "This task was deleted or belongs to a different project. Check your project filter.",
               )}
               role="status"
             />
@@ -1675,7 +1675,7 @@ function ScheduledTaskEditorForm({
                   onChange={(filters) => setDraft((current) => ({ ...current, filters }))}
                 />
                 <Field
-                  label={translateUi("Replay key")}
+                  label={translateUi("Duplicate request key")}
                   hint="template, optional"
                   htmlFor="scheduled-task-replay-key"
                 >
@@ -1688,6 +1688,9 @@ function ScheduledTaskEditorForm({
                     }
                   />
                 </Field>
+                <p className="text-xs text-muted-foreground">
+                  {translateUi("Requests with the same key run only once within 7 days.")}
+                </p>
                 <Field
                   label={translateUi("Coalesce key")}
                   hint="template, optional"
@@ -1725,7 +1728,7 @@ function ScheduledTaskEditorForm({
                 </Field>
                 <p className="text-xs text-muted-foreground">
                   {translateUi(
-                    "Replay keys suppress repeat deliveries for 7 days. Coalescing runs the latest payload once when the window from the first delivery closes. Empty keys run normally.",
+                    "Coalescing runs the latest payload once when the window from the first delivery closes. Empty keys run normally.",
                   )}
                 </p>
                 <div className="flex items-center justify-between gap-4">

@@ -3628,5 +3628,19 @@
   "{0}: connection checks passed": "{0}：连接检查通过",
   "{0}: {1} of {2} environments failed": "{0}：共 {2} 个环境，{1} 个失败",
   "’s cookies": " 的 Cookie",
-  "”’s cookies and cache?": "”的 Cookie 和缓存？"
+  "”’s cookies and cache?": "”的 Cookie 和缓存？",
+  "The host refused the merge. Check that you have write access, that the checks it requires have passed, and that the branch is not conflicting.": "托管平台拒绝合并。请确认你有写入权限、必需的检查已通过，且分支没有冲突。",
+  "The host refused the rebase. A rebase stops at the first commit that does not apply cleanly.": "托管平台拒绝变基。变基会在首个无法应用的提交处停止。",
+  "{0} must contain a valid request placeholder.": "{0} 必须包含有效的请求占位符。",
+  "Only built-in themes show artwork, so this theme shows the version pill.": "仅内置主题显示品牌图案，因此当前主题显示版本标签。",
+  "Only built-in themes show artwork.": "仅内置主题显示品牌图案。",
+  "This task was deleted or belongs to a different project. Check your project filter.": "此任务已删除，或属于其他项目。请检查项目筛选条件。",
+  "Duplicate request key": "重复请求键",
+  "Requests with the same key run only once within 7 days.": "具有相同键的请求在 7 天内仅运行一次。",
+  "Coalescing runs the latest payload once when the window from the first delivery closes. Empty keys run normally.": "合并窗口从首次投递开始计时，关闭时仅运行一次最新载荷。键为空时正常运行。",
+  "Open pull requests and changes panels proactively": "自动打开拉取请求和变更面板",
+  "Automatically resume threads when their usage limits reset. You can cancel auto-resume in each thread.": "用量限制重置后自动继续会话。你可以在各会话中取消自动继续。",
+  "Snooze threads until their usage limits reset. Enable auto-resume to continue the agent after the reset.": "将会话延后至用量限制重置。启用自动继续后，Agent 会在重置后继续运行。",
+  "Add a Guide tab to pull requests. An agent explains the changes and points out decisions that need review.": "为拉取请求添加导览标签页，由 Agent 解释变更并指出需要评审的决策。",
+  "Model for source control text and branch or bookmark names. When disabled, use the text generation model configured for this environment.": "用于生成版本控制文案及分支或书签名称的模型。禁用时使用当前环境配置的文本生成模型。"
 }

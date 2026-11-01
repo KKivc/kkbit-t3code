@@ -108,13 +108,15 @@ export function webhookDraftErrors(draft: DraftState) {
     ];
   const errors: Array<{ title: string; description: string }> = [];
   for (const [label, value] of [
-    ["Replay key", draft.replayKey],
+    ["Duplicate request key", draft.replayKey],
     ["Coalesce key", draft.coalesceKey],
   ] as const) {
     if (value.trim() && !isWebhookDedupeTemplate(value.trim()))
       errors.push({
         title: translateUi("Invalid webhook settings"),
-        description: `${label} must contain a valid request placeholder.`,
+        description: translateUi("{0} must contain a valid request placeholder.", [
+          translateUi(label),
+        ]),
       });
   }
   const window = draft.coalesceWindowSeconds.trim();
