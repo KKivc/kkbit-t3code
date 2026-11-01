@@ -78,7 +78,8 @@ import { SettingsGroup } from "./SettingsGroup";
 import { settingsScopeEnvironmentLabel, settingsScopeEnvironmentLabels } from "./settingsScopeAxis";
 import {
   WEBHOOK_SIGNATURE_DEFAULTS,
-  webhookDraftErrors,
+  scheduleDraftErrors,
+  toDateTimeLocalValue,
   webhookDeliveryLabel,
   defaultScheduledTaskProjectId,
   matchesScheduledTaskScope,
@@ -137,6 +138,8 @@ const EMPTY_DRAFT: DraftState = {
   scheduleMode: "fixed",
   intervalMinutes: "15",
   timeOfDay: "09:00",
+  runAt: "",
+  savedRunAt: "",
   weekdays: new Set([1, 2, 3, 4, 5]),
   projectId: "",
   threadId: "",
@@ -286,8 +289,15 @@ function splitModelKey(value: string): ModelSelection | null {
   };
 }
 
+const ONCE_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  dateStyle: "medium",
+  timeStyle: "short",
+});
+
 export function scheduleLabel(schedule: ScheduledTaskSchedule): string {
   if (schedule.type === "webhook") return translateUi("On webhook");
+  if (schedule.type === "once")
+    return translateUi("Once, {0}", [ONCE_FORMATTER.format(new Date(schedule.runAt))]);
   if (schedule.type === "interval") {
     const minutes = schedule.everyMs / 60_000;
     return Number.isInteger(minutes)
@@ -1204,6 +1214,10 @@ function ScheduledTaskEditorForm({
   const { scope, connectedEnvironments } = useSettingsScope();
   const [environmentId, setEnvironmentId] = useState(initialEnvironmentId);
   const environment = useEnvironment(environmentId);
+  // Older servers reject one-time schedules, so offer Once only where it can save.
+  const offersOnce =
+    environment?.serverConfig?.environment.capabilities.oneTimeSchedules === true ||
+    task?.schedule.type === "once";
   const connected =
     environment?.connection.phase === "connected" && environment.serverConfig !== null;
   const tasksQuery = useEnvironmentQuery(
@@ -1311,7 +1325,7 @@ function ScheduledTaskEditorForm({
     }
     const schedule = scheduleFromDraft(draft);
     if (schedule === null) {
-      for (const error of webhookDraftErrors(draft)) reportFailure(error.title, error.description);
+      for (const error of scheduleDraftErrors(draft)) reportFailure(error.title, error.description);
       return;
     }
     if (
@@ -1329,6 +1343,15 @@ function ScheduledTaskEditorForm({
       (!Number.isSafeInteger(schedule.everyMs) || schedule.everyMs < MIN_SCHEDULED_TASK_INTERVAL_MS)
     ) {
       reportFailure("Invalid interval", "Enter an interval of at least one minute.");
+      return;
+    }
+    if (schedule.type === "once" && !offersOnce) {
+      reportFailure(
+        translateUi("Once is not available here"),
+        translateUi(
+          "This environment runs an older T3 Code. Update it to schedule a one-time task, or pick another schedule.",
+        ),
+      );
       return;
     }
     if (draft.workspaceMode === "existing_worktree" && !draft.existingWorktreePath.trim()) {
@@ -1388,7 +1411,7 @@ function ScheduledTaskEditorForm({
         </DialogTitle>
         <DialogDescription>
           {translateUi(
-            "Run a prompt automatically on an interval, at a fixed time, or when a webhook is called.",
+            "Run a prompt automatically on an interval, at a fixed time, once at a set date, or when a webhook is called.",
           )}
         </DialogDescription>
       </DialogHeader>
@@ -1624,18 +1647,39 @@ function ScheduledTaskEditorForm({
                 value={[draft.scheduleMode]}
                 onValueChange={(values) => {
                   const mode = values[0] as ScheduleMode | undefined;
-                  if (mode === "fixed" || mode === "interval" || mode === "webhook")
-                    setDraft((current) => ({
-                      ...current,
-                      scheduleMode: mode,
-                      prompt:
-                        mode === "webhook" && !current.prompt.trim()
-                          ? DEFAULT_WEBHOOK_PROMPT
-                          : current.prompt,
-                    }));
+                  if (
+                    mode === "fixed" ||
+                    mode === "once" ||
+                    mode === "interval" ||
+                    mode === "webhook"
+                  )
+                    setDraft((current) => {
+                      const suggested =
+                        mode === "once" && !current.runAt
+                          ? new Date(Math.ceil(Date.now() / 3_600_000) * 3_600_000)
+                          : null;
+                      return {
+                        ...current,
+                        scheduleMode: mode,
+                        // Keep the instant too, so an hour that repeats when clocks go back stays exact.
+                        ...(suggested === null
+                          ? {}
+                          : {
+                              runAt: toDateTimeLocalValue(suggested),
+                              savedRunAt: suggested.toISOString(),
+                            }),
+                        prompt:
+                          mode === "webhook" && !current.prompt.trim()
+                            ? DEFAULT_WEBHOOK_PROMPT
+                            : current.prompt,
+                      };
+                    });
                 }}
               >
                 <Toggle value="fixed">{translateUi("At a time")}</Toggle>
+                {offersOnce || draft.scheduleMode === "once" ? (
+                  <Toggle value="once">{translateUi("Once")}</Toggle>
+                ) : null}
                 <Toggle value="interval">{translateUi("Every interval")}</Toggle>
                 <Toggle value="webhook">{translateUi("On webhook")}</Toggle>
               </ToggleGroup>
@@ -1820,6 +1864,20 @@ function ScheduledTaskEditorForm({
                     </Field>
                   </div>
                 ) : null}
+              </div>
+            ) : draft.scheduleMode === "once" ? (
+              <div className="flex items-center gap-2">
+                <Label htmlFor="scheduled-task-run-at">{translateUi("Run on")}</Label>
+                <Input
+                  type="datetime-local"
+                  id="scheduled-task-run-at"
+                  nativeInput
+                  className="w-56"
+                  value={draft.runAt}
+                  onChange={(event) =>
+                    setDraft((current) => ({ ...current, runAt: event.target.value }))
+                  }
+                />
               </div>
             ) : draft.scheduleMode === "fixed" ? (
               <div className="flex flex-wrap items-center gap-3">

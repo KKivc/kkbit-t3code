@@ -1,6 +1,5 @@
 // @effect-diagnostics nodeBuiltinImport:off - realpathSync.native resolves Windows 8.3 short names, which the Effect realPath does not.
 import * as NodeFS from "node:fs";
-import * as NodeOS from "node:os";
 import * as NodeURL from "node:url";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as HostProcess from "@t3tools/shared/HostProcess";
@@ -1579,7 +1578,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
             operation: "GitVcsDriver.test.notARepository",
             cwd,
             args: ["rev-parse", "--abbrev-ref", "HEAD"],
-            env: { LC_ALL: "C" },
+            env: { LC_ALL: "C", GIT_CEILING_DIRECTORIES: (yield* Path.Path).dirname(cwd) },
           })
           .pipe(Effect.flip);
 
@@ -1733,7 +1732,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
               operation: "GitVcsDriver.test.sshRefusal",
               cwd,
               args: ["fetch", "origin"],
-              env: { LC_ALL: "C", GIT_SSH_COMMAND: fakeSsh },
+              env: { LC_ALL: "C", GIT_SSH_COMMAND: `"${fakeSsh.replaceAll("\\", "/")}"` },
             })
             .pipe(Effect.flip);
 
@@ -1765,7 +1764,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
             operation: "GitVcsDriver.test.osPermission",
             cwd,
             args: ["fetch", "origin"],
-            env: { LC_ALL: "C", GIT_SSH_COMMAND: fakeSsh },
+            env: { LC_ALL: "C", GIT_SSH_COMMAND: `"${fakeSsh.replaceAll("\\", "/")}"` },
           })
           .pipe(Effect.flip);
 
@@ -1884,7 +1883,12 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         const upstream = yield* makeTmpDir();
         yield* initRepoWithCommit(upstream);
         const driver = yield* GitVcsDriver.GitVcsDriver;
-        const emptyTree = yield* git(upstream, ["hash-object", "-t", "tree", NodeOS.devNull]);
+        const emptyTree = (yield* driver.execute({
+          operation: "GitVcsDriver.test.emptyTree",
+          cwd: upstream,
+          args: ["hash-object", "-t", "tree", "--stdin"],
+          stdin: "",
+        })).stdout.trim();
         const root = yield* git(upstream, ["rev-parse", "HEAD"]);
         const rootSource = (yield* driver.getReviewDiffPreview({ cwd: upstream, commitSha: root }))
           .sources[0]!;
@@ -1895,8 +1899,10 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         yield* git(upstream, ["commit", "-am", "boundary"]);
         const sha = yield* git(upstream, ["rev-parse", "HEAD"]);
         const cwd = yield* makeTmpDir();
+        const emptyConfig = (yield* Path.Path).join(upstream, "empty.gitconfig");
+        yield* writeTextFile(upstream, "empty.gitconfig", "");
         yield* git(upstream, ["clone", "--depth=1", NodeURL.pathToFileURL(upstream).href, cwd], {
-          GIT_CONFIG_GLOBAL: NodeOS.devNull,
+          GIT_CONFIG_GLOBAL: emptyConfig,
           GIT_CONFIG_NOSYSTEM: "1",
         });
         assert.equal(yield* git(cwd, ["rev-parse", "--is-shallow-repository"]), "true");
@@ -2168,7 +2174,10 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         const cwd = yield* makeTmpDir();
         yield* initRepoWithCommit(cwd);
         const driver = yield* GitVcsDriver.GitVcsDriver;
-        yield* writeTextFile(cwd, ":(exclude)after.ts", "literal pathspec contents\n");
+        const magicPath =
+          (yield* HostProcess.Platform) === "win32" ? "[a]after.ts" : ":(exclude)after.ts";
+        yield* writeTextFile(cwd, magicPath, "literal pathspec contents\n");
+        yield* writeTextFile(cwd, "aafter.ts", "wildcard decoy\n");
         yield* writeTextFile(cwd, "ordinary.ts", "ordinary contents\n");
         const indexBefore = yield* git(cwd, ["ls-files", "--stage"]);
 
@@ -2180,17 +2189,18 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         const scoped = yield* driver.getReviewDiffPreview({
           cwd,
           file: {
-            path: ":(exclude)after.ts",
+            path: magicPath,
             previousPath: null,
             sourceKind: "working-tree",
           },
         });
         const scopedSource = scoped.sources.find((source) => source.kind === "working-tree")!;
         assert.deepStrictEqual(scopedSource.files, [
-          { path: ":(exclude)after.ts", previousPath: null, additions: 1, deletions: 0 },
+          { path: magicPath, previousPath: null, additions: 1, deletions: 0 },
         ]);
         assert.include(scopedSource.diff, "+literal pathspec contents");
         assert.notInclude(scopedSource.diff, "ordinary.ts");
+        assert.notInclude(scopedSource.diff, "wildcard decoy");
         assert.strictEqual(yield* git(cwd, ["ls-files", "--stage"]), indexBefore);
       }),
     );
@@ -3256,8 +3266,11 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
     it.effect("commits selected files from a nested project directory", () =>
       Effect.gen(function* () {
         const path = yield* Path.Path;
-        // A root basename ending in whitespace catches a root lookup that trims Git's output.
-        const cwd = path.join(yield* makeTmpDir(), "repo ");
+        // Windows 不支持目录名末尾空格，改用内部空格验证路径处理。
+        const cwd = path.join(
+          yield* makeTmpDir(),
+          (yield* HostProcess.Platform) === "win32" ? "repo with spaces" : "repo ",
+        );
         yield* (yield* FileSystem.FileSystem).makeDirectory(cwd);
         yield* initRepoWithCommit(cwd);
         yield* writeTextFile(cwd, "nested/tracked.txt", "one\n");
@@ -3276,8 +3289,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
           { path: "nested/tracked.txt", insertions: 1, deletions: 0 },
           { path: "README.md", insertions: 1, deletions: 0 },
         ]);
-        // The root is what the paths above are relative to, not the nested cwd, and it keeps
-        // the trailing space so the resolved editor target is the file that exists.
+        // 文件路径相对于仓库根目录；根目录中的空格必须保留。
         assert.equal(status.workingTree.rootPath, NodeFS.realpathSync.native(cwd));
         assert.equal(
           NodeFS.existsSync(path.join(status.workingTree.rootPath!, "nested", "new.txt")),
@@ -3692,6 +3704,47 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
           exactName: true,
         });
         assert.equal(renamed.branch, "Julius/ABC-124.v2");
+      }),
+    );
+
+    it.effect("flattens a generated name when a branch at its parent path blocks it", () =>
+      Effect.gen(function* () {
+        const cwd = yield* makeTmpDir();
+        yield* initRepoWithCommit(cwd);
+        const driver = yield* GitVcsDriver.GitVcsDriver;
+        // A local `t3` branch is why launches start on the flat `t3-<hex>` temporary branch.
+        yield* git(cwd, ["branch", "t3"]);
+        yield* git(cwd, ["checkout", "-b", "t3-abcd1234"]);
+        yield* git(cwd, ["branch", "t3-fix-login"]);
+
+        const renamed = yield* driver.renameBranch({
+          cwd,
+          oldBranch: "t3-abcd1234",
+          newBranch: "t3/fix-login",
+        });
+
+        assert.equal(renamed.branch, "t3-fix-login-1");
+        assert.equal(yield* git(cwd, ["branch", "--show-current"]), "t3-fix-login-1");
+      }),
+    );
+
+    it.effect("skips a flattened name that a nested branch blocks", () =>
+      Effect.gen(function* () {
+        const cwd = yield* makeTmpDir();
+        yield* initRepoWithCommit(cwd);
+        const driver = yield* GitVcsDriver.GitVcsDriver;
+        yield* git(cwd, ["branch", "t3"]);
+        yield* git(cwd, ["checkout", "-b", "t3-abcd1234"]);
+        yield* git(cwd, ["branch", "t3-fix-login/child"]);
+
+        const renamed = yield* driver.renameBranch({
+          cwd,
+          oldBranch: "t3-abcd1234",
+          newBranch: "t3/fix-login",
+        });
+
+        assert.equal(renamed.branch, "t3-fix-login-1");
+        assert.equal(yield* git(cwd, ["branch", "--show-current"]), "t3-fix-login-1");
       }),
     );
 
@@ -4217,7 +4270,7 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
           assert.equal(yield* git(created.worktree.path, ["branch", "--show-current"]), branch);
           assert.include(
             yield* git(cwd, ["-c", "core.quotePath=false", "worktree", "list", "--porcelain"]),
-            `worktree ${created.worktree.path}`,
+            `worktree ${created.worktree.path.replaceAll("\\", "/")}`,
           );
           folders.add(folder);
         }

@@ -1904,7 +1904,7 @@ describe("ClaudeAdapterV2 attachments", () => {
             yield* deliver;
             const retried = offeredMessages.at(-1)!.message.content;
             assert.notInclude(JSON.stringify(retried), '"type":"document"');
-            assert.include(JSON.stringify(retried), documentPath);
+            assert.include(JSON.stringify(retried), JSON.stringify(documentPath).slice(1, -1));
             assert.isBelow(Buffer.byteLength(JSON.stringify(offeredMessages)), 32_000_000);
             return;
           }
@@ -1953,7 +1953,7 @@ describe("ClaudeAdapterV2 attachments", () => {
                 typeof sent === "string" ? [] : sent.filter((block) => block.type === "image"),
                 budget === "partial-images" ? 1 : 0,
               );
-              assert.include(JSON.stringify(sent), imagePath);
+              assert.include(JSON.stringify(sent), JSON.stringify(imagePath).slice(1, -1));
               yield* runtime.steerTurn({
                 threadId,
                 runId: RunId.make("run-claude-attachments"),
@@ -1972,7 +1972,7 @@ describe("ClaudeAdapterV2 attachments", () => {
                   : steered.filter((block) => block.type === "image"),
                 0,
               );
-              assert.include(JSON.stringify(steered), imagePath);
+              assert.include(JSON.stringify(steered), JSON.stringify(imagePath).slice(1, -1));
               assert.isBelow(
                 Buffer.byteLength(
                   JSON.stringify(offeredMessages.map((message) => message.message)),
@@ -2034,7 +2034,7 @@ describe("ClaudeAdapterV2 attachments", () => {
               0,
               budget,
             );
-            assert.include(JSON.stringify(sent), documentPath);
+            assert.include(JSON.stringify(sent), JSON.stringify(documentPath).slice(1, -1));
             return;
           }
           if (!resumed) {
@@ -2247,7 +2247,7 @@ describe("ClaudeAdapterV2 attachments", () => {
             );
             if (scenario === "text-only")
               assert.equal(sent, ultrathink ? "Ultrathink:\nContinue." : "Continue.");
-            else assert.include(JSON.stringify(sent), documentPath);
+            else assert.include(JSON.stringify(sent), JSON.stringify(documentPath).slice(1, -1));
           }
         }).pipe(
           Effect.provide(
@@ -4134,8 +4134,8 @@ describe("ClaudeAdapterV2 background wake turns", () => {
           "false",
         );
 
-        // Claude Code keeps the local file at the repository root, the main checkout's root in a
-        // worktree, and that file beats the user's settings.
+        // Windows 从 cwd 读取本地设置，其他平台从仓库主目录读取。
+        const windows = (yield* HostProcess.Platform) === "win32";
         const repo = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3-claude-repo-" });
         const worktree = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3-claude-wt-" });
         const worktreeGitDir = path.join(repo, ".git", "worktrees", "wt");
@@ -4154,10 +4154,19 @@ describe("ClaudeAdapterV2 background wake turns", () => {
           );
         const userAuto = '{"env":{"ENABLE_TOOL_SEARCH":"auto"}}';
         yield* rootLocal("auto");
-        assert.equal(yield* openedToolSearch("{}", worktree), "true");
+        assert.equal(yield* openedToolSearch("{}", worktree), windows ? undefined : "true");
         yield* rootLocal("false");
+        assert.equal(yield* openedToolSearch(userAuto, worktree), windows ? "true" : undefined);
+        assert.equal(
+          yield* openedToolSearch(userAuto, path.join(repo, "packages", "app")),
+          windows ? "true" : undefined,
+        );
+        yield* fileSystem.makeDirectory(path.join(worktree, ".claude"));
+        yield* fileSystem.writeFileString(
+          path.join(worktree, ".claude", "settings.local.json"),
+          '{"env":{"ENABLE_TOOL_SEARCH":"false"}}',
+        );
         assert.isUndefined(yield* openedToolSearch(userAuto, worktree));
-        assert.isUndefined(yield* openedToolSearch(userAuto, path.join(repo, "packages", "app")));
 
         // Project settings beat user settings, and the process env applies only when no file sets it.
         const project = yield* fileSystem.makeTempDirectoryScoped({ prefix: "t3-claude-project-" });
@@ -8720,6 +8729,126 @@ describe("ClaudeAdapterV2 background wake turns", () => {
           ),
         ),
       ),
+  );
+
+  it.effect("lets the native SDK acknowledge Stop before closing its own query", () =>
+    Effect.scoped(
+      Effect.gen(function* () {
+        let closes = 0;
+        let acknowledge = Effect.void;
+        const harness = yield* makeWakeHarnessWithOptions({
+          interrupt: Effect.suspend(() => {
+            assert.equal(closes, 0);
+            return acknowledge;
+          }),
+          close: (messages) =>
+            Effect.sync(() => {
+              closes++;
+            }).pipe(Effect.andThen(Queue.shutdown(messages))),
+        });
+        yield* harness.runtime.startTurn(
+          makeClaudeTestTurnInput({
+            threadId: harness.threadId,
+            providerThread: harness.providerThread,
+            now: yield* DateTime.now,
+            attemptId: RunAttemptId.make("graceful-stop"),
+            text: "Work until stopped",
+            attachments: [],
+          }),
+        );
+        acknowledge = harness.offerAndWait(
+          makeResultFrame({
+            uuid: "00000000-0000-4000-8000-000000000620",
+            result: "",
+            subtype: "error_during_execution",
+            errors: ["Error: Request was aborted."],
+            terminalReason: "aborted_streaming",
+          }),
+        );
+        yield* harness.until(() =>
+          harness.events.some(
+            (event) =>
+              event.type === "provider_turn.updated" && event.providerTurn.status === "running",
+          ),
+        );
+        const active = harness.events.find(
+          (event) =>
+            event.type === "provider_turn.updated" && event.providerTurn.status === "running",
+        );
+        if (active?.type !== "provider_turn.updated")
+          return yield* Effect.die("Missing running native turn");
+        yield* harness.runtime.interruptTurn({
+          providerThread: harness.providerThread,
+          providerTurnId: active.providerTurn.id,
+          requestRuntimeRestart: true,
+        });
+        assert.equal((yield* Queue.take(harness.terminalReceipts)).status, "interrupted");
+        assert.equal(closes, 1);
+        assert.lengthOf(harness.terminalEvents(), 1);
+      }).pipe(
+        Effect.provide(
+          Layer.mergeAll(IdAllocator.layer, McpProviderSessions.layer, NodeServices.layer),
+        ),
+      ),
+    ),
+  );
+
+  it.effect("bounds an unacknowledged native Stop and settles its turn once", () =>
+    Effect.scoped(
+      Effect.gen(function* () {
+        let closes = 0;
+        const interruptStarted = yield* Deferred.make<void>();
+        const harness = yield* makeWakeHarnessWithOptions({
+          interrupt: Deferred.succeed(interruptStarted, undefined).pipe(
+            Effect.andThen(Effect.never),
+          ),
+          close: (messages) =>
+            Effect.sync(() => {
+              closes++;
+            }).pipe(Effect.andThen(Queue.shutdown(messages))),
+        });
+        yield* harness.runtime.startTurn(
+          makeClaudeTestTurnInput({
+            threadId: harness.threadId,
+            providerThread: harness.providerThread,
+            now: yield* DateTime.now,
+            attemptId: RunAttemptId.make("unacknowledged-stop"),
+            text: "Work until stopped",
+            attachments: [],
+          }),
+        );
+        yield* harness.until(() =>
+          harness.events.some(
+            (event) =>
+              event.type === "provider_turn.updated" && event.providerTurn.status === "running",
+          ),
+        );
+        const active = harness.events.find(
+          (event) =>
+            event.type === "provider_turn.updated" && event.providerTurn.status === "running",
+        );
+        if (active?.type !== "provider_turn.updated")
+          return yield* Effect.die("Missing running native turn");
+        const stop = yield* harness.runtime
+          .interruptTurn({
+            providerThread: harness.providerThread,
+            providerTurnId: active.providerTurn.id,
+            requestRuntimeRestart: true,
+          })
+          .pipe(Effect.forkChild);
+        yield* Deferred.await(interruptStarted);
+        assert.equal(closes, 0);
+        yield* TestClock.adjust("11 seconds");
+        yield* Fiber.join(stop);
+        assert.equal((yield* Queue.take(harness.terminalReceipts)).status, "interrupted");
+        assert.equal(closes, 1);
+        assert.lengthOf(harness.terminalEvents(), 1);
+      }).pipe(
+        Effect.provide(
+          Layer.mergeAll(IdAllocator.layer, McpProviderSessions.layer, NodeServices.layer),
+        ),
+      ),
+    ),
   );
 
   it.effect("preserves settled background work until an explicit stop", () =>

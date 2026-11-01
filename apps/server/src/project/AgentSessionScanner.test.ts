@@ -1,4 +1,6 @@
+// @effect-diagnostics nodeBuiltinImport:off -- Windows 目录别名需要 junction，Effect 的 symlink 接口不提供类型参数。
 import * as NodeServices from "@effect/platform-node/NodeServices";
+import * as NodeFSP from "node:fs/promises";
 import * as NodeOS from "node:os";
 import { describe, expect, it } from "@effect/vitest";
 import {
@@ -10,6 +12,7 @@ import {
   type ServerSettings as ContractServerSettings,
 } from "@t3tools/contracts";
 import { symlinksSupported } from "@t3tools/shared/testing/symlinks";
+import * as HostProcess from "@t3tools/shared/HostProcess";
 import * as DateTime from "effect/DateTime";
 import * as Effect from "effect/Effect";
 import * as FileSystem from "effect/FileSystem";
@@ -348,13 +351,13 @@ it.layer(NodeServices.layer)("AgentSessionScanner", (it) => {
     it.effect("returns the imported project ID through a realpath alias", () =>
       Effect.gen(function* () {
         const path = yield* Path.Path;
-        const fileSystem = yield* FileSystem.FileSystem;
         const claudeHomePath = yield* makeTempDir("t3code-claude-home-");
         const codexHomePath = yield* makeTempDir("t3code-codex-home-");
         const workspace = yield* makeTempDir("t3code-workspace-");
         const linkParent = yield* makeTempDir("t3code-scanner-links-");
         const workspaceAlias = path.join(linkParent, "workspace-alias");
-        yield* fileSystem.symlink(workspace, workspaceAlias);
+        const linkType = (yield* HostProcess.Platform) === "win32" ? "junction" : "dir";
+        yield* Effect.tryPromise(() => NodeFSP.symlink(workspace, workspaceAlias, linkType));
 
         yield* writeTranscript({
           filePath: path.join(claudeHomePath, "projects", "-slug", "a.jsonl"),
@@ -942,7 +945,8 @@ it.layer(NodeServices.layer)("AgentSessionScanner", (it) => {
         const worktreeCwd = path.join(configBaseDir, "worktrees", "t3code", "wt-3");
         yield* fileSystem.makeDirectory(worktreeCwd, { recursive: true });
         const symlinkCwd = path.join(linkParent, "innocent-project");
-        yield* fileSystem.symlink(worktreeCwd, symlinkCwd);
+        const linkType = (yield* HostProcess.Platform) === "win32" ? "junction" : "dir";
+        yield* Effect.tryPromise(() => NodeFSP.symlink(worktreeCwd, symlinkCwd, linkType));
         yield* writeTranscript({
           filePath: path.join(claudeHomePath, "projects", "-slug", "a.jsonl"),
           contents: claudeSessionLine(symlinkCwd),
@@ -1823,6 +1827,48 @@ describe("parseAgentSessionTranscript", () => {
     },
   );
 
+  it.each([199, 200, 201, 205])(
+    "counts only omitted conversation messages for a %s-message Claude transcript",
+    (count) => {
+      const thread = AgentSessionScanner.parseAgentSessionTranscript({
+        contents: [
+          ...Array.from({ length: count }, (_, index) =>
+            encodeTranscriptRecord({
+              type: index === 0 ? "user" : "assistant",
+              sessionId: "claude-session",
+              message: { content: `Message ${index}` },
+            }),
+          ),
+          encodeTranscriptRecord({ type: "user", isMeta: true, message: { content: "Setup" } }),
+          encodeTranscriptRecord({
+            type: "user",
+            isCompactSummary: true,
+            message: { content: "Summary" },
+          }),
+          encodeTranscriptRecord({
+            type: "assistant",
+            isSidechain: true,
+            message: { content: "Sidechain" },
+          }),
+          encodeTranscriptRecord({
+            type: "assistant",
+            message: { content: [{ type: "tool_use" }] },
+          }),
+          "malformed",
+        ].join("\n"),
+        source: "claudeAgent",
+        providerInstanceId: ProviderInstanceId.make("claudeAgent"),
+        fallbackSessionId: "fallback",
+        lastActiveAtMs: Date.parse("2026-08-24T12:00:00.000Z"),
+      });
+
+      expect(thread?.omittedMessageCount).toBe(Math.max(0, count - 200));
+      expect(thread?.messages).toHaveLength(Math.min(200, count));
+      expect(thread?.messages[0]?.text).toBe("Message 0");
+      expect(thread?.messages.at(-1)?.text).toBe(`Message ${count - 1}`);
+    },
+  );
+
   it("keeps Claude text and titles while dropping malformed and tool records", () => {
     const thread = AgentSessionScanner.parseAgentSessionTranscript({
       contents: [
@@ -1974,10 +2020,10 @@ describe("parseAgentSessionTranscript", () => {
     ]);
   });
 
-  it("keeps the canonical first prompt after long Codex transcripts are capped", () => {
+  it.each([199, 200])("keeps the canonical first prompt with %s later Codex messages", (count) => {
     const canonicalPrompt = "\n  Keep the canonical prompt  \n";
     const canonicalTimestamp = "2026-08-24T10:01:00.000Z";
-    const laterAssistantMessages = Array.from({ length: 200 }, (_, index) =>
+    const laterAssistantMessages = Array.from({ length: count }, (_, index) =>
       encodeTranscriptRecord({
         type: "response_item",
         timestamp: `2026-08-24T11:${String(index % 60).padStart(2, "0")}:00.000Z`,
@@ -2013,6 +2059,7 @@ describe("parseAgentSessionTranscript", () => {
       lastActiveAtMs: Date.parse("2026-08-24T12:00:00.000Z"),
     });
 
+    expect(thread?.omittedMessageCount).toBe(count - 199);
     expect(thread?.messages).toHaveLength(200);
     expect(thread?.messages[0]).toMatchObject({
       role: "user",
@@ -2075,6 +2122,7 @@ describe("parseAgentSessionTranscript", () => {
       lastActiveAtMs: Date.parse("2026-08-24T12:00:00.000Z"),
     });
 
+    expect(thread?.omittedMessageCount).toBe(1);
     expect(thread?.messages).toHaveLength(200);
     expect(thread?.messages[0]).toMatchObject({
       role: "user",
