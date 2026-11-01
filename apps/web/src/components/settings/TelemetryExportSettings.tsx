@@ -247,13 +247,11 @@ function TelemetryExportForm() {
               </div>
               {(saved[key] !== (running?.[key] ?? "") || override?.variable) && (
                 <p className="break-all text-xs text-muted-foreground">
-                  {translateUi("Running:")}
-                  {running?.[key] || translateUi("Disabled")}
+                  {translateUi("Running:")} {running?.[key] || translateUi("Disabled")}
                   {override?.variable && (
                     <>
                       {" "}
-                      {translateUi("from")}
-                      <code className="font-mono">{override.variable}</code>
+                      {translateUi("from")} <code className="font-mono">{override.variable}</code>
                     </>
                   )}
                 </p>
