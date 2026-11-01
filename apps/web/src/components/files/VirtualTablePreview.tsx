@@ -259,7 +259,10 @@ function ScaledRows(props: Omit<Parameters<typeof RowPage>[0], "page">) {
   const ref = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState({ offset: 0, height: 0, rowHeight: 29 });
-  const [top, setTop] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState({ top: 0, actualTop: 0 });
+  const { top } = scrollPosition;
+  const setTop = (top: number) =>
+    setScrollPosition({ top, actualTop: ref.current?.scrollTop ?? top });
   const handledReveal = useRef<string | null>(null);
   const pendingReveal = useRef<{ row: number; attempts: number } | null>(null);
   const pendingEnd = useRef(false);
@@ -301,8 +304,9 @@ function ScaledRows(props: Omit<Parameters<typeof RowPage>[0], "page">) {
       remaining = Math.max(0, remaining - 1);
       if (!remaining) break;
     }
-    node.scrollTop = Math.min(maxFirst * 29, logicalTop) * scale + nativeOffset;
-    setTop(node.scrollTop);
+    const nextTop = Math.min(maxFirst * 29, logicalTop) * scale + nativeOffset;
+    node.scrollTop = nextTop;
+    setTop(nextTop);
   });
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- Scroll the DOM viewport to a requested line after its virtual track has committed.
   useLayoutEffect(() => {
@@ -320,7 +324,7 @@ function ScaledRows(props: Omit<Parameters<typeof RowPage>[0], "page">) {
     pendingEnd.current = false;
     pendingReveal.current = { row, attempts: 0 };
     handledReveal.current = key;
-  }, [props.revealLine, props.revealRequestId, props.count, headerRows, scale]);
+  }, [props.revealLine, props.revealRequestId, props.count, headerRows, scale, setTop]);
   const atStart = position.top === 0;
   const rowHeight = () =>
     contentRef.current?.querySelector<HTMLElement>(`[data-preview-row="${first}"]`)?.offsetHeight ||
@@ -459,7 +463,13 @@ function ScaledRows(props: Omit<Parameters<typeof RowPage>[0], "page">) {
           setTop(node.scrollTop);
         }
       }}
-      onScroll={(event) => setTop(event.currentTarget.scrollTop)}
+      onScroll={(event) => {
+        const actualTop = event.currentTarget.scrollTop;
+        // 浏览器会取整 scrollTop；对应的滚动事件应保留换算前的小数位置。
+        setScrollPosition((previous) =>
+          previous.actualTop === actualTop ? previous : { top: actualTop, actualTop },
+        );
+      }}
     >
       <div className="relative" style={{ height: scrollHeight }}>
         <div

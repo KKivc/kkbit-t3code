@@ -20,7 +20,10 @@ function bannerDescription(resetAt: Date, timestampFormat: TimestampFormat) {
 
 describe("usageLimitRecoveryBannerItem", () => {
   it.each([
-    ["12-hour", "Resets 5:30 PM"],
+    [
+      "12-hour",
+      `Resets ${new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(2026, 9, 20, 17, 30))}`,
+    ],
     ["24-hour", "Resets 17:30"],
   ] as const)("formats a same-day reset with the %s setting", (timestampFormat, expected) => {
     using _now = vi.spyOn(Date, "now").mockReturnValue(stoppedAt.getTime());
