@@ -119,6 +119,8 @@ first load does not wait for dev bundling. There is no HMR. After an edit, wait 
 reloads by itself. The license manifest is not generated in this mode. `--built` requires
 `--share` and the `dev` mode.
 
+`t3.json` 的 Setup Worktree 操作会把主仓库的 `node_modules/.bin` 加入安装子进程的命令搜索路径，让后台进程能够使用已安装的 `vp`，依赖仍安装在各 worktree 内。主仓库需已安装 Vite+，或后台进程的 `PATH` 中已有 `vp`。初始化不读取、复制或链接主目录的环境文件。
+
 #### Reusable dev credential
 
 Use this only on a hostname where you trust every service. Browsers send cookies to all ports
@@ -133,16 +135,7 @@ value once:
 openssl rand -hex 32
 ```
 
-Put that value in the main checkout's gitignored `.env`:
-
-```dotenv
-T3CODE_DEV_AUTH_TOKEN=<the value generated above>
-```
-
-The `t3.json` Setup Worktree action links that file to each worktree's `.env`. The dev runner reads repository env files at startup. `.env.local` and inherited process
-environment values override `.env`, so no per-worktree export is needed after setup.
-
-For a manual worktree or launcher without that link, export the same fixed value instead:
+需要共享开发认证时，由开发者明确为各 worktree 配置同一个值，例如在启动进程的环境中设置：
 
 ```sh
 export T3CODE_DEV_AUTH_TOKEN="<the value generated above>"

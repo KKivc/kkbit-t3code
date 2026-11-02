@@ -3,8 +3,6 @@ import * as NodeChildProcess from "node:child_process";
 import * as NodeFS from "node:fs";
 import * as NodePath from "node:path";
 
-const ENV_FILES = [".env", NodePath.join("infra", "relay", ".env")];
-
 const worktree = NodePath.dirname(import.meta.dirname);
 
 // T3 runs setup in the background, so agents can start before it ends.
@@ -46,11 +44,23 @@ if (!projectRoot) {
   throw new Error("T3CODE_PROJECT_ROOT is not set. Run this through the t3.json setup action.");
 }
 
-// Use the shell for Windows vp shims. Unattended installs need pnpm's confirmation
-// flag and closed stdin so other prompts fail. A stale lockfile must fail, not be rewritten.
-// Pipe output so the failure marker can keep its tail.
+// 新 worktree 尚无依赖；借用主仓库的命令入口，不共享依赖目录或环境文件。
+const installEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => key.toLowerCase() !== "path"),
+);
+const inheritedPath = Object.entries(process.env).find(
+  ([key]) => key.toLowerCase() === "path",
+)?.[1];
+installEnv.PATH = [
+  NodePath.join(worktree, "node_modules", ".bin"),
+  NodePath.join(projectRoot, "node_modules", ".bin"),
+  ...(inheritedPath ? [inheritedPath] : []),
+].join(NodePath.delimiter);
+
+// shell 支持 Windows 命令入口；锁文件不一致或安装失败时保留真实错误。
 const install = NodeChildProcess.spawn("vp i --frozen-lockfile -- --yes", {
   cwd: worktree,
+  env: installEnv,
   shell: true,
   stdio: ["ignore", "pipe", "pipe"],
 });
@@ -97,20 +107,4 @@ if (
       "",
     ].join("\n"),
   );
-}
-
-// Worktrees link main-checkout env files; replace only symlinks so real files always survive.
-for (const file of ENV_FILES) {
-  const source = NodePath.join(projectRoot, file);
-  const sourceStat = NodeFS.lstatSync(source, { throwIfNoEntry: false });
-  if (!sourceStat) continue;
-  if (!sourceStat.isFile()) {
-    process.stderr.write(`Skipping ${file}: ${source} is not a regular file.\n`);
-    continue;
-  }
-  const target = NodePath.join(worktree, file);
-  const existing = NodeFS.lstatSync(target, { throwIfNoEntry: false });
-  if (existing && !existing.isSymbolicLink()) continue;
-  if (existing) NodeFS.rmSync(target);
-  NodeFS.symlinkSync(source, target);
 }
