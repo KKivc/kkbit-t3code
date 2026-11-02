@@ -74,11 +74,17 @@ export function ProviderAuthenticationSection({
     !signedIn &&
     (provider.setup?.canAuthenticate === false ||
       (provider.driver === "acpRegistry" && auth?.methods?.length === 0));
+  const usesCredentials =
+    provider.driver === "antigravity" &&
+    (provider.auth.type === "gemini-api-key" || provider.auth.type === "agent-platform");
   const accountDescription = active
     ? auth?.phase === "starting"
-      ? (auth.message ?? "Starting sign-in…")
+      ? (auth.message ??
+        (usesCredentials ? translateUi("Connecting…") : translateUi("Starting sign-in…")))
       : auth?.phase === "verifying"
-        ? "Checking your account…"
+        ? usesCredentials
+          ? translateUi("Checking credentials and loading models…")
+          : translateUi("Checking your account…")
         : interaction?.type === "terminal"
           ? translateUi("Complete sign-in in the terminal below.")
           : interaction?.type === "credentials"
@@ -90,7 +96,9 @@ export function ProviderAuthenticationSection({
         ? "Discovering sign-in methods…"
         : needsExternalSetup
           ? translateUi("No in-app sign-in advertised. Follow the provider's docs to finish setup.")
-          : `Sign in on ${environmentLabel}.`;
+          : usesCredentials
+            ? translateUi("Connect on {0} to load models.", [environmentLabel])
+            : translateUi("Sign in on {0}.", [environmentLabel]);
   const statusMessage = auth?.phase === "failed" ? auth.message : null;
   const disabled = readOnly || pending || query.error !== null || isDiscovering;
   const draftId = `${auth?.flowId ?? ""}:${interaction?.id ?? ""}`;
@@ -299,8 +307,12 @@ export function ProviderAuthenticationSection({
                 {signedIn
                   ? translateUi("Change account")
                   : auth?.phase === "failed" || auth?.phase === "cancelled"
-                    ? translateUi("Retry sign-in")
-                    : translateUi("Sign in")}
+                    ? usesCredentials
+                      ? translateUi("Retry connection")
+                      : translateUi("Retry sign-in")
+                    : usesCredentials
+                      ? "Connect"
+                      : translateUi("Sign in")}
               </Button>
             ) : null}
             {!active && signedIn && (provider.auth.canLogout ?? provider.setup?.canAuthenticate) ? (

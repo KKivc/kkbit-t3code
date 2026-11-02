@@ -200,6 +200,16 @@ function relationshipThreadTitle(input: {
   return formatSubagentDisplayTitle(input.title);
 }
 
+/** The full title, since the row truncates it, with what a click does. */
+function LineageTooltipContent(props: { readonly title: string; readonly hint: string }) {
+  return (
+    <>
+      <span className="block font-medium">{props.title}</span>
+      <span className="block text-muted-foreground">{props.hint}</span>
+    </>
+  );
+}
+
 function currentSubagent<Agent extends RuntimeSubagent>(
   agent: Agent | undefined,
   childThread: OrchestrationV2ThreadShell | null | undefined,
@@ -260,15 +270,16 @@ function RemoteSubagentRow(props: {
               size="sm"
               variant="ghost"
               part="row"
-              disabled={environment === null}
-              onClick={() =>
+              aria-disabled={environment === null || undefined}
+              onClick={() => {
+                if (environment === null) return;
                 void navigate({
                   to: "/$environmentId/$threadId",
                   params: buildThreadRouteParams(
                     scopeThreadRef(remoteChild.environmentId, remoteChild.threadId),
                   ),
-                })
-              }
+                });
+              }}
             />
           }
         >
@@ -292,9 +303,16 @@ function RemoteSubagentRow(props: {
           </span>
         </TooltipTrigger>
         <TooltipPopup side="left">
-          {environment === null
-            ? `Runs on ${remoteChild.label}. Connect to it to open the thread there.`
-            : `Open on ${remoteChild.label}`}
+          <LineageTooltipContent
+            title={title}
+            hint={
+              environment === null
+                ? translateUi("Runs on {0}. Connect to it to open the thread there.", [
+                    remoteChild.label,
+                  ])
+                : translateUi("Open on {0}", [remoteChild.label])
+            }
+          />
         </TooltipPopup>
       </Tooltip>
     </li>
@@ -327,13 +345,14 @@ function DelegatedFromRow(props: {
               size="sm"
               variant="ghost"
               part="row"
-              disabled={environment === null}
-              onClick={() =>
+              aria-disabled={environment === null || undefined}
+              onClick={() => {
+                if (environment === null) return;
                 void navigate({
                   to: "/$environmentId/$threadId",
                   params: buildThreadRouteParams(parentRef),
-                })
-              }
+                });
+              }}
             />
           }
         >
@@ -351,9 +370,16 @@ function DelegatedFromRow(props: {
           ) : null}
         </TooltipTrigger>
         <TooltipPopup side="left">
-          {environment === null
-            ? `Delegated from ${label ?? "a linked environment"}. Connect to it to open the parent thread.`
-            : "Open parent agent"}
+          <LineageTooltipContent
+            title={title}
+            hint={
+              environment === null
+                ? translateUi("Delegated from {0}. Connect to it to open the parent thread.", [
+                    label ?? translateUi("a linked environment"),
+                  ])
+                : translateUi("Open parent agent")
+            }
+          />
         </TooltipPopup>
       </Tooltip>
     </li>
@@ -687,7 +713,7 @@ export function ThreadRelationshipsPanel(props: {
         childProject={project}
       />
     ) : (
-      relationshipHint
+      <LineageTooltipContent title={threadTitle} hint={relationshipHint} />
     );
     const relationshipContent = (
       <>
