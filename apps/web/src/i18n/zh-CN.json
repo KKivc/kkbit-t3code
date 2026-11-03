@@ -1,4 +1,6 @@
 {
+  "Remove checkout {0}": "移除检出 {0}",
+  "Deletes all {0} checkout entries and their threads on every machine. Files on disk are not touched.": "移除所有机器上的 {0} 个检出记录及其会话。磁盘文件不受影响。",
   "Its saved settings, including any custom binary path, will be removed.": "已保存的设置（包括自定义可执行文件路径）将被移除。",
   "Subagent work": "子代理工作记录",
   "Read only. These subagents cannot take messages.": "只读。这些子代理无法接收消息。",

@@ -428,7 +428,7 @@ function ProjectDetail({
           variant="outline"
           disabled={!editableIds.has(member.environmentId)}
           onClick={() => void removeMembers([member])}
-          aria-label={`Remove checkout ${member.workspaceRoot}`}
+          aria-label={translateUi("Remove checkout {0}", [member.workspaceRoot])}
         >
           {translateUi("Remove")}
         </Button>
@@ -689,7 +689,10 @@ function ProjectDetail({
                     "Deletes the selected machine's checkout entries and their threads. Other machines and files on disk are not touched.",
                   )
                 : group.memberProjects.length > 1
-                  ? `Deletes all ${group.memberProjects.length} checkout entries and their threads on every machine. Files on disk are not touched.`
+                  ? translateUi(
+                      "Deletes all {0} checkout entries and their threads on every machine. Files on disk are not touched.",
+                      [group.memberProjects.length],
+                    )
                   : translateUi(
                       "Deletes the project entry and its threads. Files on disk are not touched.",
                     )
