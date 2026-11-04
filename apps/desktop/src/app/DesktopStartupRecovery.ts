@@ -18,7 +18,7 @@ import * as DesktopEnvironment from "./DesktopEnvironment.ts";
 import * as DesktopObservability from "./DesktopObservability.ts";
 import * as DesktopState from "./DesktopState.ts";
 
-const RELEASES_URL = "https://github.com/pingdotgg/t3code/releases";
+const RELEASES_URL = "https://github.com/KKivc/kkbit-t3code/releases";
 const LAST_STARTED_VERSION_FILE = "desktop-last-started-version";
 // Buttons are plain links to this host; will-navigate cancels them and runs the action.
 const ACTION_ORIGIN = "https://startup-recovery.invalid";
@@ -32,7 +32,8 @@ export type StartupRecoveryOffer =
   | { readonly _tag: "Update"; readonly version: string }
   | { readonly _tag: "Downloading"; readonly version: string; readonly percent: number | null }
   | { readonly _tag: "Reinstall"; readonly version: string }
-  | { readonly _tag: "Releases" };
+  | { readonly _tag: "Releases" }
+  | { readonly _tag: "ManagedPolicy" };
 
 const STARTUP_RECOVERY_ACTIONS = ["update", "reinstall", "releases", "copy", "quit"] as const;
 type StartupRecoveryAction = (typeof STARTUP_RECOVERY_ACTIONS)[number];
@@ -41,6 +42,7 @@ type StartupRecoveryAction = (typeof STARTUP_RECOVERY_ACTIONS)[number];
 export function resolveStartupRecoveryOffer(
   update: DesktopUpdateState,
   lastStartedVersion: string | null,
+  managedPolicy = false,
 ): StartupRecoveryOffer {
   if (update.status === "downloading" && update.availableVersion !== null) {
     return {
@@ -55,6 +57,8 @@ export function resolveStartupRecoveryOffer(
   if (updateVersion !== null && updateVersion !== update.notAppliedVersion) {
     return { _tag: "Update", version: updateVersion };
   }
+  // A newer release can know a key this one refuses; an older one or the releases page cannot help.
+  if (managedPolicy) return { _tag: "ManagedPolicy" };
   if (update.enabled && (update.status === "idle" || update.status === "checking")) {
     return { _tag: "Checking" };
   }
@@ -77,26 +81,31 @@ const actionLink = (action: StartupRecoveryAction, label: string, primary = fals
 function describeOffer(offer: StartupRecoveryOffer): { text: string; action: string } {
   switch (offer._tag) {
     case "Checking":
-      return { text: "Checking for a newer version…", action: "" };
+      return { text: "正在检查新版本…", action: "" };
     case "Update":
       return {
-        text: `Version ${offer.version} is available. It can contain a fix.`,
-        action: actionLink("update", `Update to ${offer.version}`, true),
+        text: `版本 ${offer.version} 可用，可能已修复此问题。`,
+        action: actionLink("update", `更新至 ${offer.version}`, true),
       };
     case "Downloading":
       return {
-        text: `Downloading ${offer.version}${offer.percent === null ? "" : ` (${Math.floor(offer.percent / 10) * 10}%)`}. T3 Code restarts when the download is done.`,
+        text: `正在下载 ${offer.version}${offer.percent === null ? "" : ` (${Math.floor(offer.percent / 10) * 10}%)`}。下载完成后，T3 Code 将重新启动。`,
         action: "",
       };
     case "Reinstall":
       return {
-        text: `Version ${offer.version} started correctly on this computer. Download it and install it to go back.`,
-        action: actionLink("reinstall", `Download ${offer.version}`, true),
+        text: `版本 ${offer.version} 曾在此电脑上正常启动。下载安装该版本可恢复使用。`,
+        action: actionLink("reinstall", `下载 ${offer.version}`, true),
       };
     case "Releases":
       return {
-        text: "Get a different version from the releases page.",
-        action: actionLink("releases", "Open releases", true),
+        text: "请从发行页面下载其他版本。",
+        action: actionLink("releases", "打开发行页面", true),
+      };
+    case "ManagedPolicy":
+      return {
+        text: "组织的托管策略阻止了 T3 Code 启动。请将下方详细信息发送给 IT 管理员。",
+        action: "",
       };
   }
 }
@@ -109,7 +118,7 @@ function buildStartupRecoveryHtml(input: {
 }): string {
   const offer = describeOffer(input.offer);
   const output = input.failure.output.trim();
-  return `<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>T3 Code could not start</title><style>
+  return `<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>T3 Code 无法启动</title><style>
 :root{color-scheme:light dark;--bg:#fff;--fg:#111;--muted:#666;--line:#ddd;--code:#f4f4f4}
 @media (prefers-color-scheme:dark){:root{--bg:#000;--fg:#fff;--muted:#999;--line:#333;--code:#111}}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--fg)}
@@ -120,12 +129,12 @@ h1{font-size:18px;margin:0}p{margin:0}.muted{color:var(--muted)}
 .button.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 pre{flex:1;min-height:60px;margin:0;overflow:auto;background:var(--code);border:1px solid var(--line);border-radius:6px;padding:10px;font:11px/1.4 ui-monospace,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
 </style></head><body>
-<h1>T3 Code could not start</h1>
+<h1>T3 Code 无法启动</h1>
 <p>${escapeHtml(input.failure.reason)}</p>
 <p>${escapeHtml(offer.text)}</p>
-<div class="actions">${offer.action}${actionLink("copy", "Copy details")}${actionLink("quit", "Quit")}</div>
-<pre>${escapeHtml(output.length > 0 ? output : "The server wrote no output.")}</pre>
-<p class="muted">Version ${escapeHtml(input.appVersion)}. T3 Code tries again in the background. Logs: ${escapeHtml(input.logDir)}</p>
+<div class="actions">${offer.action}${actionLink("copy", "复制详细信息")}${actionLink("quit", "退出")}</div>
+<pre>${escapeHtml(output.length > 0 ? output : "服务端没有输出。")}</pre>
+<p class="muted">版本 ${escapeHtml(input.appVersion)}。T3 Code 正在后台重试。日志：${escapeHtml(input.logDir)}</p>
 </body></html>`;
 }
 
@@ -171,8 +180,14 @@ export const listen: Effect.Effect<
   const { latest, changes: updateChanges } = yield* updates.subscribe;
   const updateStateRef = yield* Ref.make(latest);
 
-  const offer = Ref.get(updateStateRef).pipe(
-    Effect.map((state) => resolveStartupRecoveryOffer(state, lastStartedVersion)),
+  const offer = Effect.all([Ref.get(updateStateRef), Ref.get(failureRef)]).pipe(
+    Effect.map(([state, failure]) =>
+      resolveStartupRecoveryOffer(
+        state,
+        lastStartedVersion,
+        Option.exists(failure, ({ managedPolicy }) => managedPolicy),
+      ),
+    ),
   );
 
   const render = Effect.gen(function* () {
@@ -253,7 +268,7 @@ export const listen: Effect.Effect<
           minWidth: 420,
           minHeight: 320,
           show: false,
-          title: "T3 Code could not start",
+          title: "T3 Code 无法启动",
           autoHideMenuBar: true,
           backgroundColor: shouldUseDarkColors ? "#000000" : "#ffffff",
           webPreferences: {
@@ -332,7 +347,8 @@ export const listen: Effect.Effect<
         }
         if (startup._tag !== "Failing") return;
         if (Option.isSome(yield* Ref.get(failureRef))) return;
-        yield* Ref.set(failureRef, Option.some({ reason: startup.reason, output: startup.output }));
+        const { _tag, ...failure } = startup;
+        yield* Ref.set(failureRef, Option.some(failure));
         // The backend manager already logs each failure's reason.
         yield* logWarning("primary backend failing to start");
         yield* show();

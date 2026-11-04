@@ -172,7 +172,7 @@ export function SourceControlAppSignInSettings({
           />
         </span>
       ) : tokenOverrides ? (
-        translateUi("Signed in, but the token saved below is used until you remove it.")
+        translateUi("Signed in, but the token saved below is used while it can be read.")
       ) : (
         translateUi("Signed in")
       );
