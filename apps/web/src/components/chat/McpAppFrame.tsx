@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, ThreadId, TurnItemId } from "@t3tools/contracts";
 import {
   makeMcpAppHost,
@@ -40,9 +41,12 @@ const commandFailure = (result: {
   readonly cause: Parameters<typeof squashAtomCommandFailure>[0]["cause"];
 }) => {
   const error = squashAtomCommandFailure(result);
-  return new McpAppHostRefusal(
-    error instanceof Error && error.message.trim() !== "" ? error.message : "Request failed.",
-  );
+  return new McpAppHostRefusal({
+    message:
+      error instanceof Error && error.message.trim() !== ""
+        ? error.message
+        : translateUi("Request failed."),
+  });
 };
 
 const fullscreenSupported =
@@ -253,7 +257,9 @@ export function McpAppFrame(props: {
       flushSync(() => setDisplayMode("inline"));
       const approved = await requestConfirmDialog(message);
       if (approved === undefined) {
-        throw new McpAppHostRefusal("T3 could not ask for approval here.");
+        throw new McpAppHostRefusal({
+          message: translateUi("T3 could not ask for approval here."),
+        });
       }
       return approved;
     };
@@ -272,12 +278,18 @@ export function McpAppFrame(props: {
         const { environmentId, input } = scope();
         const info = await readLive().toolInfo({ environmentId, input: { ...input, name } });
         if (info._tag !== "Success") throw commandFailure(info);
-        if (!info.value.callable) throw new McpAppHostRefusal("This app cannot call that tool.");
+        if (!info.value.callable)
+          throw new McpAppHostRefusal({ message: translateUi("This app cannot call that tool.") });
         if (!info.value.readOnly) {
           const approved = await ask(
-            `Allow ${app.server} to run ${info.value.title ?? name}?\n${JSON.stringify(args, null, 2)}`,
+            translateUi("Allow {0} to run {1}?\n{2}", [
+              app.server,
+              info.value.title ?? name,
+              JSON.stringify(args, null, 2),
+            ]),
           );
-          if (approved !== true) throw new McpAppHostRefusal("Declined by the user.");
+          if (approved !== true)
+            throw new McpAppHostRefusal({ message: translateUi("Declined by the user.") });
         }
         const result = await readLive().callTool({
           environmentId,
@@ -297,15 +309,21 @@ export function McpAppFrame(props: {
       },
       openLink: async (url) => {
         if (document.activeElement !== frameRef.current || !navigator.userActivation?.isActive) {
-          throw new McpAppHostRefusal("Links open only from a click in the app.");
+          throw new McpAppHostRefusal({
+            message: translateUi("Links open only from a click in the app."),
+          });
         }
         window.open(url, "_blank", "noopener,noreferrer");
       },
       sendMessage: async (text) => {
         const send = readLive().props.onSendMessage;
-        if (send === undefined) throw new McpAppHostRefusal("Messages are not available here.");
-        const approved = await ask(`Send this message from ${app.server}?\n${text}`);
-        if (approved !== true) throw new McpAppHostRefusal("Declined by the user.");
+        if (send === undefined)
+          throw new McpAppHostRefusal({ message: translateUi("Messages are not available here.") });
+        const approved = await ask(
+          translateUi("Send this message from {0}?\n{1}", [app.server, text]),
+        );
+        if (approved !== true)
+          throw new McpAppHostRefusal({ message: translateUi("Declined by the user.") });
         await send(text);
       },
       updateModelContext: async (context) => {
@@ -339,8 +357,9 @@ export function McpAppFrame(props: {
       },
       downloadFile: async (files) => {
         const names = files.map((file) => file.name).join(", ");
-        const approved = await ask(`Save ${names} from ${app.server}?`);
-        if (approved !== true) throw new McpAppHostRefusal("Declined by the user.");
+        const approved = await ask(translateUi("Save {0} from {1}?", [names, app.server]));
+        if (approved !== true)
+          throw new McpAppHostRefusal({ message: translateUi("Declined by the user.") });
         for (const file of files) {
           let bytes: Uint8Array | undefined;
           let mimeType = file.mimeType ?? "application/octet-stream";
@@ -358,9 +377,14 @@ export function McpAppFrame(props: {
             const declared = (content as { readonly mimeType?: unknown } | undefined)?.mimeType;
             if (typeof declared === "string") mimeType = declared;
           }
-          if (bytes === undefined) throw new McpAppHostRefusal(`${file.name} has no contents.`);
+          if (bytes === undefined)
+            throw new McpAppHostRefusal({
+              message: translateUi("{0} has no contents.", [file.name]),
+            });
           if (bytes.byteLength > MAX_DOWNLOAD_BYTES) {
-            throw new McpAppHostRefusal(`${file.name} is too large to save.`);
+            throw new McpAppHostRefusal({
+              message: translateUi("{0} is too large to save.", [file.name]),
+            });
           }
           saveBlob(new Blob([bytes.slice()], { type: mimeType }), file.name);
         }
@@ -406,7 +430,7 @@ export function McpAppFrame(props: {
   if (closed) {
     return (
       <div className="flex items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-muted-foreground text-xs">
-        <span>The {app.server} app was closed</span>
+        <span>{translateUi("The {0} app was closed", [app.server])}</span>
         <Button
           size="xs"
           variant="ghost"
@@ -416,7 +440,7 @@ export function McpAppFrame(props: {
             setClosed(false);
           }}
         >
-          Show app
+          {translateUi("Show app")}
         </Button>
       </div>
     );
@@ -448,7 +472,7 @@ export function McpAppFrame(props: {
           >
             <span className="truncate">{app.server}</span>
             <Button
-              aria-label="Exit full screen"
+              aria-label={translateUi("Exit full screen")}
               size="icon-sm"
               variant="ghost"
               onClick={() => setDisplayMode("inline")}
@@ -459,13 +483,13 @@ export function McpAppFrame(props: {
         ) : null}
         {navigatedAway ? (
           <p className="flex size-full items-center justify-center text-muted-foreground text-xs">
-            The {app.server} app left its page and was stopped
+            {translateUi("The {0} app left its page and was stopped", [app.server])}
           </p>
         ) : src !== null ? (
           <iframe
             ref={attachFrame}
             src={src}
-            title={`${app.server} app`}
+            title={translateUi("{0} app", [app.server])}
             // Omitting allow-same-origin isolates the app from the session.
             sandbox="allow-scripts allow-forms"
             allow={mcpAppAllowAttribute(app.permissions)}
@@ -475,7 +499,7 @@ export function McpAppFrame(props: {
           />
         ) : asset._tag === "Failure" ? (
           <p className="flex size-full items-center justify-center text-muted-foreground text-xs">
-            Unable to load the {app.server} app
+            {translateUi("Unable to load the {0} app", [app.server])}
           </p>
         ) : null}
       </div>

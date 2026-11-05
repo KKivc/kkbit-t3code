@@ -276,7 +276,10 @@ const checkChanged = Effect.fn("checkChanged")(function* (input: {
         "--",
       ]),
     );
-    const ignored = yield* Effect.try(() => cacheInputFiles(root));
+    const ignored = yield* Effect.try({
+      try: () => cacheInputFiles(root),
+      catch: (cause) => `check:changed: 无法扫描检查输入文件：${String(cause)}`,
+    });
     for (const file of [
       // Raw bytes of changed files too: .gitattributes normalizes line endings in
       // the diff, but the formatter reads the file as it is on disk.
@@ -480,7 +483,7 @@ const checkChanged = Effect.fn("checkChanged")(function* (input: {
     ...(affected.length > 0
       ? [
           {
-            // `tsc --noEmit` writes nothing another package reads, so dependency order
+            // `effect-tsgo tsrs --noEmit` writes nothing another package reads, so dependency order
             // only made dependents wait: --parallel cut a contracts change from 13 s to 9 s.
             ...command(`typecheck (${affected.length} packages)`, [
               "run",

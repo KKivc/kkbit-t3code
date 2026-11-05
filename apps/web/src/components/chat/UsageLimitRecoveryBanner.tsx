@@ -6,16 +6,24 @@ import {
 } from "@t3tools/contracts";
 import { type TimestampFormat } from "@t3tools/contracts/settings";
 import { deadlineStore } from "@t3tools/client-runtime/clock";
+import {
+  CHATGPT_USAGE_LIMIT_CODE,
+  CHATGPT_WORKSPACE_USAGE_LIMIT_CODE,
+} from "@t3tools/shared/usageLimits";
 import { GaugeIcon } from "lucide-react";
 import { useState } from "react";
 import { useDeadlinePassed } from "../../hooks/useDeadline";
+import { OpenAI } from "../Icons";
+import { ChatGptUsageButton } from "../settings/ChatGptUsageButton";
 import { Button } from "../ui/button";
 import { formatUpcomingTimestamp } from "../../timestampFormat";
 import { toastManager } from "../ui/toast";
 import type { ComposerBannerStackItem } from "./ComposerBannerStack";
+import { copyAdminRequest } from "./ThreadErrorBanner";
 
 type RecoveryProps = {
   runId: RunId;
+  errorCode: string | null;
   resetAt: string | null;
   stoppedAt: string;
   snoozedUntil: string | null;
@@ -25,17 +33,49 @@ type RecoveryProps = {
 };
 
 export function usageLimitRecoveryBannerItem(props: RecoveryProps): ComposerBannerStackItem {
-  const { runId, resetAt, stoppedAt, timestampFormat } = props;
+  const { runId, errorCode, resetAt, stoppedAt, timestampFormat } = props;
   const canSchedule = resetAt !== null && Date.parse(resetAt) > Date.parse(stoppedAt);
+  const workspaceLimit = errorCode === CHATGPT_WORKSPACE_USAGE_LIMIT_CODE;
+  const chatGptLimit = workspaceLimit || errorCode === CHATGPT_USAGE_LIMIT_CODE;
+  const recoveryActions = canSchedule ? (
+    <RecoveryActions key={`${runId}:${resetAt}`} {...props} />
+  ) : null;
+  const resetDescription = resetAt
+    ? translateUi("Resets {0}", [formatUpcomingTimestamp(resetAt, timestampFormat)])
+    : translateUi("Reset time unavailable; retry manually");
+  if (!chatGptLimit) {
+    return {
+      id: `usage-limit-recovery:${runId}`,
+      variant: "warning",
+      icon: <GaugeIcon />,
+      title: translateUi("Usage limit reached"),
+      description: resetDescription,
+      actions: recoveryActions,
+    };
+  }
+  // OpenAI 合作方规范要求使用此 ChatGPT 提示及操作。
   return {
     id: `usage-limit-recovery:${runId}`,
     variant: "warning",
-    icon: <GaugeIcon />,
-    title: translateUi("Usage limit reached"),
-    description: resetAt
-      ? translateUi("Resets {0}", [formatUpcomingTimestamp(resetAt, timestampFormat)])
-      : translateUi("Reset time unavailable; retry manually"),
-    actions: canSchedule ? <RecoveryActions key={`${runId}:${resetAt}`} {...props} /> : null,
+    icon: <OpenAI aria-hidden="true" />,
+    title: translateUi("ChatGPT usage limit reached"),
+    description: workspaceLimit
+      ? translateUi(
+          "You've reached your workspace's limit for using your ChatGPT plan in other apps.",
+        )
+      : resetDescription,
+    actions: (
+      <>
+        {recoveryActions}
+        {workspaceLimit ? (
+          <Button size="xs" variant="ghost" onClick={copyAdminRequest}>
+            {translateUi("Copy request for admin")}
+          </Button>
+        ) : (
+          <ChatGptUsageButton size="xs" variant="ghost" />
+        )}
+      </>
+    ),
   };
 }
 
@@ -90,7 +130,11 @@ function RecoveryActions({ runId, resetAt, recovery, snoozedUntil, onChange }: R
   return (
     <>
       <Button size="xs" variant="ghost" disabled={pending} onClick={() => void toggle("resume")}>
-        {pending ? "Saving..." : scheduled ? "Cancel auto-resume" : "Resume at reset"}
+        {pending
+          ? translateUi("Saving...")
+          : scheduled
+            ? translateUi("Cancel auto-resume")
+            : translateUi("Resume at reset")}
       </Button>
       <Button
         size="xs"
@@ -98,7 +142,11 @@ function RecoveryActions({ runId, resetAt, recovery, snoozedUntil, onChange }: R
         disabled={pending || (!snoozed && resetPassed)}
         onClick={() => void toggle("snooze")}
       >
-        {pending ? "Saving..." : snoozed ? "Wake now" : "Snooze until reset"}
+        {pending
+          ? translateUi("Saving...")
+          : snoozed
+            ? translateUi("Wake now")
+            : translateUi("Snooze until reset")}
       </Button>
     </>
   );
