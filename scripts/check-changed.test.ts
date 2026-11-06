@@ -6,7 +6,7 @@ import * as NodePath from "node:path";
 import { expect } from "vite-plus/test";
 import * as NodeServices from "@effect/platform-node/NodeServices";
 import * as Option from "effect/Option";
-import { assert, describe, it } from "@effect/vitest";
+import { afterAll, assert, describe, it } from "@effect/vitest";
 import * as Clock from "effect/Clock";
 import * as Effect from "effect/Effect";
 import * as Fiber from "effect/Fiber";
@@ -232,15 +232,21 @@ describe("check:changed", () => {
 
 // Hooks export GIT_DIR and GIT_INDEX_FILE, and user config or the default
 // ~/.config/git/ignore can ignore or sign fixture files.
-const gitNull = "/dev/null";
+// Git for Windows 不接受空设备配置路径，因此使用空文件。
+const emptyConfigDir = NodeFS.mkdtempSync(
+  NodePath.join(NodeOS.tmpdir(), "t3-check-changed-config-"),
+);
+const emptyConfig = NodePath.join(emptyConfigDir, "empty.gitconfig");
+NodeFS.writeFileSync(emptyConfig, "");
+afterAll(() => NodeFS.rmSync(emptyConfigDir, { recursive: true, force: true }));
 const fixtureConfig = {
-  "core.excludesFile": gitNull,
+  "core.excludesFile": emptyConfig,
   "user.name": "Fixture",
   "user.email": "fixture@example.invalid",
 };
 const env = {
   ...Object.fromEntries(Object.entries(process.env).filter(([name]) => !name.startsWith("GIT_"))),
-  GIT_CONFIG_GLOBAL: gitNull,
+  GIT_CONFIG_GLOBAL: emptyConfig,
   GIT_CONFIG_NOSYSTEM: "1",
   GIT_CONFIG_COUNT: String(Object.keys(fixtureConfig).length),
   ...Object.fromEntries(

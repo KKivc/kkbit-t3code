@@ -1,5 +1,6 @@
 // @effect-diagnostics nodeBuiltinImport:off - realpathSync.native resolves Windows 8.3 short names, which the Effect realPath does not.
 import * as NodeFS from "node:fs";
+import * as NodePath from "node:path";
 import * as NodeURL from "node:url";
 import * as NodeCrypto from "@effect/platform-node/NodeCrypto";
 import * as NodeServices from "@effect/platform-node/NodeServices";
@@ -2171,12 +2172,11 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         const upstream = yield* makeTmpDir();
         yield* initRepoWithCommit(upstream);
         const driver = yield* GitVcsDriver.GitVcsDriver;
-        const emptyTree = (yield* driver.execute({
-          operation: "GitVcsDriver.test.emptyTree",
-          cwd: upstream,
-          args: ["hash-object", "-t", "tree", "--stdin"],
-          stdin: "",
-        })).stdout.trim();
+        // Git for Windows 不接受空设备路径，因此使用空文件。
+        const emptyDir = yield* makeTmpDir("git-vcs-driver-empty-");
+        yield* writeTextFile(emptyDir, "empty", "");
+        const emptyFile = NodePath.join(emptyDir, "empty");
+        const emptyTree = yield* git(upstream, ["hash-object", "-t", "tree", emptyFile]);
         const root = yield* git(upstream, ["rev-parse", "HEAD"]);
         const rootSource = (yield* driver.getReviewDiffPreview({ cwd: upstream, commitSha: root }))
           .sources[0]!;
@@ -2195,10 +2195,8 @@ it.layer(layerTest)("GitVcsDriver core integration", (it) => {
         yield* git(upstream, ["commit", "-am", "boundary"]);
         const sha = yield* git(upstream, ["rev-parse", "HEAD"]);
         const cwd = yield* makeTmpDir();
-        const emptyConfig = (yield* Path.Path).join(upstream, "empty.gitconfig");
-        yield* writeTextFile(upstream, "empty.gitconfig", "");
         yield* git(upstream, ["clone", "--depth=1", NodeURL.pathToFileURL(upstream).href, cwd], {
-          GIT_CONFIG_GLOBAL: emptyConfig,
+          GIT_CONFIG_GLOBAL: emptyFile,
           GIT_CONFIG_NOSYSTEM: "1",
         });
         assert.equal(yield* git(cwd, ["rev-parse", "--is-shallow-repository"]), "true");

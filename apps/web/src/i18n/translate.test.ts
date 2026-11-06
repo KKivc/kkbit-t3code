@@ -19,5 +19,16 @@ describe("界面翻译", () => {
       "现在可通过 SSH host 访问 My PC。",
     );
     expect(translateUi("Unknown {0}", ["${unchanged}"], "zh-CN")).toBe("Unknown ${unchanged}");
+    expect(translateUi("Add an alias for {0}", ["O'Reilly"], "zh-CN")).toBe("为 O'Reilly 添加别名");
+    expect(
+      translateUi(
+        "Transcribe speech on {0} and use voice input across environments.",
+        ["My PC"],
+        "zh-CN",
+      ),
+    ).toBe("在 My PC 上转录语音，并跨环境使用语音输入。");
+    expect(translateUi("Composer: Start or Finish Dictation", [], "zh-CN")).toBe(
+      "输入框：开始或结束听写",
+    );
   });
 });

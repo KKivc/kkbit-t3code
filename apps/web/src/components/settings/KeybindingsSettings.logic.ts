@@ -380,6 +380,7 @@ export function commandLabel(command: KeybindingCommand): string {
     return translateUi("Queue: Send First Queued Message");
   if (command === "thread.editQueuedMessage") return translateUi("Queue: Edit Last Queued Message");
   if (command === "thread.copyReference") return translateUi("Pull Request: Copy Link or Thread");
+  if (command === "composer.dictation") return translateUi("Composer: Start or Finish Dictation");
   const usageMetric = METRIC_OPTIONS.find((option) => option.command === command);
   if (usageMetric) return translateUi("Usage: {0}", [translateUi(usageMetric.label)]);
   const usagePeriod = WINDOW_OPTIONS.find((option) => option.command === command);
