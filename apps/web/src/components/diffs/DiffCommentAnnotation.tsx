@@ -4,7 +4,10 @@ import { MessageCircle, Trash2 } from "lucide-react";
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { Button } from "~/components/ui/button";
-import { Textarea } from "~/components/ui/textarea";
+import {
+  PullRequestMarkdownTextarea,
+  type PullRequestCompletionScope,
+} from "~/components/pullRequest/PullRequestMarkdownTextarea";
 import {
   SpeechTextField,
   TextFieldSpeechControls,
@@ -38,6 +41,8 @@ interface DiffCommentAnnotationProps {
   pending?: boolean;
   secondaryAction?: DiffCommentSecondaryAction;
   focusOnMount?: boolean;
+  /** Set only for pull request comments, where `@` completes the repository's users. */
+  completionScope?: PullRequestCompletionScope | null;
 }
 
 export function DiffCommentAnnotation({
@@ -56,6 +61,7 @@ export function DiffCommentAnnotation({
   pending = false,
   secondaryAction,
   focusOnMount = true,
+  completionScope = null,
 }: DiffCommentAnnotationProps) {
   const [localDraftText, setLocalDraftText] = useState("");
   const displayedText = kind === "draft" && !onTextChange ? localDraftText : text;
@@ -122,8 +128,9 @@ export function DiffCommentAnnotation({
       contentEditable={false}
       onPointerDown={(event) => event.stopPropagation()}
     >
-      <Textarea
+      <PullRequestMarkdownTextarea
         ref={textareaRef}
+        completionScope={completionScope}
         readOnly={speech?.freezesEditor}
         autoFocus={focusOnMount}
         size="sm"
@@ -131,7 +138,7 @@ export function DiffCommentAnnotation({
         dir={textDirection(displayedText)}
         placeholder={placeholder}
         aria-label={`Comment on lines ${rangeLabel}`}
-        onChange={(event) => (onTextChange ?? setLocalDraftText)(event.target.value)}
+        onValueChange={onTextChange ?? setLocalDraftText}
         onFocus={(event) => {
           const end = event.currentTarget.value.length;
           event.currentTarget.setSelectionRange(end, end);
