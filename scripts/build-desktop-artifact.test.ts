@@ -661,6 +661,15 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
             ),
           );
         }
+        for (const directory of ["resources", "prod-resources"]) {
+          const embeddedMonitor = `apps/desktop/${directory}/resource-monitor/t3-resource-monitor.exe`;
+          assert.isTrue(
+            DESKTOP_FILE_EXCLUSIONS.some((glob) =>
+              NodePath.matchesGlob(embeddedMonitor, glob.slice(1)),
+            ),
+            embeddedMonitor,
+          );
+        }
       }),
     ),
   );
