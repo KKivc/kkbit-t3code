@@ -48,11 +48,17 @@ function setPromptQueue(next: readonly DesktopSshPasswordPromptRequest[]) {
  * that arrives while no dialog is mounted still waits for one.
  */
 export function startSshPasswordPromptQueue(): () => void {
-  return (
-    window.desktopBridge?.onSshPasswordPrompt((request) => {
-      setPromptQueue([...promptQueue, request]);
-    }) ?? (() => undefined)
-  );
+  const bridge = window.desktopBridge;
+  if (!bridge) return () => undefined;
+  const stopPrompts = bridge.onSshPasswordPrompt((request) => {
+    if (promptQueue.some((queued) => queued.requestId === request.requestId)) return;
+    setPromptQueue([...promptQueue, request]);
+  });
+  const stopSettled = bridge.onSshPasswordPromptSettled(removeSshPasswordPrompt);
+  return () => {
+    stopPrompts();
+    stopSettled();
+  };
 }
 
 function subscribePromptQueue(listener: () => void): () => void {
@@ -65,7 +71,8 @@ function subscribePromptQueue(listener: () => void): () => void {
 const readPromptQueue = () => promptQueue;
 
 function removeSshPasswordPrompt(requestId: string) {
-  if (promptQueue[0]?.requestId === requestId) setPromptQueue(promptQueue.slice(1));
+  if (!promptQueue.some((request) => request.requestId === requestId)) return;
+  setPromptQueue(promptQueue.filter((request) => request.requestId !== requestId));
 }
 
 export function SshPasswordPromptDialog() {
@@ -212,7 +219,7 @@ function ActiveSshPasswordPrompt({
         </DialogPanel>
         <DialogFooter>
           <Button disabled={isResponding} type="button" variant="outline" onClick={cancelPrompt}>
-            {isExpired ? "Dismiss" : "Cancel"}
+            {isExpired ? translateUi("Dismiss") : translateUi("Cancel")}
           </Button>
           <Button disabled={isResponding || isExpired} form={formId} type="submit">
             {translateUi("Continue")}

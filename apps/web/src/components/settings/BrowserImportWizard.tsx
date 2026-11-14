@@ -13,6 +13,7 @@ import {
   Dialog,
   DialogClose,
   DialogDescription,
+  DialogAction,
   DialogFooter,
   DialogHeader,
   DialogPanel,
@@ -204,7 +205,7 @@ function QuitStep({
         <Button variant="outline" onClick={onCancel}>
           {translateUi("Cancel")}
         </Button>
-        <Button onClick={onRechecked}>{translateUi("I’ve quit it")}</Button>
+        <DialogAction onClick={onRechecked}>{translateUi("I’ve quit it")}</DialogAction>
       </DialogFooter>
     </>
   );
@@ -513,7 +514,7 @@ function CheckingStep({
         <div className="flex items-center gap-3 py-2">
           <Spinner size="md" tone="muted" />
           <span className="text-sm text-muted-foreground">
-            {check === "fullDiskAccess" ? "Checking access…" : "Checking…"}
+            {check === "fullDiskAccess" ? "Checking access…" : translateUi("Checking…")}
           </span>
         </div>
       </DialogPanel>
@@ -594,7 +595,7 @@ function BlockedStep({
         <Button variant="outline" onClick={onClose}>
           {translateUi("Close")}
         </Button>
-        {onRetry ? <Button onClick={onRetry}>{translateUi("Try again")}</Button> : null}
+        {onRetry ? <DialogAction onClick={onRetry}>{translateUi("Try again")}</DialogAction> : null}
       </DialogFooter>
     </>
   );

@@ -24,7 +24,7 @@ import {
   MessageCircleQuestionIcon,
   MoreHorizontalIcon,
   RotateCcwIcon,
-  SparklesIcon,
+  ScrollTextIcon,
   Trash2Icon,
 } from "lucide-react";
 import { useId, useState } from "react";
@@ -194,7 +194,7 @@ export function PullRequestActionsMenu({
       toastManager.add({
         type: "error",
         title: translateUi("Could not save maintainer access"),
-        description: readableFailure(squashAtomCommandFailure(result), "Try again."),
+        description: readableFailure(squashAtomCommandFailure(result), translateUi("Try again.")),
       });
       return;
     }
@@ -273,7 +273,7 @@ export function PullRequestActionsMenu({
         </MenuItem>
         {canWriteGuide ? (
           <MenuItem disabled={guideRunning} onClick={writeGuide}>
-            <SparklesIcon className="size-3.5" />
+            <ScrollTextIcon className="size-3.5" />
             {guideRunning ? "Writing guide..." : !guideWritten ? "Write guide" : "Rewrite guide"}
           </MenuItem>
         ) : null}
@@ -326,18 +326,20 @@ export function PullRequestActionsMenu({
                 ) : (
                   <PullRequestGlyph.draft className="size-3.5" />
                 )}
-                {detail.isDraft ? "Ready for review" : "Convert to draft"}
+                {detail.isDraft ? translateUi("Ready for review") : "Convert to draft"}
               </MenuItem>
             ) : null}
             {showsMergeNow ? (
               <MenuItem
                 closeOnClick={inlineConfirm.isArmed("merge")}
-                aria-label={inlineConfirm.isArmed("merge") ? "Confirm merge?" : "Merge now"}
+                aria-label={
+                  inlineConfirm.isArmed("merge") ? translateUi("Confirm merge?") : "Merge now"
+                }
                 disabled={actionPending}
                 {...inlineConfirm.props("merge", () => void perform("merge", selectedMergeMethod))}
               >
                 <PullRequestGlyph.merged className="size-3.5" />
-                {inlineConfirm.isArmed("merge") ? "Confirm merge?" : "Merge now"}
+                {inlineConfirm.isArmed("merge") ? translateUi("Confirm merge?") : "Merge now"}
               </MenuItem>
             ) : null}
             {autoMergeArmed && can("disable-auto-merge") ? (
@@ -350,7 +352,7 @@ export function PullRequestActionsMenu({
                 closeOnClick={inlineConfirm.isArmed("enable-auto-merge")}
                 aria-label={
                   inlineConfirm.isArmed("enable-auto-merge")
-                    ? "Confirm auto-merge?"
+                    ? translateUi("Confirm auto-merge?")
                     : "Enable auto-merge"
                 }
                 disabled={actionPending}
@@ -361,7 +363,7 @@ export function PullRequestActionsMenu({
               >
                 <PullRequestGlyph.merged className="size-3.5" />
                 {inlineConfirm.isArmed("enable-auto-merge")
-                  ? "Confirm auto-merge?"
+                  ? translateUi("Confirm auto-merge?")
                   : "Enable auto-merge"}
               </MenuItem>
             ) : null}

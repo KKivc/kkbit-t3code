@@ -14,6 +14,7 @@ import {
   useManagedRelayEnvironments,
   useManagedTunnelUsage,
 } from "../../cloud/managedRelayState";
+import { relayFailureReason } from "../../cloud/relayFailureReason";
 import { relayEnvironmentDiscovery } from "../../state/relay";
 import { useAtomCommand } from "../../state/use-atom-command";
 import { T3CHAT_SUBSCRIPTION_URL, TunnelUsageMeter, tunnelUpgradeCopy } from "../cloud/TunnelUsage";
@@ -21,6 +22,7 @@ import { Button, InlineButton } from "../ui/button";
 import { Collapsible, CollapsiblePanel, CollapsibleTrigger } from "../ui/collapsible";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "../ui/empty";
 import { toastManager } from "../ui/toast";
+import { stackedThreadToast } from "../ui/toastHelpers";
 import {
   ClerkUserProfilePage,
   ClerkUserProfileRefreshButton,
@@ -34,7 +36,7 @@ function linkedAtLabel(value: string): string {
   const linkedAt = new Date(value);
   return Number.isNaN(linkedAt.getTime())
     ? "Link date unavailable"
-    : `Linked ${linkedAtFormatter.format(linkedAt)}`;
+    : translateUi("Linked {0}", [linkedAtFormatter.format(linkedAt)]);
 }
 
 function endpointLabel(environment: RelayClientEnvironmentRecord): string {
@@ -105,7 +107,7 @@ function T3ConnectEnvironmentRow(props: {
                   disabled={props.mutationPending}
                   onClick={() => props.onDeregister(environment)}
                 >
-                  {props.mutationPending ? "Deregistering…" : "Deregister"}
+                  {props.mutationPending ? "Deregistering…" : translateUi("Deregister")}
                 </Button>
               </div>
             </div>
@@ -143,7 +145,7 @@ function T3ConnectTunnelUsage() {
               {tunnelUpgradeCopy(usage.upgrade)}{" "}
               {usage.upgrade === "link" ? (
                 <InlineButton disabled={t3Chat.pending !== null} onClick={() => void t3Chat.link()}>
-                  {t3Chat.pending === "link" ? "Opening…" : "Link T3 Chat"}
+                  {t3Chat.pending === "link" ? "Opening…" : translateUi("Link T3 Chat")}
                 </InlineButton>
               ) : (
                 <a
@@ -194,9 +196,9 @@ export function T3ConnectUserProfilePage() {
     });
     mutationPendingRef.current = false;
     setDeregisteringEnvironmentId(null);
+    setConfirmingEnvironmentId(null);
 
     if (result._tag === "Success") {
-      setConfirmingEnvironmentId(null);
       setRemovedEnvironments((current) => {
         const linkedAtById = new Map(current.accountId === accountId ? current.linkedAtById : []);
         linkedAtById.set(environment.environmentId, environment.linkedAt);
@@ -215,6 +217,8 @@ export function T3ConnectUserProfilePage() {
     }
     if (isAtomCommandInterrupted(result)) return;
 
+    // The relay may have removed it before failing.
+    environmentsState.refresh();
     const cause = squashAtomCommandFailure(result);
     const message =
       cause instanceof Error ? cause.message : translateUi("Could not deregister the server.");
@@ -225,19 +229,23 @@ export function T3ConnectUserProfilePage() {
       traceId,
       cause,
     });
-    toastManager.add({
-      type: "error",
-      title: translateUi("Could not deregister server"),
-      description: message,
-      data: traceId
-        ? {
-            secondaryActionProps: {
-              children: translateUi("Copy trace ID"),
-              onClick: () => void navigator.clipboard?.writeText(traceId),
-            },
-          }
-        : undefined,
-    });
+    toastManager.add(
+      stackedThreadToast({
+        type: "error",
+        title: translateUi("Could not deregister server"),
+        description: relayFailureReason(cause) ?? message,
+        ...(traceId
+          ? {
+              actionProps: {
+                children: translateUi("Copy trace ID"),
+                onClick: () => void navigator.clipboard?.writeText(traceId),
+              },
+              actionVariant: "outline",
+            }
+          : {}),
+        data: { hideCopyButton: true },
+      }),
+    );
   };
 
   const removedEnvironmentLinkedAt =

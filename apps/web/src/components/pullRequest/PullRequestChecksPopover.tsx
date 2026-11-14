@@ -46,7 +46,7 @@ function LazyChecksBody({
   if (detailQuery.data === null) {
     return (
       <p className="text-muted-foreground text-xs">
-        {detailQuery.isPending ? "Loading checks…" : "No checks reported"}
+        {detailQuery.isPending ? "Loading checks…" : translateUi("No checks reported")}
       </p>
     );
   }
@@ -124,7 +124,7 @@ function ChecksBody({
           aria-expanded={showAll}
           onClick={() => setShowAll(!showAll)}
         >
-          {showAll ? "Show less" : "Show all"}
+          {showAll ? translateUi("Show less") : translateUi("Show all")}
         </Button>
       ) : null}
     </>
@@ -186,11 +186,15 @@ export function PullRequestChecksPopover({
         {variant === "count" ? (
           <>
             {checks !== undefined && incompleteCount > 0 ? (
-              <span className="tabular-nums">
-                {checks.length - incompleteCount}/{checks.length} checks
+              // Clip the second line so "checks" disappears whole when the count must shrink.
+              <span className="h-lh min-w-0 overflow-hidden text-left whitespace-normal tabular-nums">
+                <span className="whitespace-nowrap">
+                  {checks.length - incompleteCount}/{checks.length}
+                </span>{" "}
+                checks
               </span>
             ) : failedCount > 0 ? (
-              <span className="tabular-nums">{failedCount} failed</span>
+              <span className="min-w-0 truncate tabular-nums">{failedCount} failed</span>
             ) : null}
           </>
         ) : null}

@@ -35,6 +35,7 @@ export function sourceControlHostIcon(
 
 /** The input's trailing submit button for the add-project, clone, and new-project flows. */
 export function CommandPaletteSubmitButton(props: {
+  readonly id: string;
   readonly label: ReactNode;
   readonly shortcutLabel: string;
   readonly ariaLabel: string;
@@ -47,9 +48,9 @@ export function CommandPaletteSubmitButton(props: {
       <TooltipTrigger
         render={
           <Button
+            id={props.id}
             variant="outline"
             size="xs"
-            tabIndex={-1}
             className="absolute inset-e-2.5 top-1/2 -translate-y-1/2"
             aria-label={props.ariaLabel}
             disabled={props.disabled}
@@ -140,7 +141,7 @@ export function NewProjectSummary(props: {
         </CommandPaletteTitleIcon>
         <span className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-foreground text-sm">
-            {props.name.length > 0 ? props.name : "New project"}
+            {props.name.length > 0 ? props.name : translateUi("New project")}
           </span>
           <span className="truncate text-muted-foreground/85 text-xs">
             {props.name.length > 0

@@ -86,7 +86,7 @@ function CustomSnoozeDialog() {
         if (!open) finish(null);
       }}
     >
-      <DialogPopup className="sm:max-w-sm">
+      <DialogPopup className="sm:max-w-md">
         <form
           className="flex min-h-0 flex-col"
           onSubmit={(event) => {
@@ -202,7 +202,11 @@ function CustomSnoozeDialog() {
                       {translateUi("Unit")}
                       <Select
                         value={unit}
-                        items={{ minutes: "Minutes", hours: "Hours", days: "Days" }}
+                        items={{
+                          minutes: translateUi("Minutes"),
+                          hours: translateUi("Hours"),
+                          days: translateUi("Days"),
+                        }}
                         onValueChange={(value) => {
                           if (value === "minutes" || value === "hours" || value === "days")
                             setUnit(value);

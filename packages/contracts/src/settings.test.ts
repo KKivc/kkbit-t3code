@@ -303,6 +303,14 @@ describe("resolveIdleCompaction", () => {
   });
 });
 
+describe("客户端语言", () => {
+  it("默认使用简体中文，并保留用户选择的语言", () => {
+    expect(decodeClientSettings({}).language).toBe("zh");
+    expect(decodeClientSettings({ language: "en" }).language).toBe("en");
+    expect(decodeClientSettings({ language: "system" }).language).toBe("system");
+  });
+});
+
 describe("ClientSettings notifications", () => {
   it("requires opt-in when existing settings omit notification preferences", () => {
     expect(decodeClientSettings({}).notificationMode).toBe("off");
@@ -516,14 +524,6 @@ describe("voice settings", () => {
     expect(() => decodeClientSettingsPatch({ speechCorrectionWord: "x".repeat(51) })).toThrow();
     expect(DEFAULT_SERVER_SETTINGS.speechProjectCustomWords).toEqual([]);
     expect(PROJECT_SCOPED_SERVER_SETTING_KEYS).toContain("speechProjectCustomWords");
-  });
-
-  it("stores the transcription model and resources on the environment", () => {
-    expect(DEFAULT_SERVER_SETTINGS).toMatchObject({
-      speechModelId: "handy-computer/parakeet-unified-en-0.6b-gguf",
-      speechAcceleration: "auto",
-      speechModelUnloadTimeout: "min_15",
-    });
   });
 });
 

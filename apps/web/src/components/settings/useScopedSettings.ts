@@ -88,8 +88,8 @@ function useRunScopedPlan() {
             ? translateUi("Setting saved on some environments")
             : translateUi("Setting not saved"),
         description: [
-          ...failedEnvironments.map(
-            ({ label, message }) => `Could not save on ${label}: ${message}`,
+          ...failedEnvironments.map(({ label, message }) =>
+            translateUi("Could not save on {0}: {1}", [label, message]),
           ),
           ...(savedEnvironmentCount > 0
             ? [`Saved on ${savedEnvironments.map(({ label }) => label).join(", ")}.`]
@@ -101,11 +101,11 @@ function useRunScopedPlan() {
 }
 
 export function useUpdateScopedSettings() {
-  const { scope, environments } = useSettingsScope();
+  const { scope, environments, deviceOnly } = useSettingsScope();
   const run = useRunScopedPlan();
   /** `onFailed` runs when any target rejects or drops the patch, so a draft can fall back. */
   return (patch: ScopedSettingsPatch, options?: { readonly onFailed?: () => void }) =>
-    run(planScopedSettingsPatch(scope, environments, patch), options?.onFailed);
+    run(planScopedSettingsPatch(scope, environments, patch, { deviceOnly }), options?.onFailed);
 }
 
 export function useClearScopedSettings() {

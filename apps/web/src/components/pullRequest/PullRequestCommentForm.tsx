@@ -138,9 +138,7 @@ export function PullRequestCommentForm({
         }}
       />
       <div className="flex flex-wrap items-center justify-end gap-2">
-        <div className="mr-auto flex min-w-0 flex-wrap items-center gap-1">
-          <TextFieldSpeechControls speech={speech} disabled={locked} />
-        </div>
+        <TextFieldSpeechControls speech={speech} disabled={locked} />
         {followUpAction === null ? null : (
           <Button
             size="xs"
@@ -166,7 +164,7 @@ export function PullRequestCommentForm({
                     ? "Closing..."
                     : inlineConfirm.isArmed("close")
                       ? "Confirm close?"
-                      : "Close with comment"}
+                      : translateUi("Close with comment")}
                 </span>
               </span>
             ) : submitting === "reopen" ? (
@@ -183,7 +181,7 @@ export function PullRequestCommentForm({
           onClick={() => submitAfterDictation("comment")}
         >
           <SendIcon className="size-3.5" />
-          {submitting === "comment" ? "Posting..." : "Comment"}
+          {submitting === "comment" ? "Posting..." : translateUi("Comment")}
         </Button>
       </div>
     </div>

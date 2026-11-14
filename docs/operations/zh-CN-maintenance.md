@@ -2,7 +2,7 @@
 
 此 Fork 默认使用简体中文。Web 和 Windows 桌面版共用 `apps/web` 的界面；移动端与 Electron 原生菜单尚未迁移。
 
-界面文案由 `apps/web/src/i18n/zh-CN.json` 集中管理，源码中的 `translateUi` 调用明确标记翻译范围。品牌、模型名、命令、配置键、路径和用户内容保留原文。页面语言由 HTML 的 `lang` 指定；中文页面使用中文词库，其他语言保留英文源文案。未收录的词条保留原文，不改写动态用户内容。
+界面文案由 `apps/web/src/i18n/zh-CN.json` 管理，源码中的 `translateUi` 调用明确标记翻译范围。上游已迁移的界面沿用 `gt-react` 和 `translations/zh.json`。客户端默认选择简体中文（`zh`），可在设置中更换语言；`translateUi` 按当前页面语言选择词库。品牌、模型名、命令、配置键、路径和用户内容保留原文。未收录的词条保留原文，不改写动态用户内容。
 
 只同步 `pingdotgg/t3code` 已发布的 nightly Release 标签，不直接合并官方 `main`、稳定版或 preview。同步在专用 worktree `E:\Projects\kkbit-t3code-upstream-sync` 的 `automation/upstream-sync` 分支中执行，保留中文文案和 Windows 修复。当前代码已包含较新提交时不回退，等待后续 nightly。合并后检查冲突和新增文案，再运行 `vp run check:changed`。新增翻译沿用完整英文句子作为键；动态值使用 `{0}`、`{1}` 占位符，中文可以调整顺序。
 

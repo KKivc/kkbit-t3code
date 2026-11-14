@@ -1,6 +1,6 @@
 import { translateUi } from "~/i18n/translate";
 import type { EnvironmentId, PullRequestRef, PullRequestReviewGuideStop } from "@t3tools/contracts";
-import { SparklesIcon, TriangleAlertIcon } from "lucide-react";
+import { ScrollTextIcon, TriangleAlertIcon } from "lucide-react";
 import { useEffect, useEffectEvent } from "react";
 
 import type { ReviewCommentContext } from "~/reviewCommentContext";
@@ -95,7 +95,7 @@ export function PullRequestGuideTab({
   const writeButton = (label: string, size: "sm" | "xs") =>
     canWrite ? (
       <Button size={size} variant="outline" disabled={running} onClick={() => void write()}>
-        {running ? <Spinner /> : <SparklesIcon aria-hidden className="size-3.5" />}
+        {running ? <Spinner /> : <ScrollTextIcon aria-hidden className="size-3.5" />}
         {running ? "Reading the change..." : label}
       </Button>
     ) : null;
@@ -125,7 +125,7 @@ export function PullRequestGuideTab({
                 "A guide is a tour of the change: stops through the code in reading order, with the calls only a maintainer can make.")
               : FAILURE_HINT}
         </p>
-        {writeButton(failure === null ? "Write guide" : "Try again", "sm")}
+        {writeButton(failure === null ? "Write guide" : translateUi("Try again"), "sm")}
         {failure === null || running ? null : <FailureDetails detail={failure} />}
       </div>
     );

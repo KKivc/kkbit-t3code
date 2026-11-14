@@ -61,6 +61,7 @@ export type KeybindingCommandOption = KeybindingCommand;
 const CORE_WHEN_VARIABLES = [
   "terminalFocus",
   "terminalOpen",
+  "previewOpen",
   "isWeb",
   "isDesktop",
   "true",
@@ -384,9 +385,10 @@ export function commandLabel(command: KeybindingCommand): string {
   const usageMetric = METRIC_OPTIONS.find((option) => option.command === command);
   if (usageMetric) return translateUi("Usage: {0}", [translateUi(usageMetric.label)]);
   const usagePeriod = WINDOW_OPTIONS.find((option) => option.command === command);
-  if (usagePeriod) return translateUi("Usage: Period: {0}", [translateUi(usagePeriod.label)]);
+  if (usagePeriod) return translateUi("Usage: Period: {0}", [usagePeriod.label]);
   if (command === "view.reopenClosed") return translateUi("Reopen Closed Tab");
   if (command === "preview.focusUrl") return translateUi("Preview: Focus URL");
+  if (command === "preview.find") return translateUi("Preview: Find on Page");
   const raw = String(command);
   if (raw.startsWith("script.") && raw.endsWith(".run")) {
     return translateUi("Run Script: {0}", [

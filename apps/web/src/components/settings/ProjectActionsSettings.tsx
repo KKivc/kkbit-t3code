@@ -178,9 +178,9 @@ export function ProjectActionsSettings() {
       />
       {mixed ? (
         <SettingsRow
-          title={translateUi("Different actions across environments")}
+          title={translateUi("Different actions across checkouts")}
           description={translateUi(
-            "Choose one environment to edit its list. Adding an action here adds it on every selected environment.",
+            "Narrow the selection above to one checkout to edit its list. Adding an action here adds it to every selected checkout.",
           )}
         />
       ) : (

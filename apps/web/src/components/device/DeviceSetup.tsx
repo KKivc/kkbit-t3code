@@ -1,15 +1,13 @@
 import { translateUi } from "~/i18n/translate";
 import { DeviceHostUpdates } from "./DeviceHostUpdates";
 import type { DevicePlatform, DeviceServiceState, EnvironmentId } from "@t3tools/contracts";
-import { Check } from "lucide-react";
-import { Check as CheckGlyph, CircleAlert } from "lucide";
+import { Check, CircleAlert } from "lucide-react";
 import { AuthSettingsWriteScope } from "@t3tools/contracts";
 import { useAtomMount } from "@effect/atom-react";
 import { useState } from "react";
 
 import { Button } from "~/components/ui/button";
 import { DialogClose } from "~/components/ui/dialog";
-import { MorphIcon } from "~/components/MorphIcon";
 import { WizardHeader, WizardPanel, WizardSteps, WizardFooter } from "~/components/ui/wizard";
 import { Spinner } from "~/components/ui/spinner";
 import { Switch } from "~/components/ui/switch";
@@ -187,7 +185,7 @@ export function DeviceSetup(props: {
         description="Review what runs on this environment before using simulators and emulators."
       >
         <WizardSteps
-          steps={["Device hub", "Simulators", "Agent access"]}
+          steps={[translateUi("Device hub"), "Simulators", translateUi("Agent access")]}
           currentStep={step}
           onStepChange={setStep}
           isStepDisabled={(requested) => busy || pending !== null || requested > step}
@@ -285,7 +283,7 @@ export function DeviceSetup(props: {
             disabled={!canConfigure || !ready || pending !== null}
             onClick={() => void update("complete", { onboardingCompleted: true })}
           >
-            {pending === "complete" ? "Saving…" : "Done"}
+            {pending === "complete" ? translateUi("Saving…") : translateUi("Done")}
           </Button>
         )}
       </WizardFooter>
@@ -339,7 +337,7 @@ function DevicePlatformSetup(props: {
       </p>
       <Button size="compact" variant="outline" disabled={props.disabled} onClick={props.onCheck}>
         {props.checking ? <Spinner size="xs" /> : null}
-        {props.checking ? "Checking…" : "Check again"}
+        {props.checking ? translateUi("Checking…") : translateUi("Check again")}
       </Button>
     </div>
   );
@@ -394,17 +392,15 @@ function PlatformStatus(props: {
     <div
       className={cn("flex gap-2", !props.compact && "rounded-md border border-border/60 px-3 py-2")}
     >
-      <MorphIcon
-        className={cn(
-          "mt-0.5 size-4 shrink-0",
-          props.status.ready ? "text-success" : "text-muted-foreground",
-        )}
-        icon={props.status.ready ? CheckGlyph : CircleAlert}
-      />
+      {props.status.ready ? (
+        <Check className="mt-0.5 size-4 shrink-0 text-success" />
+      ) : (
+        <CircleAlert className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+      )}
       <div className={cn(props.compact && props.status.ready && "flex items-center gap-2")}>
         <p className="font-medium">{props.platform}</p>
         <p className="text-xs text-muted-foreground">
-          {props.compact && props.status.ready ? "Ready" : props.status.message}
+          {props.compact && props.status.ready ? translateUi("Ready") : props.status.message}
         </p>
       </div>
     </div>
