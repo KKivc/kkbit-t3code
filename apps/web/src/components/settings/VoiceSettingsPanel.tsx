@@ -1646,13 +1646,13 @@ export function VoiceSettingsPanel() {
         title={translateUi("Cleanup")}
       >
         <SettingsRow
-          title="Clean up transcripts"
+          title={translateUi("Clean up transcripts")}
           description={translateUi(
             "Off by default. Sends the transcript and nearby draft text, never audio, to the cleanup model.",
           )}
           control={
             <Switch
-              aria-label="Clean up transcripts"
+              aria-label={translateUi("Clean up transcripts")}
               checked={cleanupEnabled}
               onCheckedChange={chooseTranscriptCleanup}
             />
@@ -1660,7 +1660,7 @@ export function VoiceSettingsPanel() {
         />
         {cleanupEnabled ? (
           <SettingsRow
-            title="Instructions"
+            title={translateUi("Instructions")}
             description={
               settings.speechPostProcessingPrompt.mode === "custom"
                 ? translateUi("Your own instructions for cleanup.")

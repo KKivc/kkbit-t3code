@@ -785,6 +785,9 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
           "node_modules/node-pty/third_party/conpty/1.0.0/win10-arm64/OpenConsole.exe",
           "node_modules/node-pty/prebuilds/win32-x64/pty.node",
           "node_modules/node-pty/prebuilds/linux-x64/pty.node",
+          "node_modules/node-pty/build/Release/conpty/OpenConsole.exe",
+          "node_modules/@yuuang/ffi-rs-win32-ia32-msvc/ffi-rs.win32-ia32-msvc.node",
+          "node_modules/@yuuang/ffi-rs-win32-x64-msvc/ffi-rs.win32-x64-msvc.node",
         ];
 
         for (const nativeFile of nativeFiles) {
@@ -826,6 +829,21 @@ it.layer(NodeServices.layer)("build-desktop-artifact", (it) => {
         assert.isFalse(
           yield* fs.exists(
             path.join(unpackedRoot, "node_modules/node-pty/third_party/conpty/1.0.0/win10-arm64"),
+          ),
+        );
+        for (const unused of [
+          "node_modules/node-pty/build/Release/conpty",
+          "node_modules/node-pty/third_party/conpty/1.0.0/win10-x64",
+          "node_modules/@yuuang/ffi-rs-win32-ia32-msvc",
+        ]) {
+          assert.isFalse(yield* fs.exists(path.join(unpackedRoot, unused)), unused);
+        }
+        assert.isTrue(
+          yield* fs.exists(
+            path.join(
+              unpackedRoot,
+              "node_modules/@yuuang/ffi-rs-win32-x64-msvc/ffi-rs.win32-x64-msvc.node",
+            ),
           ),
         );
       }),

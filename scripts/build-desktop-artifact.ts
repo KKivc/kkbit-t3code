@@ -992,6 +992,10 @@ export const DESKTOP_FILE_EXCLUSIONS = [
   "!**/node_modules/@anthropic-ai/claude-agent-sdk-*/**/*",
   "!**/*.map",
   "!**/*.d.cts",
+  // 加载器优先使用已放在自身目录的副本；32 位 FFI 不用于受支持的桌面架构。
+  "!**/node_modules/@clerk/electron-passkeys-win32-*/**/*",
+  "!**/node_modules/@napi-rs/keyring-win32-*/**/*",
+  "!**/node_modules/@yuuang/ffi-rs-win32-ia32-msvc/**/*",
   "!apps/desktop/resources/browser-secret",
   "!apps/desktop/resources/browser-secret/**/*",
   "!apps/desktop/prod-resources/browser-secret",
@@ -1050,6 +1054,10 @@ export const WINDOWS_SERVER_ASAR_IGNORE_GLOBS = [
   "**/node_modules/.bin",
   "**/node_modules/.bin/**",
   "**/*.map",
+  // node-pty 从目标架构的 prebuilds 加载；其余 ConPTY 目录仅供源码构建。
+  "**/node_modules/node-pty/build/Release/conpty/**",
+  "**/node_modules/node-pty/third_party/conpty/**",
+  "**/node_modules/@yuuang/ffi-rs-win32-ia32-msvc/**",
 ] as const;
 
 export function resolveWindowsServerAsarIgnoreGlobs(arch: typeof BuildArch.Type) {
@@ -1099,6 +1107,7 @@ export const DESKTOP_EXTRA_RESOURCES = [
   {
     from: "apps/desktop/prod-resources/cursor-sdk",
     to: "node_modules/@cursor",
+    filter: ["**/*", "!**/README.md"],
   },
   {
     from: "apps/desktop/prod-resources/resource-monitor",

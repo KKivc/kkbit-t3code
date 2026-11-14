@@ -4519,5 +4519,6 @@
   "Record": "录音",
   "Preferences": "偏好设置",
   "Clean up transcripts": "整理转录文本",
-  "Text generators": "文本生成器"
+  "Text generators": "文本生成器",
+  "Instructions": "指令"
 }
