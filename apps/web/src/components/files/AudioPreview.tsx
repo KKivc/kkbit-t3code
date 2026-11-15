@@ -1,9 +1,11 @@
+import { translateUi } from "~/i18n/translate";
 import { LoaderCircleIcon, PauseIcon, PlayIcon, TriangleAlertIcon } from "lucide-react";
 import { createContext, useContext, useRef, useState } from "react";
 
 import { useStableCallback } from "~/hooks/useStableCallback";
 import { ContextChip, ContextChipAction, ContextChipLabel } from "../ContextChip";
 import { middleTruncateAttachmentName } from "../composerInlineChip";
+import { Spinner } from "../ui/spinner";
 
 export const AudioPreviewUnmountContext = createContext<((audio: HTMLAudioElement) => void) | null>(
   null,
@@ -93,13 +95,13 @@ function AudioChip(props: AudioPreviewProps) {
   const open = props.onOpen ?? (props.failed ? props.onRetry : undefined);
   const action = props.failed
     ? props.onOpen
-      ? "Open"
-      : "Retry"
+      ? translateUi("Open")
+      : translateUi("Retry")
     : loading
-      ? "Loading"
+      ? translateUi("Loading")
       : playing
         ? "Pause"
-        : "Play";
+        : translateUi("Play");
   const Icon = props.failed
     ? TriangleAlertIcon
     : loading
@@ -140,7 +142,7 @@ function AudioChip(props: AudioPreviewProps) {
             });
         }}
       >
-        <Icon aria-hidden className={loading && props.src ? "animate-spin" : undefined} />
+        {loading && props.src ? <Spinner aria-hidden /> : <Icon aria-hidden />}
       </ContextChipAction>
       <ContextChipLabel className={props.variant === "bubble" ? "flex-1" : "max-w-72"}>
         {open ? (
@@ -148,7 +150,7 @@ function AudioChip(props: AudioPreviewProps) {
             type="button"
             className="block max-w-full cursor-pointer truncate rounded-sm text-left focus-visible:outline-2 focus-visible:outline-foreground"
             onClick={open}
-            aria-label={`${props.failed && !props.onOpen ? "Retry" : "Preview"} ${props.name}`}
+            aria-label={`${props.failed && !props.onOpen ? translateUi("Retry") : translateUi("Preview")} ${props.name}`}
           >
             {middleTruncateAttachmentName(props.name)}
           </button>
@@ -158,7 +160,7 @@ function AudioChip(props: AudioPreviewProps) {
       </ContextChipLabel>
       <span dir="ltr" className="shrink-0 self-baseline text-3xs text-current">
         {props.failed
-          ? "Unavailable"
+          ? translateUi("Unavailable")
           : loading
             ? "..."
             : duration > 0

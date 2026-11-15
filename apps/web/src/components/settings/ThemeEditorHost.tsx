@@ -45,13 +45,6 @@ export function ThemeEditorHost() {
         );
         return false;
       }
-      toastManager.add(
-        stackedThreadToast({
-          type: "success",
-          title: translateUi("{0} updated", [savedTheme.label]),
-          description: translateUi("Its {0} palette was added.", [mergedAppearance]),
-        }),
-      );
       return true;
     }
     if (!created) {
@@ -61,15 +54,6 @@ export function ThemeEditorHost() {
         themeHalves?.light === savedTheme.id ||
         themeHalves?.dark === savedTheme.id;
       if (wasActive) refreshTheme();
-      toastManager.add(
-        stackedThreadToast({
-          type: "success",
-          title: translateUi("{0} saved", [savedTheme.label]),
-          description: wasActive
-            ? translateUi("Your changes are now active.")
-            : translateUi("Your changes are saved."),
-        }),
-      );
       return true;
     }
 
@@ -83,13 +67,6 @@ export function ThemeEditorHost() {
       );
       return false;
     }
-    toastManager.add(
-      stackedThreadToast({
-        type: "success",
-        title: translateUi("{0} created", [savedTheme.label]),
-        description: translateUi("It’s now active."),
-      }),
-    );
     return true;
   };
 

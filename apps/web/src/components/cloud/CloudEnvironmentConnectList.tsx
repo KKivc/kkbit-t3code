@@ -1,6 +1,7 @@
 import { translateUi } from "~/i18n/translate";
 import { findErrorTraceId } from "@t3tools/client-runtime/errors";
 import {
+  type ConnectionTarget,
   type EnvironmentConnectionPresentation,
   RelayConnectionRegistration,
   RelayConnectionTarget,
@@ -25,6 +26,7 @@ import * as Option from "effect/Option";
 import { type ReactNode, useEffect, useEffectEvent, useState } from "react";
 
 import { environmentCatalog } from "~/connection/catalog";
+import { isDesktopLocalConnectionTarget } from "~/connection/desktopLocal";
 import { cn } from "~/lib/utils";
 import { relayEnvironmentDiscovery } from "~/state/relay";
 import { useRelayEnvironmentDiscovery } from "~/state/environments";
@@ -50,6 +52,7 @@ function discoveredCompatibilityError(
 
 export interface SavedCloudEnvironmentConnection {
   readonly environmentId: EnvironmentId;
+  readonly entry: { readonly target: ConnectionTarget };
   readonly connection: EnvironmentConnectionPresentation;
   readonly relayManaged: boolean;
   readonly serverConfig?: Pick<ServerConfig, "environment"> | null;
@@ -123,6 +126,11 @@ export function CloudEnvironmentConnectRows({
       .filter((environment) => !environment.relayManaged)
       .map((environment) => environment.environmentId),
   );
+  const desktopLocalIds = new Set(
+    savedEnvironments
+      .filter((environment) => isDesktopLocalConnectionTarget(environment.entry.target))
+      .map((environment) => environment.environmentId),
+  );
 
   // oxlint-disable-next-line t3code/no-unreasoned-state-sync -- fetches relay discovery when its inputs change, unless hidden polling covers it, and reports readiness
   useEffect(() => {
@@ -194,6 +202,7 @@ export function CloudEnvironmentConnectRows({
   // Omit machines saved over other routes; onboarding selection must not add a T3 Connect route.
   const isVisibleEnvironment = (environmentId: EnvironmentId) =>
     environmentId !== primaryEnvironmentId &&
+    !desktopLocalIds.has(environmentId) &&
     (showSavedEnvironments || !savedById.has(environmentId)) &&
     !(selection && savedWithoutRelay.has(environmentId));
   const visibleEnvironments = [...environmentsState.environments.values()].filter(
@@ -274,7 +283,7 @@ export function CloudEnvironmentConnectRows({
     };
   }, [shouldRefreshWhileEmpty]);
 
-  const standalone = showSavedEnvironments || savedEnvironments.length === 0;
+  const standalone = showSavedEnvironments || savedEnvironments.length === desktopLocalIds.size;
 
   if (
     !refreshWhileEmpty &&
@@ -410,15 +419,15 @@ export function CloudEnvironmentConnectRows({
               )}
             >
               {connectingEnvironmentIds.has(environment.environmentId)
-                ? "Connecting…"
+                ? translateUi("Connecting…")
                 : (savedConnection?.buttonLabel ??
                   (availability === "online"
-                    ? "Available"
+                    ? translateUi("Available")
                     : availability === "offline"
-                      ? "Offline"
+                      ? translateUi("Offline")
                       : availability === "error"
-                        ? "Unavailable"
-                        : "Checking…"))}
+                        ? translateUi("Unavailable")
+                        : translateUi("Checking…")))}
             </TooltipTrigger>
             <TooltipPopup>{unsupportedDetail ?? statusText}</TooltipPopup>
           </Tooltip>
@@ -465,7 +474,9 @@ export function CloudEnvironmentConnectRows({
               className={cn(
                 "mt-1 truncate text-xs",
                 savedConnection?.tone === "error" ||
-                  (savedConnection?.tone === "connecting" && savedEnvironment?.connection.error) ||
+                  (savedConnection?.tone === "connecting" &&
+                    savedEnvironment?.connection.error &&
+                    !savedEnvironment.connection.awaitingApproval) ||
                   (savedConnection === null && availability === "error")
                   ? "text-destructive"
                   : "text-muted-foreground",
@@ -481,7 +492,9 @@ export function CloudEnvironmentConnectRows({
                   {translateUi("Add")}
                 </Button>
               </TooltipTrigger>
-              <TooltipPopup>{unsupportedDetail ?? "Client not supported"}</TooltipPopup>
+              <TooltipPopup>
+                {unsupportedDetail ?? translateUi("Client not supported")}
+              </TooltipPopup>
             </Tooltip>
           ) : savedConnection ? (
             <Button size="sm" variant="outline" disabled>
@@ -496,8 +509,8 @@ export function CloudEnvironmentConnectRows({
               {connectingEnvironmentIds.has(environment.environmentId)
                 ? "Adding…"
                 : savedWithoutRelay.has(environment.environmentId)
-                  ? "Add route"
-                  : "Add"}
+                  ? translateUi("Add route")
+                  : translateUi("Add")}
             </Button>
           )}
         </div>

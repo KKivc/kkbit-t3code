@@ -149,7 +149,7 @@ export interface ChannelSwitchRelease {
 }
 
 export const channelSwitchLabel = (channel: DesktopUpdateChannel) =>
-  channel === "nightly" ? "Nightly" : "Stable";
+  channel === "nightly" ? translateUi("Nightly") : translateUi("Stable");
 
 /** Stable and Nightly each build their own commits, so either can hold migrations the other lacks.
  * Crossing tracks needs proof that the target release knows every migration the database holds. */
@@ -349,11 +349,15 @@ function trackSwitchMove(
 export interface UpdateEverythingSteps<Providers, Servers> {
   readonly downloadLocal?: () => Promise<boolean>;
   readonly updateProviders: () => Promise<Providers>;
-  readonly updateServers: () => Promise<Servers>;
+  readonly stageServers?: () => ReadonlyMap<EnvironmentId, Promise<unknown>>;
+  readonly updateServers: (
+    staged: ReadonlyMap<EnvironmentId, Promise<unknown>>,
+  ) => Promise<Servers>;
 }
 
-/** Finish provider installs before server restarts. Install this app last when localReady; failed
- * downloads skip only that install. */
+/** Finish provider installs before server restarts; servers stage meanwhile and each server's
+ * update waits only on its own stage. Install this app last when localReady; failed downloads skip
+ * only that install. */
 export async function runUpdateEverything<Providers, Servers>(
   steps: UpdateEverythingSteps<Providers, Servers>,
 ): Promise<{
@@ -361,11 +365,14 @@ export async function runUpdateEverything<Providers, Servers>(
   readonly providers: Providers;
   readonly servers: Servers;
 }> {
+  const staged = new Map(
+    Array.from(steps.stageServers?.() ?? [], ([id, stage]) => [id, stage.catch(() => undefined)]),
+  );
   const [localReady, remote] = await Promise.all([
     steps.downloadLocal?.() ?? Promise.resolve(true),
     steps
       .updateProviders()
-      .then(async (providers) => ({ providers, servers: await steps.updateServers() })),
+      .then(async (providers) => ({ providers, servers: await steps.updateServers(staged) })),
   ]);
   return { localReady, ...remote };
 }
@@ -668,7 +675,7 @@ export function describeUpdateEverything(plan: UpdateEverythingPlan): {
     rows.set(environmentId, { ...row, ...change });
   };
   if (plan.localVersion) {
-    if (plan.localMachines.length === 0) update(null, "This app", { app: "this-app" });
+    if (plan.localMachines.length === 0) update(null, translateUi("This app"), { app: "this-app" });
     for (const machine of plan.localMachines) {
       update(machine.environmentId, machine.label, { app: "this-app" });
     }

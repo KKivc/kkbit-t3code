@@ -1,3 +1,4 @@
+import { translateUi } from "~/i18n/translate";
 import {
   AuthOrchestrationOperateScope,
   PROVIDER_SEND_TURN_SUPPORTED_IMAGE_MIME_TYPES,
@@ -336,7 +337,7 @@ async function runUpload(job: UploadJob): Promise<void> {
         ? "Upload could not start"
         : result.step === "resolve-url"
           ? readEnvironmentScope(job.environmentId, AuthOrchestrationOperateScope)
-            ? "Not connected"
+            ? translateUi("Not connected")
             : "This connection cannot upload attachments."
           : result.error instanceof Error
             ? result.error.message
@@ -422,6 +423,8 @@ export function startAttachmentUpload(input: {
       deletePendingUpload(existing.environmentId, existing.attachmentId);
     }
     setUploadState(input.image.id, existing.previous);
+    // Retargeting a scratch draft cleared the file's upload stamp; restore it for reloads.
+    stampDraftFileUpload(input, existing.previous.attachmentId);
     return;
   }
 

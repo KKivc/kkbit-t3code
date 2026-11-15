@@ -13,8 +13,8 @@ const POSITION_HASH_PATTERN = /^#L(\d+)(?:C(\d+)|-L?(\d+))?$/i;
 export function parseFileUrlHref(
   href: string,
 ): { readonly path: string; readonly hash: string } | null {
-  // Windows Chromium 会将盘符前缀解释为 file:，因此先核对原始协议。
-  if (!/^file:/i.test(href)) return null;
+  // Windows Chromium 会将单字母协议解释为盘符，因此先核对原始协议。
+  if (!href.trim().toLowerCase().startsWith("file:")) return null;
   try {
     const parsed = new URL(href);
     if (parsed.protocol.toLowerCase() !== "file:") return null;
@@ -103,7 +103,7 @@ export function resolvePathLinkTarget(rawPath: string, cwd: string): string {
     }
   } else if (!isAbsolutePath(path)) {
     const separator: "/" | "\\" = isWindowsPathStyle(cwd) ? "\\" : "/";
-    resolvedPath = joinPath(cwd, path, separator);
+    resolvedPath = joinPath(cwd, path.replace(/^(?:\.\/)+/, ""), separator);
   }
 
   return formatFilePathPosition({ ...position, path: resolvedPath });

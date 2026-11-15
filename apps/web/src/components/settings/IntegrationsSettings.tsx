@@ -373,6 +373,7 @@ function BrowserViewportSetting({ disabled }: { readonly disabled: boolean }) {
   return (
     <SettingsRow
       {...searchableSetting("browser-default-viewport")}
+      devicePreference
       description={translateUi(
         "Tab size for you and agents. Fill fits the panel; other sizes show the device toolbar.",
       )}
@@ -483,6 +484,7 @@ function BrowserZoomSetting({ disabled }: { readonly disabled: boolean }) {
   return (
     <SettingsRow
       {...searchableSetting("browser-default-zoom")}
+      devicePreference
       description={translateUi("Page zoom applied to new browser tabs.")}
       resetAction={
         !disabled && zoomFactor !== DEFAULT_PREVIEW_ZOOM_FACTOR ? (
@@ -530,6 +532,7 @@ function BrowserAppearanceSetting({ disabled }: { readonly disabled: boolean }) 
   return (
     <SettingsRow
       {...searchableSetting("browser-default-appearance")}
+      devicePreference
       description={translateUi(
         "The color scheme pages are told to prefer. System follows your OS setting.",
       )}
@@ -579,6 +582,7 @@ function BrowserRecordingInputSettings({ disabled }: { readonly disabled: boolea
     <>
       <SettingsRow
         {...searchableSetting("browser-recording-key-presses")}
+        devicePreference
         description={translateUi(
           "Show pressed keys and shortcuts in new recordings. Password fields are excluded.",
         )}
@@ -595,6 +599,7 @@ function BrowserRecordingInputSettings({ disabled }: { readonly disabled: boolea
       />
       <SettingsRow
         {...searchableSetting("browser-recording-mouse-presses")}
+        devicePreference
         description={translateUi("Highlight mouse presses and held buttons in new recordings.")}
         control={
           <Switch
@@ -618,6 +623,7 @@ function BrowserRecordingFrameRateSetting({ disabled }: { readonly disabled: boo
   return (
     <SettingsRow
       {...searchableSetting("browser-recording-frame-rate")}
+      devicePreference
       description={translateUi(
         "Maximum recording rate. 30 fps saves CPU and storage; 60 fps is smoother.",
       )}
@@ -674,6 +680,7 @@ function BrowserLinkTargetSetting({ disabled }: { readonly disabled: boolean }) 
   return (
     <SettingsRow
       {...searchableSetting("browser-link-target")}
+      devicePreference
       description={translateUi(
         "Where links in the chat and terminal open. Hold ⌘ or Ctrl while clicking a link to open it in your default browser either way.",
       )}
@@ -734,6 +741,7 @@ function BrowserSearchEngineSetting() {
     <>
       <SettingsRow
         {...searchableSetting("browser-search-engine")}
+        devicePreference
         description={translateUi(
           "What the address bar searches when you type something that isn't a URL.",
         )}
@@ -779,6 +787,7 @@ function BrowserSearchEngineSetting() {
       />
       {engine === "custom" ? (
         <SettingsRow
+          devicePreference
           title={translateUi("Custom search URL")}
           description={translateUi("Use %s where the search terms go.")}
           status={
@@ -1114,6 +1123,7 @@ function BrowserAutoShowFloatingPreviewSetting({ disabled }: { readonly disabled
   return (
     <SettingsRow
       {...searchableSetting("browser-auto-show-floating-preview")}
+      devicePreference
       description={translateUi(
         "Show the floating preview when an agent opens a browser or device unless the agent says otherwise.",
       )}
@@ -1150,6 +1160,9 @@ function BrowserProfilesSetting({ disabled }: { readonly disabled: boolean }) {
   // Profile edits pair with profile data on disk, so they save for this device in every scope.
   const updateSettings = useUpdatePrimarySettings();
   const updateDefaultProfile = useUpdateScopedSettings();
+  const { scope } = useSettingsScope();
+  // The default profile is a device preference, which a project cannot override.
+  const defaultProfileReadOnly = scope.kind === "project" || scope.kind === "checkout";
   const { environments, isReady: environmentsReady } = useEnvironments();
   const primaryEnvironment = usePrimaryEnvironment();
   // Cookie import runs on this desktop, whose policy the primary environment reports.
@@ -1469,7 +1482,7 @@ function BrowserProfilesSetting({ disabled }: { readonly disabled: boolean }) {
                 </MenuTrigger>
                 <MenuPopup align="end">
                   <MenuItem
-                    disabled={!settingsHydrated || isDefault}
+                    disabled={!settingsHydrated || isDefault || defaultProfileReadOnly}
                     onClick={() => {
                       if (settingsHydrated) {
                         updateDefaultProfile({ browserDefaultProfileId: profile.id });

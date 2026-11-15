@@ -100,12 +100,20 @@ describe("parseFileUrlHref", () => {
     expect(parseFileUrlHref("file:///c%3A/Users/x/shot.png")?.path).toBe("/c%3A/Users/x/shot.png");
   });
 
-  it.each(["https://example.com/a.ts", "file://%", "/Users/julius/a.ts", "d:alert(1)"])(
-    "rejects %s",
-    (href) => {
-      expect(parseFileUrlHref(href)).toBeNull();
-    },
-  );
+  it.each(["https://example.com/a.ts", "file://%", "/Users/julius/a.ts"])("rejects %s", (href) => {
+    expect(parseFileUrlHref(href)).toBeNull();
+  });
+
+  it("rejects one-letter schemes that Chromium on Windows reads as drive letters", () => {
+    const NativeURL = URL;
+    using _url = vi.spyOn(globalThis, "URL").mockImplementation(function (input: string | URL) {
+      const drive = /^([a-z]):/i.exec(String(input));
+      return drive
+        ? new NativeURL(`file:///${drive[1]!.toUpperCase()}:/${String(input).slice(2)}`)
+        : new NativeURL(input);
+    });
+    expect(parseFileUrlHref("d:x")).toBeNull();
+  });
 });
 
 describe("splitFilePathPosition", () => {
@@ -136,6 +144,7 @@ describe("resolvePathLinkTarget", () => {
       String.raw`\\server\share\project\.\src\index.ts:12`,
     ],
     ["src/index.ts:12", "/home/jane/project", "/home/jane/project/src/index.ts:12"],
+    ["./reports/draft.md:2", "/home/jane/project", "/home/jane/project/reports/draft.md:2"],
   ])("resolves %s using the connected environment cwd %s", (path, cwd, expected) => {
     expect(resolvePathLinkTarget(path, cwd)).toBe(expected);
   });

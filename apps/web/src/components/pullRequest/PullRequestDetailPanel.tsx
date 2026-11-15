@@ -537,8 +537,6 @@ export function PullRequestDetailPanel({
   const keybindings = useAtomValue(primaryServerKeybindingsAtom);
   const { copyToClipboard: copyReference } = useCopyToClipboard<string>({
     target: translateUi("{0} reference", [terminology.singular]),
-    onCopy: (label) =>
-      toastManager.add({ type: "success", title: translateUi("{0} copied", [label]) }),
     onError: (error, label) =>
       toastManager.add({
         type: "error",

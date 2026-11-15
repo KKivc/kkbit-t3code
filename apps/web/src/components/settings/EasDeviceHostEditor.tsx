@@ -176,7 +176,7 @@ export function EasDeviceHostEditor(props: {
         >
           <DialogHeader>
             <DialogTitle>
-              {props.isNew ? translateUi("Add EAS host") : translateUi("Edit EAS host")}
+              {props.isNew ? translateUi("Add Expo host") : translateUi("Edit Expo host")}
             </DialogTitle>
             <DialogDescription>
               {translateUi(
@@ -282,7 +282,7 @@ export function EasDeviceHostEditor(props: {
               </Button>
             </div>
             <div className="space-y-1.5 text-sm">
-              <span>{translateUi("EAS project")}</span>
+              <span>{translateUi("Expo project")}</span>
               <Select
                 value={draft.appId ?? FROM_THREAD_PROJECT}
                 disabled={props.busy}
@@ -294,7 +294,7 @@ export function EasDeviceHostEditor(props: {
                   });
                 }}
               >
-                <SelectTrigger size="sm" aria-label={translateUi("EAS project")}>
+                <SelectTrigger size="sm" aria-label={translateUi("Expo project")}>
                   <SelectValue>
                     {(value: string) =>
                       value === FROM_THREAD_PROJECT
@@ -330,9 +330,11 @@ export function EasDeviceHostEditor(props: {
             </div>
             <p className="text-xs text-muted-foreground">
               {translateUi(
-                "Expo allows sessions of up to 40 minutes on free accounts and 115 on paid ones, and ends one after the idle minutes without activity, so idle minutes must be smaller than session minutes.",
+                "Expo Simulators needs a paid Expo account. A session runs for up to 115 minutes and stops early when it is idle for the idle minutes, so idle minutes must be less than session minutes.",
               )}
-              {props.isNew ? null : " Saving restarts this host, which stops its running sessions."}
+              {props.isNew
+                ? null
+                : translateUi(" Saving restarts this host and stops its running sessions.")}
             </p>
             {problem === null ? null : (
               <p className="text-xs text-destructive" role="alert">
